@@ -1,11 +1,8 @@
-apply plugin: 'java'
+
 apply plugin: 'eclipse'
-apply plugin: 'spring-boot'
 apply plugin: 'io.spring.dependency-management'
-apply plugin: 'osgi'
-apply plugin: 'flyway'
 apply plugin: 'groovy'
-apply plugin: 'net.saliman.cobertura'
+
 
 buildscript {
 	repositories {
@@ -23,19 +20,6 @@ buildscript {
 	}
 }
 
-cobertura {
-	coverageFormats = [ 'xml' ]
-}
-
-//for cobertura and java8
-configurations.all {
-	resolutionStrategy {
-		// Cobertura includes an ASM version that can't handle Java 8, ASM 5.0.3
-		//handles Java8
-		force 'org.ow2.asm:asm:5.0.3'
-		forcedModules = [ 'org.ow2.asm:asm:5.0.3' ]
-	}
-}
 
 repositories {
 	mavenLocal()
@@ -47,17 +31,6 @@ repositories {
 	maven { url "https://repo.spring.io/libs-release" }
 }
 
-/* Use this when you need to upload snapshot to nexus artifactory
- * 
- * uploadArchives {
-	repositories {
-		mavenDeployer {
-			repository(url: "http://172.31.11.79/content/repositories/snapshots") {
-				authentication(userName: "admin", password: "Rated1234")
-			}
-		}
-	}
-}*/
 
 dependencyManagement {
 	imports {
@@ -95,13 +68,5 @@ dependencies {
 	
 }
 
-task setupDockerFolder(type: Copy) {
-	from('build/libs/')
-	into('docker/')
-	include('*.jar')
-	rename { String fileName ->
-		fileName.replace("-${version}", "")
-	}
-}
 
 
