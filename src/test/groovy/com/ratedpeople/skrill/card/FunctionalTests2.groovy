@@ -21,8 +21,8 @@ class FunctionalTests2 extends Specification {
 		
 		when:
 		String input1 ="{\"number\":\"4000000000000051\", \"userId\":\"34\",\"cvv\":\"123\",\"expiryYear\":\"2016\",\"expiryMonth\":\"01\",\"nameOnCard\":\"davide\",\"type\":\"visa\"}"
-		def map = http.request("http://localhost:8091/", Method.POST, "application/json") {
-			uri.path = 'v1.0/payment/user/1/card'
+		def map = http.request("http://minerva.ratedcloud.net:8091/", Method.POST, "application/json") {
+			uri.path = 'v1.0/register'
 			send('application/json', input1)
 		}
 
