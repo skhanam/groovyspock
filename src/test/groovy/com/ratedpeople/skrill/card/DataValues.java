@@ -53,10 +53,12 @@ public  class DataValues {
 		put("CHANNELID","6c6dc1da6bc443e08510a36325ada090");
 		put("MERCHANT","4656");
 		put("RPUSERID","1");
-		put("","");
-		put("","");
-		put("","");
-		put("","");
+		
+		// Database values 
+		put("CONNECTURL","jdbc:mysql://minerva.ratedcloud.net:3306/");
+		put("DBUSERNAME","admin");
+		put("DBPWD","123456");
+		put("DBDRIVER","com.mysql.jdbc.Driver");
 		put("","");
 		put("","");
 		put("","");
