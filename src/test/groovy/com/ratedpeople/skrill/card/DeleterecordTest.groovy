@@ -8,8 +8,8 @@ import groovy.sql.Sql
 class DeleterecordTest extends Specification  {
 
 	def USER_ID ="34"
-	def sqlconn = Sql.newInstance('jdbc:mysql://minerva.ratedcloud.net:3306/', 'admin','123456', 'com.mysql.jdbc.Driver')
-//	def CREDITCARDID;
+	def sqlconn = Sql.newInstance(DataValues.requestValues.get("CONNECTURL"), DataValues.requestValues.get("DBUSERNAME"),DataValues.requestValues.get("DBPWD"), DataValues.requestValues.get("DBDRIVER"))
+
 
 	def "test connection and see if records exists for credit card"(){
 
