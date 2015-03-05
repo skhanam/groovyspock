@@ -32,8 +32,6 @@ import com.ratedpeople.skrill.card.DataValues
 //@Stepwise
 class RegisterUserFunctionalTest extends Specification {
 
-	private static String URL = "http://minerva.ratedcloud.net:8765/api/user/"
-	private static String URLAUTHENTICATE = "http://minerva.ratedcloud.net:8765/api/uaa/"
 	public static String  gettoken = DataValues.requestValues.get("TOKEN").bytes.encodeBase64().toString()
 	public static String USERNAME = DataValues.requestValues.get("USERNAME")+System.currentTimeMillis();
 	
@@ -184,65 +182,11 @@ class RegisterUserFunctionalTest extends Specification {
 	
 	
 	
-	
-
-	def "Get User Id"(){
-		
-						setup:
-						println "Hash map value   : Test 4 :  " + DataValues.responseToken
-						HTTPBuilder http = new HTTPBuilder()
-						http.handler.failure = { resp, reader ->
-							[response:resp, reader:reader]
-						}
-						http.handler.success = { resp, reader ->
-							[response:resp, reader:reader]
-						}
-						println "tokenised string  :"+gettoken
-
-						when:
-					
-						println "Get Map values  : "
-						def map = http.request(DataValues.requestValues.get("URL")+DataValues.requestValues.get("USERSERVICE")+"v1.0/me" ,Method.GET, "application/json")
-
-						{
-					
-							headers.'Authorization' =
-							"Bearer "+ DataValues.responseToken.get("access_token")
-						}
-						def response = map['response']
-						def reader = map['reader']
-						then:
-					
-						String getResposecode = response.status
-						assert getResposecode == status
-						def responsemap = reader.each
-						{
-							println "Token values : "+"$it"
-							
-							String token = "$it"
-							String key = token.substring(0, token.indexOf("="))
-							String value = token.substring(token.indexOf("=") + 1, token.length())
-							println key
-							println value
-							
-							DataValues.responseToken.put(key,value)
-	
-						}
-							println "User Id from Map  : " 	+ DataValues.responseToken.get("userId")		
-							where :
-				
-							username | password | access_token|status
-							USERNAME | DataValues.requestValues.get("PASSWORD") |DataValues.responseToken.get("access_token") |DataValues.requestValues.get("STATUS200")
-
-		
-	}
-
-	
 	def "credit card creation"(){
 		
 				setup:
 					
-						println "Hash map value   : Test 5 :  "
+						println "Hash map value   : Test 4 :  "
 						HTTPBuilder http = new HTTPBuilder()
 						http.handler.failure = { resp, reader ->
 							[response:resp, reader:reader]
@@ -260,7 +204,7 @@ class RegisterUserFunctionalTest extends Specification {
 				
 		
 		
-				def map = http.request("http://minerva.ratedcloud.net:8765/api/payment/", Method.POST, "application/json") {
+				def map = http.request(DataValues.requestValues.get("URL")+DataValues.requestValues.get("PAYMENTSERVICE"), Method.POST, "application/json") {
 					uri.path = 'v1.0/users/1/cards'
 					headers.'Authorization' =
 					"Bearer "+DataValues.responseToken.get("access_token")
@@ -304,14 +248,14 @@ class RegisterUserFunctionalTest extends Specification {
 				DataValues.requestValues.get("CREDITCARDNUMBER")| DataValues.requestValues.get("USERID")| DataValues.requestValues.get("CV2")|DataValues.requestValues.get("EXPIRYYEAR")|DataValues.requestValues.get("EXPIRYMONTH")  |DataValues.requestValues.get("NAMEONCARD")  | DataValues.requestValues.get("CARDTYPE")||DataValues.requestValues.get("STATUS400")||""
 				
 		
-			}
+	}
 	
 	
 		def "Credit card creation and all validations"(){
 			
 					setup:
 						
-							println "Hash map value   : Test 6 :  " 
+							println "Hash map value   : Test 5 :  " 
 							HTTPBuilder http = new HTTPBuilder()
 							http.handler.failure = { resp, reader ->
 								[response:resp, reader:reader]
@@ -329,7 +273,7 @@ class RegisterUserFunctionalTest extends Specification {
 					
 			
 			
-					def map = http.request("http://minerva.ratedcloud.net:8765/api/payment/", Method.POST, "application/json") {
+					def map = http.request(DataValues.requestValues.get("URL")+DataValues.requestValues.get("PAYMENTSERVICE"), Method.POST, "application/json") {
 						uri.path = 'v1.0/users/1/cards'
 						headers.'Authorization' =
 						"Bearer "+DataValues.responseToken.get("access_token")
@@ -368,7 +312,7 @@ class RegisterUserFunctionalTest extends Specification {
 					where :
 			
 					creditCardNumber	| userId			| cvv		| expiryYear | expiryMonth | nameOnCard | cardType  || status 				|| message
-//					DataValues.requestValues.get("CREDITCARDNUMBER")    | DataValues.requestValues.get("USERID")| DataValues.requestValues.get("CV2")|DataValues.requestValues.get("EXPIRYYEAR")|DataValues.requestValues.get("EXPIRYMONTH")  |DataValues.requestValues.get("NAMEONCARD")  | DataValues.requestValues.get("CARDTYPE")||DataValues.requestValues.get("STATUS400")||""
+					DataValues.requestValues.get("CREDITCARDNUMBER")    | DataValues.requestValues.get("USERID")| DataValues.requestValues.get("CV2")|DataValues.requestValues.get("EXPIRYYEAR")|DataValues.requestValues.get("EXPIRYMONTH")  |DataValues.requestValues.get("NAMEONCARD")  | DataValues.requestValues.get("CARDTYPE")||DataValues.requestValues.get("STATUS400")||""
 					DataValues.requestValues.get("CREDITCARDNUMBER")    | DataValues.requestValues.get("USERID")| DataValues.requestValues.get("CV2")|DataValues.requestValues.get("EXPIRYYEAR")|DataValues.requestValues.get("EXPIRYMONTH")  |DataValues.requestValues.get("NAMEONCARD")  | DataValues.requestValues.get("CARDTYPE")||DataValues.requestValues.get("STATUS400")||DataValues.requestValues.get("CARDEXISTS")
 					"  "| DataValues.requestValues.get("USERID")|DataValues.requestValues.get("CV2")|DataValues.requestValues.get("EXPIRYYEAR") |DataValues.requestValues.get("EXPIRYMONTH")|DataValues.requestValues.get("NAMEONCARD")|DataValues.requestValues.get("CARDTYPE")  ||DataValues.requestValues.get("STATUS400")||DataValues.requestValues.get("CREDITCARDVALIDATION")
 					DataValues.requestValues.get("CREDITCARDNUMBER")|"  "|DataValues.requestValues.get("CV2")|DataValues.requestValues.get("EXPIRYYEAR")|DataValues.requestValues.get("EXPIRYMONTH")|DataValues.requestValues.get("NAMEONCARD")|DataValues.requestValues.get("CARDTYPE")||DataValues.requestValues.get("STATUS400")||DataValues.requestValues.get("USERIDVALIDATION")
@@ -383,7 +327,7 @@ class RegisterUserFunctionalTest extends Specification {
 		def "Get Card details"()
 		{
 					setup:
-									println "Hash map value   : Test 7 :  " + DataValues.responseToken
+									println "Hash map value   : Test 6 :  " + DataValues.responseToken
 									HTTPBuilder http = new HTTPBuilder()
 									http.handler.failure = { resp, reader ->
 										[response:resp, reader:reader]
@@ -409,7 +353,7 @@ class RegisterUserFunctionalTest extends Specification {
 								
 									String getResposecode = response.status
 									assert getResposecode == status
-									reader.each{println "$it"}
+//									reader.each{println "$it"}
 								
 									where :
 								
@@ -422,7 +366,7 @@ class RegisterUserFunctionalTest extends Specification {
 		def "Refresh access token for registered user"(){
 			
 									setup:
-									println "Hash map value   : Test 8 :  " + DataValues.responseToken
+									println "Hash map value   : Test 7 :  " + DataValues.responseToken
 									HTTPBuilder http = new HTTPBuilder()
 									http.handler.failure = { resp, reader ->
 										[response:resp, reader:reader]
@@ -436,7 +380,7 @@ class RegisterUserFunctionalTest extends Specification {
 									when:
 								
 									println "Get Map values  : "
-									def map = http.request(DataValues.requestValues.get("URL")+DataValues.requestValues.get("AUTHSERVICE")+"/oauth/token?grant_type=refresh_token&refresh_token="+DataValues.responseToken.get("refresh_token"),Method.POST, "application/json")
+									def map = http.request(DataValues.requestValues.get("URL")+DataValues.requestValues.get("AUTHSERVICE")+"oauth/token?grant_type=refresh_token&refresh_token="+DataValues.responseToken.get("refresh_token"),Method.POST, "application/json")
 									{
 								
 										headers.'Authorization' =
