@@ -1,11 +1,10 @@
 /**
  * 
  */
-package com.ratedpeople.skrill.card;
+package com.ratedpeople.common.support;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.commons.codec.binary.Base64;
 
 /**
  * @author shabana.khanam
@@ -27,7 +26,8 @@ public  class DataValues {
 		put("CARDTYPE","visa");
 		put("STATUS201","201");
 		put("STATUS400","400");
-		put("USERNAME","davide");
+		put("USERNAME","functional.test.user@gid.com");
+		put("USERNAME_NEW","new.user@gid.com");
 		put("PASSWORD","password");
 		put("STATUS200","200");
 		put("STATUS401","401");
@@ -37,10 +37,10 @@ public  class DataValues {
 		put("USERSERVICE","/api/user/");
 		put("AUTHSERVICE","/api/uaa/");
 		put("PAYMENTSERVICE","/api/payment/");
-		put("URL","http://localhost:8765");
+		put("URL","http://minerva.ratedcloud.net:8765");
 		put("USERID","34");
 		put("CREDITCARDVALIDATION","credit card has wrong size - credit card has invalid characters - credit card number is compulsory -");
-		put("USERIDVALIDATION","userId is compulsory - userId has invalid characters -");
+		put("USERIDVALIDATION","USER_ID is compulsory - USER_ID has invalid characters -");
 		put("CVVVALIDATION","ccv has wrong size - ccv has invalid characters -");
 		put("EXPIRYYEARVALIDATION","year has invalid characters - year has wrong size -");
 		put("EXPIRYMONTHVALIDATION","month has invalid characters -");

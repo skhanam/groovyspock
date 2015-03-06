@@ -1,4 +1,4 @@
-package com.ratedpeople.skrill.card
+package com.ratedpeople.payment.resource
 
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
@@ -20,8 +20,8 @@ class FunctionalTests2 extends Specification {
 		}
 		
 		when:
-		String input1 ="{\"number\":\"4000000000000051\", \"userId\":\"34\",\"cvv\":\"123\",\"expiryYear\":\"2016\",\"expiryMonth\":\"01\",\"nameOnCard\":\"davide\",\"type\":\"visa\"}"
-		def map = http.request("http://minerva.ratedcloud.net:8091/", Method.POST, "application/json") {
+		String input1 ="{\"number\":\"4000000000000051\", \"USER_ID\":\"34\",\"cvv\":\"123\",\"expiryYear\":\"2016\",\"expiryMonth\":\"01\",\"nameOnCard\":\"davide\",\"type\":\"visa\"}"
+		def map = http.request("HTTP_BUILDER://minerva.ratedcloud.net:8091/", Method.POST, "application/json") {
 			uri.path = 'v1.0/register'
 			send('application/json', input1)
 		}

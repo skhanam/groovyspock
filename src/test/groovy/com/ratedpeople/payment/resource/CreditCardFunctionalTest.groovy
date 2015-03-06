@@ -1,99 +1,24 @@
 /**
  * 
  */
-package com.ratedpeople.skrill.card
+package com.ratedpeople.payment.resource
 
-import groovy.json.JsonBuilder
-import groovyx.net.http.HTTPBuilder
-
-import org.apache.http.HttpResponse
-import org.apache.http.client.HttpClient
-import org.apache.http.client.methods.HttpPost
-import org.apache.http.protocol.BasicHttpContext
-import org.apache.http.protocol.HttpContext
-
-import spock.lang.Specification
-
-
-
-import groovyx.net.http.Method
-import groovy.transform.Field;
 import groovy.json.*
-
-import com.ratedpeople.skrill.card.DataValues
+import groovyx.net.http.Method
+import com.ratedpeople.common.support.DataValues;
+import com.ratedpeople.user.token.AbstractUserTokenTest
 /**
  * @author shabana.khanam
  *
  */
 
+class CreditCardFunctionalTest extends AbstractUserTokenTest {
 
-
-
-//@Stepwise
-class CreditCardFunctionalTest extends AbstractGetUserTest {
-
-	private static String URL = "http://localhost:8765/api/user/"
-	private static String URLAUTHENTICATE = "http://localhost:8765/api/uaa/"
+	private static String URL = "HTTP_BUILDER://localhost:8765/api/user/"
+	private static String URLAUTHENTICATE = "HTTP_BUILDER://localhost:8765/api/uaa/"
 	public static String  gettoken = DataValues.requestValues.get("TOKEN").bytes.encodeBase64().toString()
 	public static String USERNAME = "davide"
-	
-	
-	
-	
-	def "Register a Merchant"(){
-		
-							setup:
-							
-							println "Hash map value   : Test 3 :  " + token
-											
-							when:
-							
-							def jsonString = new JsonBuilder()
-							
-							def jsonParams = jsonString rpUserId: rpUserId,merchant:  merchant,channel:  channel
-							
-							def map = http.request(DataValues.requestValues.get("URL")+DataValues.requestValues.get("PAYMENTSERVICE")+"v1.0/merchants",Method.POST, "application/json")
-							{
-								headers.'Authorization' =
-								"Bearer "+token
-								send('application/json',jsonParams )
-							}
-								
-							def response = map['response']
-							def reader = map['reader']
-							
-							then:
-					
-							String getResposecode = response.status
-							assert getResposecode == status
-							def responsemap = reader.each
-							{
-								println "Token values : "+"$it"
-								
-								String token = "$it"
-								String key = token.substring(0, token.indexOf("="))
-								String value = token.substring(token.indexOf("=") + 1, token.length())
-								println key
-								println value
-								
-								DataValues.responseToken.put(key,value)
-		
-							}
-		
-						where :   
-					
-						rpUserId | merchant | channel|access_token|status|message
-						DataValues.requestValues.get("RPUSERID") | DataValues.requestValues.get("MERCHANT") | DataValues.requestValues.get("CHANNELID")|DataValues.responseToken.get("access_token")||DataValues.requestValues.get("STATUS200")||""
-						DataValues.requestValues.get("RPUSERID") | DataValues.requestValues.get("MERCHANT") | DataValues.requestValues.get("CHANNELID")|DataValues.responseToken.get("access_token")||DataValues.requestValues.get("STATUS400")||DataValues.requestValues.get("MERCHANTEXISTS")
-		
-				}
-	
-	
-	
-	
 
-	
-	
 	def "credit card creation success"(){
 		
 				setup:
@@ -105,15 +30,15 @@ class CreditCardFunctionalTest extends AbstractGetUserTest {
 		
 				def jsonString = new JsonBuilder()
 				
-				def jsonParams = jsonString number: creditCardNumber,userId:  userId,cvv:  cvv,
+				def jsonParams = jsonString number: creditCardNumber,userId:  USER_ID,cvv:  cvv,
 				expiryYear: expiryYear,expiryMonth:  expiryMonth,nameOnCard:  nameOnCard,type:  cardType
 				
 		
 		
-				def map = http.request("http://localhost:8765/api/payment/", Method.POST, "application/json") {
-					uri.path = 'v1.0/users/'+userId+'/cards'
+				def map = HTTP_BUILDER.request("http://localhost:8765/api/payment/", Method.POST, "application/json") {
+					uri.path = 'v1.0/users/'+USER_ID+'/cards'
 					headers.'Authorization' =
-					"Bearer "+token
+					"Bearer "+ACCESS_TOKEN
 					send('application/json',jsonParams )
 				}
 		
@@ -151,7 +76,7 @@ class CreditCardFunctionalTest extends AbstractGetUserTest {
 				*/	
 				where :
 		
-				creditCardNumber	| userId			| cvv		| expiryYear | expiryMonth | nameOnCard | cardType  || status 				|| message
+				creditCardNumber	| USER_ID			| cvv		| expiryYear | expiryMonth | nameOnCard | cardType  || status 				|| message
 				DataValues.requestValues.get("CREDITCARDNUMBER")| DataValues.requestValues.get("USERID")| DataValues.requestValues.get("CV2")|DataValues.requestValues.get("EXPIRYYEAR")|DataValues.requestValues.get("EXPIRYMONTH")  |DataValues.requestValues.get("NAMEONCARD")  | DataValues.requestValues.get("CARDTYPE")||DataValues.requestValues.get("STATUS201")||""
 				
 		
@@ -169,15 +94,15 @@ class CreditCardFunctionalTest extends AbstractGetUserTest {
 			
 					def jsonString = new JsonBuilder()
 					
-					def jsonParams = jsonString number: creditCardNumber,userId:  userId,cvv:  cvv,
+					def jsonParams = jsonString number: creditCardNumber,userId:  USER_ID,cvv:  cvv,
 					expiryYear: expiryYear,expiryMonth:  expiryMonth,nameOnCard:  nameOnCard,type:  cardType
 					
 			
 			
-					def map = http.request("http://localhost:8765/api/payment/", Method.POST, "application/json") {
+					def map = HTTP_BUILDER.request("http://localhost:8765/api/payment/", Method.POST, "application/json") {
 						uri.path = 'v1.0/users/1/cards'
 						headers.'Authorization' =
-						"Bearer "+token
+						"Bearer "+ACCESS_TOKEN
 						send('application/json',jsonParams )
 					}
 			
@@ -212,7 +137,7 @@ class CreditCardFunctionalTest extends AbstractGetUserTest {
 					
 					where :
 			
-					creditCardNumber	| userId			| cvv		| expiryYear | expiryMonth | nameOnCard | cardType  || status 				|| message
+					creditCardNumber	| USER_ID			| cvv		| expiryYear | expiryMonth | nameOnCard | cardType  || status 				|| message
 //					DataValues.requestValues.get("CREDITCARDNUMBER")    | DataValues.requestValues.get("USERID")| DataValues.requestValues.get("CV2")|DataValues.requestValues.get("EXPIRYYEAR")|DataValues.requestValues.get("EXPIRYMONTH")  |DataValues.requestValues.get("NAMEONCARD")  | DataValues.requestValues.get("CARDTYPE")||DataValues.requestValues.get("STATUS400")||""
 					DataValues.requestValues.get("CREDITCARDNUMBER")    | DataValues.requestValues.get("USERID")| DataValues.requestValues.get("CV2")|DataValues.requestValues.get("EXPIRYYEAR")|DataValues.requestValues.get("EXPIRYMONTH")  |DataValues.requestValues.get("NAMEONCARD")  | DataValues.requestValues.get("CARDTYPE")||DataValues.requestValues.get("STATUS400")||DataValues.requestValues.get("CARDEXISTS")
 					"  "| DataValues.requestValues.get("USERID")|DataValues.requestValues.get("CV2")|DataValues.requestValues.get("EXPIRYYEAR") |DataValues.requestValues.get("EXPIRYMONTH")|DataValues.requestValues.get("NAMEONCARD")|DataValues.requestValues.get("CARDTYPE")  ||DataValues.requestValues.get("STATUS400")||DataValues.requestValues.get("CREDITCARDVALIDATION")
@@ -228,7 +153,7 @@ class CreditCardFunctionalTest extends AbstractGetUserTest {
 		def "Get Card details"()
 		{
 					setup:
-									println "Hash map value   : Test 7 :  " + token
+									println "Hash map value   : Test 7 :  " + ACCESS_TOKEN
 								
 									println "you are in setup method "
 									println "tokenised string  :"+gettoken
@@ -236,11 +161,11 @@ class CreditCardFunctionalTest extends AbstractGetUserTest {
 									when:
 								
 									println "Get Map values  : "
-									def map = http.request(DataValues.requestValues.get("URL")+DataValues.requestValues.get("PAYMENTSERVICE")+"v1.0/users/1/cards",Method.GET, "application/json")
+									def map = HTTP_BUILDER.request(DataValues.requestValues.get("URL")+DataValues.requestValues.get("PAYMENTSERVICE")+"v1.0/users/1/cards",Method.GET, "application/json")
 									{
 								
 										headers.'Authorization' =
-												"Bearer "+token
+												"Bearer "+ACCESS_TOKEN
 									}
 									def response = map['response']
 									def reader = map['reader']

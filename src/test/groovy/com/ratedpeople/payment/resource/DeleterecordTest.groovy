@@ -1,5 +1,6 @@
-package com.ratedpeople.skrill.card
+package com.ratedpeople.payment.resource
 
+import com.ratedpeople.common.support.DataValues;
 import spock.lang.Specification
 import groovy.sql.Sql
 
