@@ -38,7 +38,7 @@ public  class DataValues {
 		put("AUTHSERVICE","/api/uaa/");
 		put("PAYMENTSERVICE","/api/payment/");
 		put("URL","http://minerva.ratedcloud.net:8765");
-		put("USERID","34");
+		put("USERID","1");
 		put("CREDITCARDVALIDATION","credit card has wrong size - credit card has invalid characters - credit card number is compulsory -");
 		put("USERIDVALIDATION","USER_ID is compulsory - USER_ID has invalid characters -");
 		put("CVVVALIDATION","ccv has wrong size - ccv has invalid characters -");
@@ -59,14 +59,16 @@ public  class DataValues {
 		put("DBUSERNAME","admin");
 		put("DBPWD","123456");
 		put("DBDRIVER","com.mysql.jdbc.Driver");
-		put("","");
-		put("","");
-		put("","");
-		put("","");
-		put("","");
-		put("","");
-		put("","");
-		put("","");
+		
+		// Pre auth
+		put("FROMUSERID","1");
+		put("TOUSERID","3");
+		put("JOBID","1");
+		put("CURRENCY","GBP");
+		put("SKRILLTRANSACTION","");
+		put("AMOUNT","1000");
+		put("FROMUSEREMAIL","davi@tin.it");
+		put("IP","12.12.12.12");
 		put("","");
 		put("","");
 		put("","");
