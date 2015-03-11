@@ -1,13 +1,13 @@
 package com.ratedpeople.payment.resource;
 
 import groovy.json.JsonBuilder
-import groovyx.net.http.ContentType;
+import groovyx.net.http.ContentType
 import groovyx.net.http.Method
-import com.ratedpeople.common.support.DataValues
-import com.ratedpeople.user.token.AbstractUserTokenTest
+import com.ratedpeople.support.DataValues
+import com.ratedpeople.user.token.AbstractUserToken
 
 
-class RegisterMerchantFunctionalTest extends AbstractUserTokenTest{
+class RegisterMerchantFunctionalTest extends AbstractUserToken{
 	
 	private static final String REGISTER_MERCHANT_URI = DataValues.requestValues.get("PAYMENTSERVICE")+"v1.0/merchants"
 	
@@ -36,16 +36,6 @@ class RegisterMerchantFunctionalTest extends AbstractUserTokenTest{
 					println "Content-Type: ${resp.headers.'Content-Type'}"
 					
 					responseStatus = resp.statusLine.statusCode
-					
-					reader.each{
-						println "Token values : "+"$it"
-						
-						String token = "$it"
-						String key = token.substring(0, token.indexOf("="))
-						String value = token.substring(token.indexOf("=") + 1, token.length())
-						println key
-						println value
-					}
 				}
 				
 				response.failure = { resp ->

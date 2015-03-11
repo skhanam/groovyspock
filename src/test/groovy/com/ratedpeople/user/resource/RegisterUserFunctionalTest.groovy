@@ -4,11 +4,10 @@
 package com.ratedpeople.user.resource
 
 import groovy.json.*
-import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
 import spock.lang.Specification
-import com.ratedpeople.common.support.DataValues;
+import com.ratedpeople.support.DataValues
 /**
  * @author shabana.khanam
  *
