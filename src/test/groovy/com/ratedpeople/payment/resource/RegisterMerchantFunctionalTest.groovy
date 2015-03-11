@@ -4,6 +4,7 @@ import groovy.json.JsonBuilder
 import groovyx.net.http.ContentType
 import groovyx.net.http.Method
 import com.ratedpeople.support.DataValues
+import com.ratedpeople.support.DatabaseHelper
 import com.ratedpeople.user.token.AbstractUserToken
 
 
@@ -44,10 +45,55 @@ class RegisterMerchantFunctionalTest extends AbstractUserToken{
 				}	
 			}
 		then:
-			responseStatus == status
-		where:   
-			status										|message
-			DataValues.requestValues.get("STATUS200")	|""
-			DataValues.requestValues.get("STATUS400")	|DataValues.requestValues.get("MERCHANTEXISTS")
+			responseStatus == DataValues.requestValues.get("STATUS201")
+		cleanup:
+			DatabaseHelper.executeQuery("delete from payment.merchant where channel = '${DataValues.requestValues.get("CHANNELID")}'")
+	}
+	
+	def testRegisterMerchantWhenAleadyExists(){
+		given:
+			String responseStatus = null
+			String errorMessage
+			
+			def json = new JsonBuilder()
+			json {
+				"rpUserId" DataValues.requestValues.get("RPUSERID")
+				"merchant" DataValues.requestValues.get("MERCHANT")
+				"channel" DataValues.requestValues.get("CHANNELID")
+			}
+			
+			println "Json is " +  json.toString()
+		when:
+			def response = registerMerhant(json)
+			def resp = response['response']
+			def reader = response['reader']
+
+			assert resp.status.toString() == DataValues.requestValues.get("STATUS201")
+			
+			response = registerMerhant(json)
+			resp = response['response']
+			reader = response['reader']
+			
+			responseStatus = resp.status.toString()
+			errorMessage = reader.get('cause')
+			println errorMessage
+		then:
+			responseStatus == DataValues.requestValues.get("STATUS409")
+			
+		cleanup:
+			DatabaseHelper.executeQuery("delete from payment.merchant where channel = '${DataValues.requestValues.get("CHANNELID")}'")
+	}
+	
+	private def registerMerhant(def json){
+		def response = HTTP_BUILDER.request(Method.POST, ContentType.JSON){
+			uri.path = REGISTER_MERCHANT_URI
+			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN
+			body = json.toString()
+			requestContentType = ContentType.JSON
+			
+			println "Registering merchant 1 Uri : " + uri
+		}
+		
+		return response;
 	}
 }
