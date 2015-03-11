@@ -19,6 +19,11 @@ import groovyx.net.http.Method
  */
 class CreateInvoiceFunctionalTest extends AbstractUserTokenTest{
 	
+	/*
+	 *  Negative scenarios are not written as there are no validations in place 
+	 *  will update once this is being put in place
+	 */
+	
 	def "test create invoice "(){
 		
 		given:
@@ -74,7 +79,7 @@ class CreateInvoiceFunctionalTest extends AbstractUserTokenTest{
 //		where:
 //			status
 //			DataValues.requestValues.get("STATUS200")
-//			DataValues.requestValues.get("STATUS400")	|DataValues.requestValues.get("MERCHANTEXISTS")
+
 	}
 
 	
