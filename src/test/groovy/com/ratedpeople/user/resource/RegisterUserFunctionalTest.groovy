@@ -4,20 +4,16 @@
 package com.ratedpeople.user.resource
 
 import groovy.json.*
-import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
 import spock.lang.Specification
-import com.ratedpeople.common.support.DataValues;
+import com.ratedpeople.support.DataValues
 /**
  * @author shabana.khanam
  *
  */
 
 class RegisterUserFunctionalTest extends Specification {
-
-	public static String  gettoken = DataValues.requestValues.get("TOKEN").bytes.encodeBase64().toString()
-	public static String USERNAME = DataValues.requestValues.get("USERNAME")+System.currentTimeMillis();
 	
 	private static final String REGISTER_USER_URI = DataValues.requestValues.get("USERSERVICE")+"v1.0/user/register"
 	private final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(DataValues.requestValues.get("URL"))

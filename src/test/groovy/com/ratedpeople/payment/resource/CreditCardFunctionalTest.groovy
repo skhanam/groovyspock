@@ -4,187 +4,218 @@
 package com.ratedpeople.payment.resource
 
 import groovy.json.*
+import groovyx.net.http.ContentType
 import groovyx.net.http.Method
-import com.ratedpeople.common.support.DataValues;
-import com.ratedpeople.user.token.AbstractUserTokenTest
+import com.ratedpeople.support.DataValues
+import com.ratedpeople.support.DatabaseHelper
+import com.ratedpeople.user.token.AbstractUserToken
 /**
  * @author shabana.khanam
  *
  */
 
-class CreditCardFunctionalTest extends AbstractUserTokenTest {
-
-	private static String URL = "HTTP_BUILDER://localhost:8765/api/user/"
-	private static String URLAUTHENTICATE = "HTTP_BUILDER://localhost:8765/api/uaa/"
-	public static String  gettoken = DataValues.requestValues.get("TOKEN").bytes.encodeBase64().toString()
-	public static String USERNAME = "davide"
-
-	def "credit card creation success"(){
+class CreditCardFunctionalTest extends AbstractUserToken {
+	
+	private final String CREDIT_CARD_RESOURCE_URI = DataValues.requestValues.get("PAYMENTSERVICE")+"v1.0/users/" 
+	
+	def testCreditCardSuccess(){
+		println "CreditCardFunctionalTest"
+		println "Test 1 :  testCreditCardSuccess"
 		
-				setup:
-					
-						println "Hash map value   : Test 5 :  "
+		given:
+			String ccToken
+			String responseStatus
+		when:
+			def response = postCreditCard(createJson());
 			
-		
-				when :
-		
-				def jsonString = new JsonBuilder()
-				
-				def jsonParams = jsonString number: creditCardNumber,userId:  USER_ID,cvv:  cvv,
-				expiryYear: expiryYear,expiryMonth:  expiryMonth,nameOnCard:  nameOnCard,type:  cardType
-				
-		
-		
-				def map = HTTP_BUILDER.request("http://localhost:8765/api/payment/", Method.POST, "application/json") {
-					uri.path = 'v1.0/users/'+USER_ID+'/cards'
-					headers.'Authorization' =
-					"Bearer "+ACCESS_TOKEN
-					send('application/json',jsonParams )
-				}
-		
-				
+			def resp = response['response']
+			def reader = response['reader']
 			
-				then:
-				
-				def response = map['response']
-				def reader = map['reader']
-				println "*********************************"
-				println "response code :${response.status}"
-				println "reader type: ${reader.get('cause')}"
-				println "*********************************"
-
-				String delims = "[-\\,]+"
-				def messageValue = message.tokenize(delims)
-				def range = messageValue
-				println "range : "+range.size
-				println "constant :"+messageValue
-				String getResposecode = response.status
-				assert getResposecode==status
-				
-				/*def trimrightspaces = reader.get('cause').trim()
-				def watever = trimrightspaces.tokenize(delims)
-				def rangeresponse = watever
-				println "from Id :"+watever
-				println"range of watever :"+rangeresponse.size
-
-				
-				watever.each{println "watever: $it"}
-				messageValue.each{println "messageValue:$it"
-				
+			responseStatus = resp.status
+			println "*********************************"
+			println "response code :${resp.status}"
+			println "reader type: ${reader.get('cause')}"
+			println "*********************************"
+			
+			reader.each{
+				println "Response data: " + "$it"
+	
+				String data = "$it"
+				if (data.startsWith("token")){
+					ccToken = data.replace("token=", "")
 				}
-				assert range.size == rangeresponse.size
-				*/	
-				where :
-		
-				creditCardNumber	| USER_ID			| cvv		| expiryYear | expiryMonth | nameOnCard | cardType  || status 				|| message
-				DataValues.requestValues.get("CREDITCARDNUMBER")| DataValues.requestValues.get("USERID")| DataValues.requestValues.get("CV2")|DataValues.requestValues.get("EXPIRYYEAR")|DataValues.requestValues.get("EXPIRYMONTH")  |DataValues.requestValues.get("NAMEONCARD")  | DataValues.requestValues.get("CARDTYPE")||DataValues.requestValues.get("STATUS201")||""
-				
-		
 			}
+		then:
+			responseStatus == DataValues.requestValues.get("STATUS201")
+		cleanup:	
+			DatabaseHelper.executeQuery("delete from payment.credit_card where token = '${ccToken}'")
+	}
+					
+	def testGetCardDetails(){
+		println "Test 2 :  testGetCardDetails"
+
+		given:
+			String ccToken
+			def response = postCreditCard(createJson())
+			def resp = response['response']
+			def reader = response['reader']
+			
+			reader.each{
+				println "Response data: " + "$it"
 	
-	
-		def "Credit card creation and all validations"(){
-			
-					setup:
-						
-							println "Hash map value   : Test 6 :  " 
-							
-			
-					when :
-			
-					def jsonString = new JsonBuilder()
-					
-					def jsonParams = jsonString number: creditCardNumber,userId:  USER_ID,cvv:  cvv,
-					expiryYear: expiryYear,expiryMonth:  expiryMonth,nameOnCard:  nameOnCard,type:  cardType
-					
-			
-			
-					def map = HTTP_BUILDER.request("http://localhost:8765/api/payment/", Method.POST, "application/json") {
-						uri.path = 'v1.0/users/1/cards'
-						headers.'Authorization' =
-						"Bearer "+ACCESS_TOKEN
-						send('application/json',jsonParams )
-					}
-			
-					
-				
-					then:
-					
-					def response = map['response']
-					def reader = map['reader']
-					println "*********************************"
-					println "response code :${response.status}"
-					println "reader type: ${reader.get('cause')}"
-					println "*********************************"
-	
-					String delims = "[-\\,]+"
-					def messageValue = message.tokenize(delims)
-					def range = messageValue
-					println "range : "+range.size
-					println "constant :"+messageValue
-					
-					def trimrightspaces = reader.get('cause').trim()
-					def watever = trimrightspaces.tokenize(delims)
-					def rangeresponse = watever
-					println "from Id :"+watever
-					println"range of watever :"+rangeresponse.size
-	
-					String getResposecode = response.status
-					assert getResposecode==status
-					watever.each{println "watever: $it"}
-					messageValue.each{println "messageValue:$it"}
-					assert range.size == rangeresponse.size
-					
-					where :
-			
-					creditCardNumber	| USER_ID			| cvv		| expiryYear | expiryMonth | nameOnCard | cardType  || status 				|| message
-//					DataValues.requestValues.get("CREDITCARDNUMBER")    | DataValues.requestValues.get("USERID")| DataValues.requestValues.get("CV2")|DataValues.requestValues.get("EXPIRYYEAR")|DataValues.requestValues.get("EXPIRYMONTH")  |DataValues.requestValues.get("NAMEONCARD")  | DataValues.requestValues.get("CARDTYPE")||DataValues.requestValues.get("STATUS400")||""
-					DataValues.requestValues.get("CREDITCARDNUMBER")    | DataValues.requestValues.get("USERID")| DataValues.requestValues.get("CV2")|DataValues.requestValues.get("EXPIRYYEAR")|DataValues.requestValues.get("EXPIRYMONTH")  |DataValues.requestValues.get("NAMEONCARD")  | DataValues.requestValues.get("CARDTYPE")||DataValues.requestValues.get("STATUS400")||DataValues.requestValues.get("CARDEXISTS")
-					"  "| DataValues.requestValues.get("USERID")|DataValues.requestValues.get("CV2")|DataValues.requestValues.get("EXPIRYYEAR") |DataValues.requestValues.get("EXPIRYMONTH")|DataValues.requestValues.get("NAMEONCARD")|DataValues.requestValues.get("CARDTYPE")  ||DataValues.requestValues.get("STATUS400")||DataValues.requestValues.get("CREDITCARDVALIDATION")
-					DataValues.requestValues.get("CREDITCARDNUMBER")|"  "|DataValues.requestValues.get("CV2")|DataValues.requestValues.get("EXPIRYYEAR")|DataValues.requestValues.get("EXPIRYMONTH")|DataValues.requestValues.get("NAMEONCARD")|DataValues.requestValues.get("CARDTYPE")||DataValues.requestValues.get("STATUS400")||DataValues.requestValues.get("USERIDVALIDATION")
-					DataValues.requestValues.get("CREDITCARDNUMBER")|DataValues.requestValues.get("USERID")|"  "|DataValues.requestValues.get("EXPIRYYEAR")|DataValues.requestValues.get("EXPIRYMONTH")|DataValues.requestValues.get("NAMEONCARD")|DataValues.requestValues.get("CARDTYPE")||DataValues.requestValues.get("STATUS400")||DataValues.requestValues.get("CVVVALIDATION")
-					DataValues.requestValues.get("CREDITCARDNUMBER")|DataValues.requestValues.get("USERID")|DataValues.requestValues.get("CV2")|"  "		 |DataValues.requestValues.get("EXPIRYMONTH")|DataValues.requestValues.get("NAMEONCARD")|DataValues.requestValues.get("CARDTYPE")||DataValues.requestValues.get("STATUS400")||DataValues.requestValues.get("EXPIRYYEARVALIDATION")
-					DataValues.requestValues.get("CREDITCARDNUMBER")|DataValues.requestValues.get("USERID")|DataValues.requestValues.get("CV2")|DataValues.requestValues.get("EXPIRYYEAR")|"  " |DataValues.requestValues.get("NAMEONCARD")|DataValues.requestValues.get("CARDTYPE")||DataValues.requestValues.get("STATUS400")||DataValues.requestValues.get("EXPIRYMONTHVALIDATION")
-					DataValues.requestValues.get("CREDITCARDNUMBER")|DataValues.requestValues.get("USERID")|DataValues.requestValues.get("CV2")|DataValues.requestValues.get("EXPIRYYEAR")|DataValues.requestValues.get("EXPIRYMONTH")|"    "|DataValues.requestValues.get("CARDTYPE")||DataValues.requestValues.get("STATUS400")||DataValues.requestValues.get("NAMEONCARDVALIDATION")
-					DataValues.requestValues.get("CREDITCARDNUMBER")|DataValues.requestValues.get("USERID")|DataValues.requestValues.get("CV2")|DataValues.requestValues.get("EXPIRYYEAR")|DataValues.requestValues.get("EXPIRYMONTH")|DataValues.requestValues.get("NAMEONCARD")| "   "||DataValues.requestValues.get("STATUS400")||DataValues.requestValues.get("CARDTYPEVALIDATION")
-			
+				String data = "$it"
+				if (data.startsWith("token")){
+					ccToken = data.replace("token=", "")
 				}
+			}
 			
-		def "Get Card details"()
-		{
-					setup:
-									println "Hash map value   : Test 7 :  " + ACCESS_TOKEN
-								
-									println "you are in setup method "
-									println "tokenised string  :"+gettoken
-								
-									when:
-								
-									println "Get Map values  : "
-									def map = HTTP_BUILDER.request(DataValues.requestValues.get("URL")+DataValues.requestValues.get("PAYMENTSERVICE")+"v1.0/users/1/cards",Method.GET, "application/json")
-									{
-								
-										headers.'Authorization' =
-												"Bearer "+ACCESS_TOKEN
-									}
-									def response = map['response']
-									def reader = map['reader']
-									then:
-								
-									String getResposecode = response.status
-									assert getResposecode == status
-									reader.each{println "$it"}
-								
-									where :
-								
-									username | password | status
-									USERNAME | DataValues.requestValues.get("PASSWORD") | DataValues.requestValues.get("STATUS200")
+			assert resp.status.toString() == DataValues.requestValues.get("STATUS201")
+			println "Credit card created"
 			
+			String responseStatus
+		when:
+			def map = HTTP_BUILDER.request(Method.GET) {
+				uri.path = CREDIT_CARD_RESOURCE_URI + USER_ID +"/cards"
+				headers.'Authorization' = "Bearer " + ACCESS_TOKEN
+				requestContentType = ContentType.JSON
+				headers.Accept = ContentType.JSON
+				
+				println "Get credit card Uri: ${uri}" 
+			}
+			
+			resp = map['response']
+			reader = map['reader']
+
+			responseStatus = resp.status.toString()
+			
+			def getToken
+			reader.each{
+				println "Response data: " + "$it"
+	
+				String data = "$it"
+				if (data.startsWith("token")){
+					getToken = data.replace("token=", "")
+				}
+			}
+		then:
+			responseStatus == DataValues.requestValues.get("STATUS200")
+			getToken == ccToken
+		cleanup:	
+			DatabaseHelper.executeQuery("delete from payment.credit_card where token = '${ccToken}'")
+	}
+	
+	def testCreateCreditCardValidation(){
+		println "Test 3 :  testCreateCreditCardValidation"
+		println "USER IS ${USER_ID}"
+		
+		given:
+			String responseStatus = null
+			String errorMessage
+			
+			def json = new JsonBuilder()
+
+			json {
+				number creditCardNumber
+				userId USER_ID
+				cvv cv2
+				expiryYear ccExpiryYear
+				expiryMonth ccExpiryMonth
+				nameOnCard ccNameOnCard
+				type cardType
+			}
+			
+			println "Json is " +  json.toString()
+		when:
+			def response = postCreditCard(json)	
+			def resp = response['response']
+			def reader = response['reader']
+			
+			println "*********************************"
+			println "response code :${response.status}"
+			println "reader type: ${reader.get('cause')}"
+			println "*********************************"
+			errorMessage = reader.get('cause')
+			responseStatus = resp.status.toString()
+		then:
+			responseStatus == status
+			errorMessage == message
+		where :
+			creditCardNumber			| cv2		| ccExpiryYear | ccExpiryMonth | ccNameOnCard | cardType  | status 				| message
+			"  "|DataValues.requestValues.get("CV2")|DataValues.requestValues.get("EXPIRYYEAR") |DataValues.requestValues.get("EXPIRYMONTH")|DataValues.requestValues.get("NAMEONCARD")|DataValues.requestValues.get("CARDTYPE")  ||DataValues.requestValues.get("STATUS400")||DataValues.requestValues.get("CREDITCARDVALIDATION")
+			DataValues.requestValues.get("CREDITCARDNUMBER")| "" |DataValues.requestValues.get("EXPIRYYEAR")|DataValues.requestValues.get("EXPIRYMONTH")|DataValues.requestValues.get("NAMEONCARD")|DataValues.requestValues.get("CARDTYPE")||DataValues.requestValues.get("STATUS400")||DataValues.requestValues.get("CVVVALIDATION")
+			DataValues.requestValues.get("CREDITCARDNUMBER")|DataValues.requestValues.get("CV2")|"  "		 |DataValues.requestValues.get("EXPIRYMONTH")|DataValues.requestValues.get("NAMEONCARD")|DataValues.requestValues.get("CARDTYPE")||DataValues.requestValues.get("STATUS400")||DataValues.requestValues.get("EXPIRYYEARVALIDATION")
+			DataValues.requestValues.get("CREDITCARDNUMBER")|DataValues.requestValues.get("CV2")|DataValues.requestValues.get("EXPIRYYEAR")|"  " |DataValues.requestValues.get("NAMEONCARD")|DataValues.requestValues.get("CARDTYPE")||DataValues.requestValues.get("STATUS400")||DataValues.requestValues.get("EXPIRYMONTHVALIDATION")
+			DataValues.requestValues.get("CREDITCARDNUMBER")|DataValues.requestValues.get("CV2")|DataValues.requestValues.get("EXPIRYYEAR")|DataValues.requestValues.get("EXPIRYMONTH")|"    "|DataValues.requestValues.get("CARDTYPE")||DataValues.requestValues.get("STATUS400")||DataValues.requestValues.get("NAMEONCARDVALIDATION")
+			DataValues.requestValues.get("CREDITCARDNUMBER")|DataValues.requestValues.get("CV2")|DataValues.requestValues.get("EXPIRYYEAR")|DataValues.requestValues.get("EXPIRYMONTH")|DataValues.requestValues.get("NAMEONCARD")| "   "||DataValues.requestValues.get("STATUS400")||DataValues.requestValues.get("CARDTYPEVALIDATION")
+	}
+	
+	def testCreateCreditCardWhenAlreadyExists(){
+		println "Test 3 :  testCreateCreditCardValidation"
+		println "USER IS ${USER_ID}"
+		
+		given:
+			String ccToken
+			String errorMessage
+			
+			def response = postCreditCard(createJson())
+			def resp = response['response']
+			def reader = response['reader']
+			
+			reader.each{
+				println "Response data: " + "$it"
+	
+				String data = "$it"
+				if (data.startsWith("token")){
+					ccToken = data.replace("token=", "")
+				}
+			}
+			
+			assert resp.status.toString() == DataValues.requestValues.get("STATUS201")
+			println "Credit card created"
+			
+			String responseStatus
+		when:
+			response = postCreditCard(createJson())
+			
+			resp = response['response']
+			reader = response['reader']
+
+			responseStatus = resp.status.toString()
+			errorMessage = reader.get('cause')
+		then:
+			responseStatus == DataValues.requestValues.get("STATUS409")
+			errorMessage == DataValues.requestValues.get("CARDEXISTS")
+		cleanup:	
+			DatabaseHelper.executeQuery("delete from payment.credit_card where token = '${ccToken}'")			
+	}
+	
+	private def createJson(){
+		def json = new JsonBuilder()
+		json {
+			"number" DataValues.requestValues.get("CREDITCARDNUMBER")
+			"userId" USER_ID
+			"cvv" DataValues.requestValues.get("CV2")
+			"expiryYear" DataValues.requestValues.get("EXPIRYYEAR")
+			"expiryMonth" DataValues.requestValues.get("EXPIRYMONTH")
+			"nameOnCard" DataValues.requestValues.get("NAMEONCARD")
+			"type" DataValues.requestValues.get("CARDTYPE")
 		}
 		
-		
+		println "Json is ${json.toString()}"
+		return json;
+	}
 	
+	private def postCreditCard(def json){
+		def map = HTTP_BUILDER.request(Method.POST) {
+			uri.path = CREDIT_CARD_RESOURCE_URI + USER_ID +"/cards"
+			headers.'Authorization' = "Bearer " + ACCESS_TOKEN
+			body = json.toString()
+			requestContentType = ContentType.JSON
+			headers.Accept = ContentType.JSON
+			
+			println "Post credit card Uri : " + uri
+		}
 		
-		
-
+		return map;
+	}
 }

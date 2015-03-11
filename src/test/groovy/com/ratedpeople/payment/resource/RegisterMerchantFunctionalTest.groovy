@@ -1,13 +1,14 @@
 package com.ratedpeople.payment.resource;
 
 import groovy.json.JsonBuilder
-import groovyx.net.http.ContentType;
+import groovyx.net.http.ContentType
 import groovyx.net.http.Method
-import com.ratedpeople.common.support.DataValues
-import com.ratedpeople.user.token.AbstractUserTokenTest
+import com.ratedpeople.support.DataValues
+import com.ratedpeople.support.DatabaseHelper
+import com.ratedpeople.user.token.AbstractUserToken
 
 
-class RegisterMerchantFunctionalTest extends AbstractUserTokenTest{
+class RegisterMerchantFunctionalTest extends AbstractUserToken{
 	
 	private static final String REGISTER_MERCHANT_URI = DataValues.requestValues.get("PAYMENTSERVICE")+"v1.0/merchants"
 	
@@ -36,16 +37,6 @@ class RegisterMerchantFunctionalTest extends AbstractUserTokenTest{
 					println "Content-Type: ${resp.headers.'Content-Type'}"
 					
 					responseStatus = resp.statusLine.statusCode
-					
-					reader.each{
-						println "Token values : "+"$it"
-						
-						String token = "$it"
-						String key = token.substring(0, token.indexOf("="))
-						String value = token.substring(token.indexOf("=") + 1, token.length())
-						println key
-						println value
-					}
 				}
 				
 				response.failure = { resp ->
@@ -54,10 +45,55 @@ class RegisterMerchantFunctionalTest extends AbstractUserTokenTest{
 				}	
 			}
 		then:
-			responseStatus == status
-		where:   
-			status										|message
-			DataValues.requestValues.get("STATUS200")	|""
-			DataValues.requestValues.get("STATUS400")	|DataValues.requestValues.get("MERCHANTEXISTS")
+			responseStatus == DataValues.requestValues.get("STATUS201")
+		cleanup:
+			DatabaseHelper.executeQuery("delete from payment.merchant where channel = '${DataValues.requestValues.get("CHANNELID")}'")
+	}
+	
+	def testRegisterMerchantWhenAleadyExists(){
+		given:
+			String responseStatus = null
+			String errorMessage
+			
+			def json = new JsonBuilder()
+			json {
+				"rpUserId" DataValues.requestValues.get("RPUSERID")
+				"merchant" DataValues.requestValues.get("MERCHANT")
+				"channel" DataValues.requestValues.get("CHANNELID")
+			}
+			
+			println "Json is " +  json.toString()
+		when:
+			def response = registerMerhant(json)
+			def resp = response['response']
+			def reader = response['reader']
+
+			assert resp.status.toString() == DataValues.requestValues.get("STATUS201")
+			
+			response = registerMerhant(json)
+			resp = response['response']
+			reader = response['reader']
+			
+			responseStatus = resp.status.toString()
+			errorMessage = reader.get('cause')
+			println errorMessage
+		then:
+			responseStatus == DataValues.requestValues.get("STATUS409")
+			
+		cleanup:
+			DatabaseHelper.executeQuery("delete from payment.merchant where channel = '${DataValues.requestValues.get("CHANNELID")}'")
+	}
+	
+	private def registerMerhant(def json){
+		def response = HTTP_BUILDER.request(Method.POST, ContentType.JSON){
+			uri.path = REGISTER_MERCHANT_URI
+			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN
+			body = json.toString()
+			requestContentType = ContentType.JSON
+			
+			println "Registering merchant 1 Uri : " + uri
+		}
+		
+		return response;
 	}
 }

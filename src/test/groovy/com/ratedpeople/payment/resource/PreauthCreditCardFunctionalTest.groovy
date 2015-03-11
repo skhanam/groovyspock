@@ -3,10 +3,10 @@
  */
 package com.ratedpeople.payment.resource
 
-import com.ratedpeople.user.token.AbstractUserTokenTest;
+import com.ratedpeople.user.token.AbstractUserToken;
 import groovy.json.JsonBuilder;
 import spock.lang.Specification;
-import com.ratedpeople.common.support.DataValues;
+import com.ratedpeople.support.DataValues;
 import groovy.json.*
 import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
@@ -17,7 +17,7 @@ import groovyx.net.http.Method
  * @author shabana.khanam
  *
  */
-class PreauthCreditCardFunctionalTest extends AbstractUserTokenTest{
+class PreauthCreditCardFunctionalTest extends AbstractUserToken{
 	
 	
 		def "test preauth credit card"(){
