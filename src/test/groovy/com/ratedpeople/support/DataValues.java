@@ -58,13 +58,13 @@ public class DataValues {
 		requestValues.put("CC_USERID","34");
 				
 		//Credit Card validation Error
-		requestValues.put("CREDITCARDVALIDATION","credit card number is compulsory - credit card has invalid characters - credit card has wrong size - ");
+		requestValues.put("CREDITCARDVALIDATION","credit card has invalid characters - credit card number is compulsory - credit card has wrong size - ");
 		requestValues.put("CVVVALIDATION","ccv has wrong size - ");
 		requestValues.put("CARDEXISTS","Credit card already exists for this user");
-		requestValues.put("EXPIRYYEARVALIDATION","year has wrong size - year has invalid characters - ");
+		requestValues.put("EXPIRYYEARVALIDATION","year has invalid characters - year has wrong size - ");
 		requestValues.put("EXPIRYMONTHVALIDATION","month has invalid characters - ");
 		requestValues.put("CARDTYPEVALIDATION","type has invalid characters - ");
-		requestValues.put("NAMEONCARDVALIDATION","name on card has invalid characters - name on card is compulsory - ");
+		requestValues.put("NAMEONCARDVALIDATION","name on card is compulsory - name on card has invalid characters - ");
 		
 		//Merchant Validation Error
 		requestValues.put("USERIDVALIDATION","USER_ID is compulsory - USER_ID has invalid characters -");

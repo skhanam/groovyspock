@@ -2,20 +2,6 @@
 apply plugin: 'eclipse'
 apply plugin: 'groovy'
 
-buildscript {
-	repositories {
-		mavenCentral()
-		maven { url "http://repo.spring.io/libs-release" }
-		maven { url "https://repo.spring.io/plugins-snapshot" }
-	}
-	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.2.1.RELEASE"
-		classpath "org.flywaydb:flyway-gradle-plugin:3.1"
-		classpath "mysql:mysql-connector-java:5.1.34"
-	}
-}
-
-
 repositories {
 	mavenLocal()
 	jcenter()
@@ -27,15 +13,12 @@ repositories {
 }
 
 dependencies {
-	compile "org.springframework.boot:spring-boot-starter-web"
 	compile "mysql:mysql-connector-java:5.1.34"
-	compile "org.springframework.security.oauth:spring-security-oauth2:2.0.6.RELEASE"
 	
 	testCompile "org.codehaus.groovy:groovy-all:2.4.0"
 	testCompile "org.spockframework:spock-core:0.7-groovy-2.0"
-	//testCompile 'org.spockframework:spock-spring:0.7-groovy-2.0'
+
 	testCompile "org.codehaus.groovy.modules.http-builder:http-builder:0.7+"
-	testCompile "org.springframework.boot:spring-boot-starter-test"
 	testRuntime "cglib:cglib-nodep:3.1"     // allows mocking of classes (in addition to interfaces)
 	testRuntime "org.objenesis:objenesis:2.1"  // allows mocking of classes without default constructor (together with CGLIB)	
 }
