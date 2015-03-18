@@ -40,7 +40,7 @@ public class DataValues {
 		
 		//Default User
 		requestValues.put("USERNAME","functional.test.user@gid.com");
-		requestValues.put("USERNAME_NEW","new.user@gid.com");
+		requestValues.put("USERNAME_HO","ho.functional.test.user@gid.com");
 		requestValues.put("PASSWORD","password");
 	
 		//Default Merchant
@@ -68,6 +68,23 @@ public class DataValues {
 		
 		//Merchant Validation Error
 		requestValues.put("USERIDVALIDATION","USER_ID is compulsory - USER_ID has invalid characters -");
-		requestValues.put("MERCHANTEXISTS","Merchant with RP user id 1 already exists");		
+		requestValues.put("MERCHANTEXISTS","Merchant with RP user id 1 already exists");	
+		
+		// Preauth
+		requestValues.put("FROMUSERID","1");
+		requestValues.put("TOUSERID","1");
+		requestValues.put("JOBID","1");
+		requestValues.put("TOKEN","");
+		requestValues.put("CURRENCY","GBP");
+		requestValues.put("SKRILLTRANSACTION","");
+		requestValues.put("AMOUNT","1000");
+		requestValues.put("FROMUSEREMAIL","davi@tin.it");
+		requestValues.put("IP","12.12.12.12");
+		/*requestValues.put("JOBID","123");
+		requestValues.put("","01");
+		requestValues.put("currency","2016");
+		requestValues.put("skrillTransaction","visa");
+		requestValues.put("amount","34");*/
+		
 	};
 }
