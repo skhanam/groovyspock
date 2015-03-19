@@ -18,7 +18,11 @@ import groovyx.net.http.Method
  *
  */
 class PreauthCreditCardFunctionalTest extends AbstractUserToken{
+		
 	
+		def "ho test preauth"(){
+			
+		}
 	
 		def "test preauth credit card"(){
 			
@@ -26,10 +30,10 @@ class PreauthCreditCardFunctionalTest extends AbstractUserToken{
 			String responseStatus = null
 			def json = new JsonBuilder()
 			json {
-				"fromUserId" DataValues.requestValues.get("FROMUSERID")
-				"toUserId" DataValues.requestValues.get("TOUSERID")
+				"fromUserId" DataValues.requestValues.get("USERIDHO")
+				"toUserId" DataValues.requestValues.get("USERIDTM")
 				"jobId" DataValues.requestValues.get("JOBID")
-				"token" "528d5b2a1ed64d87854d2920dd7f5560"
+				"token" DataValues.requestValues.get("CCTOKEN")
 				"currency" DataValues.requestValues.get("CURRENCY")
 				"skrillTransaction" DataValues.requestValues.get("SKRILLTRANSACTION")
 				"amount" DataValues.requestValues.get("AMOUNT")
@@ -41,8 +45,8 @@ class PreauthCreditCardFunctionalTest extends AbstractUserToken{
 			println "Json is " +  json.toString()
 		when:			
 			HTTP_BUILDER.request(Method.POST, ContentType.JSON){
-				uri.path = DataValues.requestValues.get("PAYMENTSERVICE")+"v1.0/users/1/preauth"
-				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN
+				uri.path = DataValues.requestValues.get("PAYMENTSERVICE")+"v1.0/users/"+USER_ID_HO+"/preauth"
+				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_HO
 				body = json.toString()
 				requestContentType = ContentType.JSON
 				

@@ -41,6 +41,10 @@ public class DataValues {
 		//Default User
 		requestValues.put("USERNAME","functional.test.user@gid.com");
 		requestValues.put("USERNAME_HO","ho.functional.test.user@gid.com");
+		requestValues.put("USERIDTM","1");
+		requestValues.put("USERIDHO","2");
+		requestValues.put("CCTOKEN","83f1c8e83a004ebdb8c8c35362a688ff");
+		
 		requestValues.put("PASSWORD","password");
 	
 		//Default Merchant
@@ -67,7 +71,7 @@ public class DataValues {
 		requestValues.put("NAMEONCARDVALIDATION","name on card is compulsory - name on card has invalid characters - ");
 		
 		//Merchant Validation Error
-		requestValues.put("USERIDVALIDATION","USER_ID is compulsory - USER_ID has invalid characters -");
+		requestValues.put("USERIDVALIDATION","USER_ID_TM is compulsory - USER_ID_TM has invalid characters -");
 		requestValues.put("MERCHANTEXISTS","Merchant with RP user id 1 already exists");	
 		
 		// Preauth
