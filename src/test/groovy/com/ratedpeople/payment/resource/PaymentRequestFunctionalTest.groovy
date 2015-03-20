@@ -30,10 +30,10 @@ class PaymentRequestFunctionalTest extends AbstractUserToken{
 		String responseStatus = null
 		def json = new JsonBuilder()
 		json {
-			"fromUserId" DataValues.requestValues.get("FROMUSERID")
-			"toUserId" DataValues.requestValues.get("TOUSERID")
+			"fromUserId" DataValues.requestValues.get("USERIDHO")
+			"toUserId" DataValues.requestValues.get("USERIDTM")
 			"jobId" DataValues.requestValues.get("JOBID")
-			"token" "6136597bc97b4ff1a6650f2ea500bad2"
+			"token" "83f1c8e83a004ebdb8c8c35362a688ff"
 			"currency" DataValues.requestValues.get("CURRENCY")
 			"skrillTransaction" DataValues.requestValues.get("SKRILLTRANSACTION")
 			"amount" DataValues.requestValues.get("AMOUNT")
@@ -45,8 +45,8 @@ class PaymentRequestFunctionalTest extends AbstractUserToken{
 		println "Json is " +  json.toString()
 	when:
 		HTTP_BUILDER.request(Method.POST, ContentType.JSON){
-			uri.path = DataValues.requestValues.get("PAYMENTSERVICE")+"v1.0/users/"+USER_ID+"/jobs/1"
-			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN
+			uri.path = DataValues.requestValues.get("PAYMENTSERVICE")+"v1.0/users/"+USER_ID_HO+"/jobs/1"
+			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_HO
 			body = json.toString()
 			requestContentType = ContentType.JSON
 			
