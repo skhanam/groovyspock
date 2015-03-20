@@ -75,8 +75,8 @@ class CreditCardFunctionalTest extends AbstractUserToken {
 			String responseStatus
 		when:
 			def map = HTTP_BUILDER.request(Method.GET) {
-				uri.path = CREDIT_CARD_RESOURCE_URI + USER_ID +"/cards"
-				headers.'Authorization' = "Bearer " + ACCESS_TOKEN
+				uri.path = CREDIT_CARD_RESOURCE_URI + USER_ID_TM +"/cards"
+				headers.'Authorization' = "Bearer " + ACCESS_TOKEN_TM
 				requestContentType = ContentType.JSON
 				headers.Accept = ContentType.JSON
 				
@@ -106,7 +106,7 @@ class CreditCardFunctionalTest extends AbstractUserToken {
 	
 	def testCreateCreditCardValidation(){
 		println "Test 3 :  testCreateCreditCardValidation"
-		println "USER IS ${USER_ID}"
+		println "USER IS ${USER_ID_HO}"
 		
 		given:
 			String responseStatus = null
@@ -116,7 +116,7 @@ class CreditCardFunctionalTest extends AbstractUserToken {
 
 			json {
 				number creditCardNumber
-				userId USER_ID
+				userId USER_ID_HO
 				cvv cv2
 				expiryYear ccExpiryYear
 				expiryMonth ccExpiryMonth
@@ -151,7 +151,7 @@ class CreditCardFunctionalTest extends AbstractUserToken {
 	
 	def testCreateCreditCardWhenAlreadyExists(){
 		println "Test 3 :  testCreateCreditCardValidation"
-		println "USER IS ${USER_ID}"
+		println "USER IS ${USER_ID_HO}"
 		
 		given:
 			String ccToken
@@ -193,7 +193,7 @@ class CreditCardFunctionalTest extends AbstractUserToken {
 		def json = new JsonBuilder()
 		json {
 			"number" DataValues.requestValues.get("CREDITCARDNUMBER")
-			"userId" USER_ID
+			"userId" USER_ID_HO
 			"cvv" DataValues.requestValues.get("CV2")
 			"expiryYear" DataValues.requestValues.get("EXPIRYYEAR")
 			"expiryMonth" DataValues.requestValues.get("EXPIRYMONTH")
@@ -207,8 +207,8 @@ class CreditCardFunctionalTest extends AbstractUserToken {
 	
 	private def postCreditCard(def json){
 		def map = HTTP_BUILDER.request(Method.POST) {
-			uri.path = CREDIT_CARD_RESOURCE_URI + USER_ID +"/cards"
-			headers.'Authorization' = "Bearer " + ACCESS_TOKEN
+			uri.path = CREDIT_CARD_RESOURCE_URI + USER_ID_HO +"/cards"
+			headers.'Authorization' = "Bearer " + ACCESS_TOKEN_HO
 			body = json.toString()
 			requestContentType = ContentType.JSON
 			headers.Accept = ContentType.JSON
