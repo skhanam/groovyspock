@@ -34,6 +34,7 @@ public class DataValues {
 		requestValues.put("USERSERVICE","/api/user/");
 		requestValues.put("AUTHSERVICE","/api/uaa/");
 		requestValues.put("PAYMENTSERVICE","/api/payment/");
+		requestValues.put("BILLINGSERVICE","/api/billing/");
 			
 		//Default Client token
 		requestValues.put("CLIENT_ID","9ecc8459ea5f39f9da55cb4d71a70b5d1e0f0b80:1");
@@ -89,6 +90,15 @@ public class DataValues {
 		requestValues.put("currency","2016");
 		requestValues.put("skrillTransaction","visa");
 		requestValues.put("amount","34");*/
+		
+		//bank details
+		requestValues.put("BENEFICIARYNAME","Chips and");
+		requestValues.put("BANKCODE","110311");
+		requestValues.put("ACCOUNTNUMBER","11020088");
+		requestValues.put("BANKACCOUNTTYPE","PERSONAL");
+		requestValues.put("COUNTRY","UK");
+		
+		
 		
 	};
 }
