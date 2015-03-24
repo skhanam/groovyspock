@@ -21,6 +21,10 @@ public class DataValues {
 		requestValues.put("DBUSERNAME","admin");
 		requestValues.put("DBPWD","123456");
 		requestValues.put("DBDRIVER","com.mysql.jdbc.Driver");	
+		
+		// User Creation Service 
+		requestValues.put("HOUSER","ho.test."+System.currentTimeMillis()+"@gid.com");
+		requestValues.put("TMUSER","tm.test."+System.currentTimeMillis()+"@gid.com");
 				
 		//HTTP Response Status
 		requestValues.put("STATUS201","201");

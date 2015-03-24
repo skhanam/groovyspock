@@ -26,7 +26,7 @@ class RegisterMerchantFunctionalTest extends AbstractUserToken{
 		when:			
 			HTTP_BUILDER.request(Method.POST, ContentType.JSON){
 				uri.path = REGISTER_MERCHANT_URI
-				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN
+				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
 				body = json.toString()
 				requestContentType = ContentType.JSON
 				
@@ -46,8 +46,9 @@ class RegisterMerchantFunctionalTest extends AbstractUserToken{
 			}
 		then:
 			responseStatus == DataValues.requestValues.get("STATUS201")
-		cleanup:
-			DatabaseHelper.executeQuery("delete from payment.merchant where channel = '${DataValues.requestValues.get("CHANNELID")}'")
+//		cleanup:
+//			DatabaseHelper.executeQuery("delete from payment.merchant where channel = '${DataValues.requestValues.get("CHANNELID")}'")
+//		println "this is nothing"
 	}
 	
 	def testRegisterMerchantWhenAleadyExists(){
@@ -64,13 +65,13 @@ class RegisterMerchantFunctionalTest extends AbstractUserToken{
 			
 			println "Json is " +  json.toString()
 		when:
-			def response = registerMerhant(json)
+			def response = registerMerchant(json)
 			def resp = response['response']
 			def reader = response['reader']
 
 			assert resp.status.toString() == DataValues.requestValues.get("STATUS201")
 			
-			response = registerMerhant(json)
+			response = registerMerchant(json)
 			resp = response['response']
 			reader = response['reader']
 			
@@ -80,14 +81,14 @@ class RegisterMerchantFunctionalTest extends AbstractUserToken{
 		then:
 			responseStatus == DataValues.requestValues.get("STATUS409")
 			
-		cleanup:
-			DatabaseHelper.executeQuery("delete from payment.merchant where channel = '${DataValues.requestValues.get("CHANNELID")}'")
+//		cleanup:
+//			DatabaseHelper.executeQuery("delete from payment.merchant where channel = '${DataValues.requestValues.get("CHANNELID")}'")
 	}
 	
-	private def registerMerhant(def json){
+	private def registerMerchant(def json){
 		def response = HTTP_BUILDER.request(Method.POST, ContentType.JSON){
 			uri.path = REGISTER_MERCHANT_URI
-			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN
+			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
 			body = json.toString()
 			requestContentType = ContentType.JSON
 			
