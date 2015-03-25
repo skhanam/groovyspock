@@ -44,13 +44,11 @@ class AbstractUserToken extends Specification {
 				uri.path = GET_TOKEN_URI
 				uri.query = [
 					grant_type: DataValues.requestValues.get("PASSWORD"),
-//					username: DataValues.requestValues.get("USERNAME"),
 					username:userName,
 					password:DataValues.requestValues.get("PASSWORD") ,
 					scope: 'all'
 				]
 				
-//				println "username is : "+username
 				println "Uri is " + uri
 				
 				response.success = { resp, reader ->
