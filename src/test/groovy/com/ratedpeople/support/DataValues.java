@@ -25,6 +25,19 @@ public class DataValues {
 		// User Creation Service 
 		requestValues.put("HOUSER","ho.test."+System.currentTimeMillis()+"@gid.com");
 		requestValues.put("TMUSER","tm.test."+System.currentTimeMillis()+"@gid.com");
+		
+		// Profile service
+		requestValues.put("FIRSTNAME","hoprofile");
+		requestValues.put("LASTNAME","lname");
+		requestValues.put("EMAIL","ho.profile"+System.currentTimeMillis()+"@gid.com");
+		requestValues.put("PHONE","0782145");
+						
+		// Home owner address 
+		requestValues.put("POSTCODE","rp99rp");
+		requestValues.put("LINE1","some address line1");
+		requestValues.put("LINE2","some address line2");
+		requestValues.put("CITY","london");
+		requestValues.put("COUNTRY","united kingdom");		
 				
 		//HTTP Response Status
 		requestValues.put("STATUS201","201");
@@ -39,6 +52,7 @@ public class DataValues {
 		requestValues.put("AUTHSERVICE","/api/uaa/");
 		requestValues.put("PAYMENTSERVICE","/api/payment/");
 		requestValues.put("BILLINGSERVICE","/api/billing/");
+		requestValues.put("PROFILESERVICE","/api/profile/");
 			
 		//Default Client token
 		requestValues.put("CLIENT_ID","9ecc8459ea5f39f9da55cb4d71a70b5d1e0f0b80:1");
@@ -46,6 +60,7 @@ public class DataValues {
 		//Default User
 		requestValues.put("USERNAME","functional.test.user@gid.com");
 		requestValues.put("USERNAME_HO","ho.functional.test.user@gid.com");
+		requestValues.put("ADMIN_USER","admin@gid.com");
 		requestValues.put("USERIDTM","1");
 		requestValues.put("USERIDHO","2");
 		requestValues.put("CCTOKEN","83f1c8e83a004ebdb8c8c35362a688ff");

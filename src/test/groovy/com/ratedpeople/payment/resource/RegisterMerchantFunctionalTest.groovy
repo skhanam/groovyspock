@@ -48,7 +48,7 @@ class RegisterMerchantFunctionalTest extends AbstractUserToken{
 			responseStatus == DataValues.requestValues.get("STATUS201")
 		cleanup:
 			DatabaseHelper.executeQuery("delete from payment.merchant where channel = '${DataValues.requestValues.get("CHANNELID")}'")
-		println "this is nothing"
+	
 	}
 	
 	def testRegisterMerchantWhenAleadyExists(){

@@ -11,4 +11,9 @@ class DatabaseHelper {
 	static executeQuery(final String query){
 		sqlconn.execute(query)
 	}
+	
+	static String select (final String query){
+		return sqlconn.rows(query)
+	
+	}
 }

@@ -41,6 +41,7 @@ class RegisterUserFunctionalTest extends Specification {
 				"password" DataValues.requestValues.get("PASSWORD")
 			}
 			println "Json is " +  json.toString()
+			println "Test 1"
 			
 		when:
 			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
@@ -79,6 +80,8 @@ class RegisterUserFunctionalTest extends Specification {
 				"password" DataValues.requestValues.get("PASSWORD")
 			}
 			println "Json is " +  json.toString()
+			println "Test 2"
+			
 		when:
 			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
 				uri.path = REGISTER_USER_TM_URI
@@ -117,6 +120,7 @@ class RegisterUserFunctionalTest extends Specification {
 		 HTTP_BUILDER.handler.success = { resp, reader ->
 			 [response:resp, reader:reader]
 		 }
+		 println "Test 4"
 		 when:
 		 HTTP_BUILDER.request(Method.POST){
 			 headers.Accept = 'application/json'
@@ -145,7 +149,7 @@ class RegisterUserFunctionalTest extends Specification {
 						if (tokentemp.startsWith("access_token")){
 							
 							println "userName  :"+userName
-							println " :"+userName.equals(DataValues.requestValues.get("USERNAME"))
+							println " :"+userName.equals(DataValues.requestValues.get("TMUSER"))
 							token = tokentemp.substring(tokentemp.indexOf("=") + 1, tokentemp.length())
 							
 							if(userName.equals(DataValues.requestValues.get("USERNAME"))){
@@ -157,7 +161,7 @@ class RegisterUserFunctionalTest extends Specification {
 							}
 							if (tokentemp.startsWith("refresh_token")){
 								
-								if(userName.equals(DataValues.requestValues.get("USERNAME"))){
+								if(userName.equals(DataValues.requestValues.get("TMUSER"))){
 									REFRESH_TOKEN_TM1 = tokentemp.substring(tokentemp.indexOf("=") + 1, tokentemp.length())
 									println "Refresh Token TM1: " + REFRESH_TOKEN_TM1
 								}else {
@@ -194,7 +198,7 @@ class RegisterUserFunctionalTest extends Specification {
 						if (user.startsWith("userId")){
 							user = user.replace("userId=", "")
 							println "User values : " +user
-							if(userName.equals(DataValues.requestValues.get("USERNAME"))){
+							if(userName.equals(DataValues.requestValues.get("TMUSER"))){
 								USER_ID_TM1 = user
 								println "User ID TM1: " + USER_ID_TM1
 							}else {
@@ -225,6 +229,7 @@ class RegisterUserFunctionalTest extends Specification {
 	def "Reset password"(){
 		given:
 		String responseStatus = null
+		println "Test 5"
 		when:
 		HTTP_BUILDER.request(Method.POST){
 			uri.path = DataValues.requestValues.get("USERSERVICE")+"v1.0/users/"+USER_ID_HO1+"/resetpassword"
@@ -264,6 +269,7 @@ class RegisterUserFunctionalTest extends Specification {
 		given:
 		DatabaseHelper.executeQuery("select token from uaa.user_password_token where user_id= '${USER_ID_HO1}'")
 		String responseStatus = null
+		println "Test 3"
 		when:
 		HTTP_BUILDER.request(Method.PUT)
 		{
