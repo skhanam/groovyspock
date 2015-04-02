@@ -31,7 +31,8 @@ class RegisterUserFunctionalTest extends Specification {
 	protected static String USER_ID_HO1
 	private static final ME_URI = DataValues.requestValues.get("USERSERVICE") +"v1.0/me"
 	
-	def "Create  User HO"(){
+	def "Create  User HO"()
+	{
 		given:
 			String responseCode = null
 			def json = new JsonBuilder()
@@ -41,7 +42,8 @@ class RegisterUserFunctionalTest extends Specification {
 				"password" DataValues.requestValues.get("PASSWORD")
 			}
 			println "Json is " +  json.toString()
-			println "Test 1"
+			println "********************************"
+			println "Test Running ........  Create  User HO"
 			
 		when:
 			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
@@ -68,9 +70,10 @@ class RegisterUserFunctionalTest extends Specification {
 		then:
 			responseCode == DataValues.requestValues.get("STATUS201")
 	}
+
 	
-	
-	def "Create  User TM"(){
+	def "Create  User TM"()
+	{
 		given:
 			String responseCode = null
 			def json = new JsonBuilder()
@@ -80,7 +83,8 @@ class RegisterUserFunctionalTest extends Specification {
 				"password" DataValues.requestValues.get("PASSWORD")
 			}
 			println "Json is " +  json.toString()
-			println "Test 2"
+			println "********************************"
+			println "Test Running ........  Create  User TM"
 			
 		when:
 			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
@@ -109,6 +113,8 @@ class RegisterUserFunctionalTest extends Specification {
 	}
 	
 	
+	
+	
 	def "Get user token "(){
 		 given:
 		 String responseCode = null
@@ -120,12 +126,14 @@ class RegisterUserFunctionalTest extends Specification {
 		 HTTP_BUILDER.handler.success = { resp, reader ->
 			 [response:resp, reader:reader]
 		 }
-		 println "Test 4"
+		 println "********************************"
+		 println "Test Running ........  Get user token"
 		 when:
 		 HTTP_BUILDER.request(Method.POST){
 			 headers.Accept = 'application/json'
 			 headers.'Authorization' = "Basic "+ DataValues.requestValues.get("CLIENT_ID").bytes.encodeBase64().toString()
 			 uri.path = GET_TOKEN_URI
+			 println "uri.path = "+ uri.path
 			 uri.query = [
 				 grant_type: DataValues.requestValues.get("PASSWORD"),
 				 username:userName,
@@ -152,7 +160,7 @@ class RegisterUserFunctionalTest extends Specification {
 							println " :"+userName.equals(DataValues.requestValues.get("TMUSER"))
 							token = tokentemp.substring(tokentemp.indexOf("=") + 1, tokentemp.length())
 							
-							if(userName.equals(DataValues.requestValues.get("USERNAME"))){
+							if(userName.equals(DataValues.requestValues.get("TMUSER"))){
 								ACCESS_TOKEN_TM1 = tokentemp.substring(tokentemp.indexOf("=") + 1, tokentemp.length())
 								println "Access Token TM1: " + ACCESS_TOKEN_TM1
 							}else {
@@ -174,7 +182,7 @@ class RegisterUserFunctionalTest extends Specification {
 				 
 			 }
 			 
-		 }
+			 }
 		 }
     	 then:
 		 
@@ -226,10 +234,78 @@ class RegisterUserFunctionalTest extends Specification {
 	
 	
 	
+	
+	
+	def "Update HO Status"()
+	{
+		given:
+		String responseStatus = null
+		println "********************************"
+		println "Test Running ........  Verify Reset password"
+		when:
+		HTTP_BUILDER.request(Method.PUT)
+		{
+			uri.path = DataValues.requestValues.get("USERSERVICE")+"v1.0/homeowners/"+USER_ID_HO1+"/status"
+			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_HO1
+			println "Uri : " + uri
+			uri.query = [
+				grant_type: DataValues.requestValues.get("PASSWORD"),
+				username:DataValues.requestValues.get("HOUSER"),
+				password:DataValues.requestValues.get("PASSWORD") ,
+				scope: 'all'
+			]
+			response.success =
+			{
+				
+				resp, reader ->
+				println "Success"
+				println "Got response: ${resp.statusLine}"
+				println "Content-Type: ${resp.headers.'Content-Type'}"
+				
+				responseStatus = resp.statusLine.statusCode
+				
+				reader.each
+				{
+					println "Token values : "+"$it"
+					
+					String token = "$it"
+					String key = token.substring(0, token.indexOf("="))
+					String value = token.substring(token.indexOf("=") + 1, token.length())
+					println key
+					println value
+				}
+			}
+			
+			response.failure =
+			{ resp ->
+				println "Request failed with status ${resp.status}"
+				responseStatus = resp.statusLine.statusCode
+				}
+			
+			}
+			then:
+			1==1
+//			do nothing
+ }
+	
+	
+	
+	
+		
+	
+	
+	
+	
+	def "Update TM Status"(){
+		
+	}
+	
+	
 	def "Reset password"(){
 		given:
 		String responseStatus = null
-		println "Test 5"
+		println "********************************"
+		println "Test Running ........  Reset password"
 		when:
 		HTTP_BUILDER.request(Method.POST){
 			uri.path = DataValues.requestValues.get("USERSERVICE")+"v1.0/users/"+USER_ID_HO1+"/resetpassword"
@@ -247,7 +323,7 @@ class RegisterUserFunctionalTest extends Specification {
 					
 					String token = "$it"
 					String key = token.substring(0, token.indexOf("="))
-					String value = token.substring(token.indexOf("=") + 1, token.length())
+					String value = token.substring(token.indexOf("=") , token.length())
 					println key
 					println value
 				}
@@ -264,12 +340,15 @@ class RegisterUserFunctionalTest extends Specification {
 	
 	
 	
+	
+	
 	def "Verify Reset password"()
 	{
 		given:
 		DatabaseHelper.executeQuery("select token from uaa.user_password_token where user_id= '${USER_ID_HO1}'")
 		String responseStatus = null
-		println "Test 3"
+		println "********************************"
+		println "Test Running ........  Verify Reset password"
 		when:
 		HTTP_BUILDER.request(Method.PUT)
 		{

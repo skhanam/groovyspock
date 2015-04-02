@@ -3,11 +3,11 @@
  */
 package com.ratedpeople.user.resource
 
-import com.ratedpeople.user.token.AbstractUserToken;
-
+import com.ratedpeople.user.token.AbstractHomeowner;
 import groovy.json.JsonBuilder
 import com.ratedpeople.support.DataValues
 import groovyx.net.http.ContentType
+import groovyx.net.http.HTTPBuilder;
 import groovyx.net.http.Method
 import com.ratedpeople.support.DatabaseHelper
 import java.util.Random
@@ -16,24 +16,26 @@ import org.apache.commons.lang.RandomStringUtils;
  * @author shabana.khanam
  *
  */
-class ProfileHomeownerFunctionalTest  extends AbstractUserToken{
+class ProfileHomeownerFunctionalTest  extends AbstractHomeowner{
 	
 	
 	long randomMobile = Math.round(Math.random()*1000);
 	private static final ME_URI = DataValues.requestValues.get("PROFILESERVICE") +"v1.0/users/"
-
+	private final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(DataValues.requestValues.get("URL"))
+	
 	
 	def "Create Homeowner Profile"()
 	{
 	
 						given:
 							String responseCode = null
+							println "User Id : Profile  : " + USER_ID_DYNAMIC_HO
 							def json = new JsonBuilder()
 							json {
-								"userId" DataValues.requestValues.get("USERIDHO")
+								"userId" USER_ID_DYNAMIC_HO
 								"firstName" DataValues.requestValues.get("FIRSTNAME")
 								"lastName" DataValues.requestValues.get("LASTNAME")
-								"email"  DataValues.requestValues.get("USERNAME_HO")
+								"email"  DataValues.requestValues.get("HOUSER")
 								"phone" {
 									"mobilePhone" DataValues.requestValues.get("PHONE")+randomMobile
 								}
@@ -45,8 +47,8 @@ class ProfileHomeownerFunctionalTest  extends AbstractUserToken{
 							
 						when:
 							HTTP_BUILDER.request(Method.POST,ContentType.JSON){
-								uri.path = DataValues.requestValues.get("PROFILESERVICE")+"v1.0/users/"+DataValues.requestValues.get("USERIDHO")+"/hoprofiles"
-								headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_HO
+								uri.path = DataValues.requestValues.get("PROFILESERVICE")+"v1.0/users/"+USER_ID_DYNAMIC_HO+"/hoprofiles"
+								headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_HO
 								body = json.toString()
 								requestContentType = ContentType.JSON
 								println "Uri is " + uri
@@ -74,13 +76,6 @@ class ProfileHomeownerFunctionalTest  extends AbstractUserToken{
 	def "Matching Free Text"(){
 						given:
 							String responseCode = null
-							
-							HTTP_BUILDER.handler.failure = { resp, reader ->
-								[response:resp, reader:reader]
-							}
-							HTTP_BUILDER.handler.success = { resp, reader ->
-								[response:resp, reader:reader]
-							}
 							println "********************************"
 							println "Test Running ... Matching Free Text " 
 					when:
@@ -136,7 +131,7 @@ class ProfileHomeownerFunctionalTest  extends AbstractUserToken{
 					String responseCode = null
 					def json = new JsonBuilder()
 					json {
-						"userId" DataValues.requestValues.get("USERIDHO")
+						"userId" USER_ID_DYNAMIC_HO
 						"firstName" DataValues.requestValues.get("FIRSTNAME")+"Update"
 						"lastName" DataValues.requestValues.get("LASTNAME")
 						"email"  DataValues.requestValues.get("USERNAME_HO")
@@ -151,8 +146,8 @@ class ProfileHomeownerFunctionalTest  extends AbstractUserToken{
 					
 				when:
 					HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
-						uri.path = DataValues.requestValues.get("PROFILESERVICE")+"v1.0/users/"+DataValues.requestValues.get("USERIDHO")+"/hoprofiles"
-						headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_HO
+						uri.path = DataValues.requestValues.get("PROFILESERVICE")+"v1.0/users/"+USER_ID_DYNAMIC_HO+"/hoprofiles"
+						headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_HO
 						body = json.toString()
 						requestContentType = ContentType.JSON
 						println "Uri is " + uri
@@ -195,8 +190,8 @@ class ProfileHomeownerFunctionalTest  extends AbstractUserToken{
 						
 					when:
 						HTTP_BUILDER.request(Method.POST,ContentType.JSON){
-							uri.path = DataValues.requestValues.get("PROFILESERVICE")+"v1.0/users/"+DataValues.requestValues.get("USERIDHO")+"/hoaddress"
-							headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_HO
+							uri.path = DataValues.requestValues.get("PROFILESERVICE")+"v1.0/users/"+USER_ID_DYNAMIC_HO+"/hoaddress"
+							headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_HO
 							body = json.toString()
 							requestContentType = ContentType.JSON
 							println "Uri is " + uri
@@ -223,7 +218,7 @@ class ProfileHomeownerFunctionalTest  extends AbstractUserToken{
 	
 
 	
-	def "Update Ho Address"(){
+	def "Update HO Address"(){
 		
 							given:
 							String responseCode = null
@@ -241,8 +236,8 @@ class ProfileHomeownerFunctionalTest  extends AbstractUserToken{
 							
 						when:
 							HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
-								uri.path = DataValues.requestValues.get("PROFILESERVICE")+"v1.0/users/"+DataValues.requestValues.get("USERIDHO")+"/hoaddress"
-								headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_HO
+								uri.path = DataValues.requestValues.get("PROFILESERVICE")+"v1.0/users/"+USER_ID_DYNAMIC_HO+"/hoaddress"
+								headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_HO
 								body = json.toString()
 								requestContentType = ContentType.JSON
 								println "Uri is " + uri
@@ -282,8 +277,8 @@ class ProfileHomeownerFunctionalTest  extends AbstractUserToken{
 			when:
 					HTTP_BUILDER.request(Method.GET){
 					headers.Accept = 'application/json'
-					headers.'Authorization' = "Bearer " + ACCESS_TOKEN_HO
-					uri.path = ME_URI+DataValues.requestValues.get("USERIDHO")+"/hoaddress"
+					headers.'Authorization' = "Bearer " + ACCESS_TOKEN_DYNAMIC_HO
+					uri.path = ME_URI+USER_ID_DYNAMIC_HO+"/hoaddress"
 					
 					println "Uri is " + uri
 					
@@ -326,19 +321,19 @@ def "Get HomeOwners Profile"()
 					given:
 							String responseCode = null
 							
-							HTTP_BUILDER.handler.failure = { resp, reader ->
-								[response:resp, reader:reader]
-							}
-							HTTP_BUILDER.handler.success = { resp, reader ->
-								[response:resp, reader:reader]
-							}
+//							HTTP_BUILDER.handler.failure = { resp, reader ->
+//								[response:resp, reader:reader]
+//							}
+//							HTTP_BUILDER.handler.success = { resp, reader ->
+//								[response:resp, reader:reader]
+//							}
 							println "********************************"
 							println "Test running ..  " +"Get HomeOwners Profile"
 					when:
 							HTTP_BUILDER.request(Method.GET){
 							headers.Accept = 'application/json'
-							headers.'Authorization' = "Bearer " + ACCESS_TOKEN_HO
-							uri.path = ME_URI+DataValues.requestValues.get("USERIDHO")+"/hoprofiles"
+							headers.'Authorization' = "Bearer " + ACCESS_TOKEN_DYNAMIC_HO
+							uri.path = ME_URI+USER_ID_DYNAMIC_HO+"/hoprofiles"
 							
 							println "Uri is " + uri
 							
