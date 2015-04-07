@@ -23,9 +23,13 @@ public class DataValues {
 		requestValues.put("DBDRIVER","com.mysql.jdbc.Driver");	
 		
 		// User Creation Service 
-		requestValues.put("HOUSER","ho.test."+System.currentTimeMillis()+"@gid.com");
+		requestValues.put("HOUSER","ho.test.");
+		//Only my user is configued to get emails from Amazon SES
+//		requestValues.put("HOUSER","shabana.khanam@ratedpeople.com");
 		requestValues.put("TMUSER","tm.test."+System.currentTimeMillis()+"@gid.com");
-		
+		requestValues.put("HOSTATUS1","ACTIVE");
+		requestValues.put("HOSTATUS2","PENDING");
+		requestValues.put("HOSTATUS3","BLACKLISTED");
 		// Profile service
 		requestValues.put("FIRSTNAME","hoprofile");
 		requestValues.put("LASTNAME","lname");
@@ -60,7 +64,7 @@ public class DataValues {
 		//Default User
 		requestValues.put("USERNAME","functional.test.user@gid.com");
 		requestValues.put("USERNAME_HO","ho.functional.test.user@gid.com");
-		requestValues.put("ADMIN_USER","admin@gid.com");
+		requestValues.put("ADMIN_USER","admin.test.user@gid.com");
 		requestValues.put("USERIDTM","1");
 		requestValues.put("USERIDHO","2");
 		requestValues.put("CCTOKEN","83f1c8e83a004ebdb8c8c35362a688ff");
@@ -82,17 +86,17 @@ public class DataValues {
 		requestValues.put("CC_USERID","34");
 				
 		//Credit Card validation Error
-		requestValues.put("CREDITCARDVALIDATION","credit card has invalid characters - credit card number is compulsory - credit card has wrong size - ");
-		requestValues.put("CVVVALIDATION","ccv has wrong size - ");
-		requestValues.put("CARDEXISTS","Credit card already exists for this user");
-		requestValues.put("EXPIRYYEARVALIDATION","year has invalid characters - year has wrong size - ");
-		requestValues.put("EXPIRYMONTHVALIDATION","month has invalid characters - ");
-		requestValues.put("CARDTYPEVALIDATION","type has invalid characters - ");
-		requestValues.put("NAMEONCARDVALIDATION","name on card is compulsory - name on card has invalid characters - ");
+		requestValues.put("CREDITCARDVALIDATION","credit card has invalid characters - credit card number is compulsory - credit card has wrong size -   ");
+		requestValues.put("CVVVALIDATION","ccv has wrong size -  ");
+		requestValues.put("CARDEXISTS","Credit card already exists for this user  ");
+		requestValues.put("EXPIRYYEARVALIDATION","year has invalid characters - year has wrong size -   ");
+		requestValues.put("EXPIRYMONTHVALIDATION","month has invalid characters -   ");
+		requestValues.put("CARDTYPEVALIDATION","type has invalid characters -   ");
+		requestValues.put("NAMEONCARDVALIDATION","name on card is compulsory - name on card has invalid characters -   ");
 		
 		//Merchant Validation Error
-		requestValues.put("USERIDVALIDATION","USER_ID_TM is compulsory - USER_ID_TM has invalid characters -");
-		requestValues.put("MERCHANTEXISTS","Merchant with RP user id 1 already exists");	
+		requestValues.put("USERIDVALIDATION","USER_ID_TM is compulsory - USER_ID_TM has invalid characters -  ");
+		requestValues.put("MERCHANTEXISTS","Merchant with RP user id 1 already exists ");	
 		
 		// Preauth
 		requestValues.put("FROMUSERID","1");

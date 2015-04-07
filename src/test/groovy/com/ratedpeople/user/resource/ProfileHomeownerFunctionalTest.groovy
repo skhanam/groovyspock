@@ -35,7 +35,7 @@ class ProfileHomeownerFunctionalTest  extends AbstractHomeowner{
 								"userId" USER_ID_DYNAMIC_HO
 								"firstName" DataValues.requestValues.get("FIRSTNAME")
 								"lastName" DataValues.requestValues.get("LASTNAME")
-								"email"  DataValues.requestValues.get("HOUSER")
+								"email"  DYNAMIC_USER
 								"phone" {
 									"mobilePhone" DataValues.requestValues.get("PHONE")+randomMobile
 								}
@@ -52,7 +52,6 @@ class ProfileHomeownerFunctionalTest  extends AbstractHomeowner{
 								body = json.toString()
 								requestContentType = ContentType.JSON
 								println "Uri is " + uri
-								
 								response.success = { resp, reader ->
 									println "Success"
 									println "Got response: ${resp.statusLine}"

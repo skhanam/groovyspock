@@ -26,6 +26,7 @@ class AbstractHomeowner  extends Specification{
 	protected static String ACCESS_TOKEN_ADMIN
 	protected static String REFRESH_TOKEN_ADMIN
 	private static final STATUS_URI = DataValues.requestValues.get("USERSERVICE")+"v1.0/homeowners/"
+	protected static String DYNAMIC_USER
 	
 	private static final ME_URI = DataValues.requestValues.get("USERSERVICE") +"v1.0/me"
 	
@@ -53,128 +54,21 @@ class AbstractHomeowner  extends Specification{
 				getAdmin()
 				changeStatus()
 				authToken()
-}				
+       }				
 	
-		
 	
-
-/*	def "Create a HO and get a Token"()
-	{
-	
-
-				String responseCode = null
-				String token = null
-				
-				HTTP_BUILDER.handler.failure = { resp, reader ->
-					[response:resp, reader:reader]
-				}
-				HTTP_BUILDER.handler.success = { resp, reader ->
-					[response:resp, reader:reader]
-				}
-		when:
-
-				HTTP_BUILDER.request(Method.POST){
-					headers.Accept = 'application/json'
-					headers.'Authorization' = "Basic "+ DataValues.requestValues.get("CLIENT_ID").bytes.encodeBase64().toString()
-					uri.path = GET_TOKEN_URI
-					uri.query = [
-						grant_type: DataValues.requestValues.get("PASSWORD"),
-						username: DataValues.requestValues.get("ADMIN_USER"),
-						password:DataValues.requestValues.get("PASSWORD") ,
-						scope: 'all'
-					]
-					
-					println "Uri is " + uri
-					
-					response.success =
-					{ resp, reader ->
-						println "Success"
-						println "Got response: ${resp.statusLine}"
-						println "Content-Type: ${resp.headers.'Content-Type'}"
-						
-						responseCode = resp.statusLine.statusCode
-						
-						reader.each
-						{
-							println "Response data: "+"$it"
-				
-							String tokentemp = "$it"
-							if (tokentemp.startsWith("access_token"))
-							{
-								token = tokentemp.substring(tokentemp.indexOf("=") + 1, tokentemp.length())
-									ACCESS_TOKEN_ADMIN = tokentemp.substring(tokentemp.indexOf("=") + 1, tokentemp.length())
-									println "Access Token Admin : " + ACCESS_TOKEN_ADMIN
-								}
-							if (tokentemp.startsWith("refresh_token"))
-							{
-								REFRESH_TOKEN_ADMIN = tokentemp.substring(tokentemp.indexOf("=") + 1, tokentemp.length())
-									println "Refresh Token Admin : " + REFRESH_TOKEN_ADMIN
-							}
-						}
-					}
-					
-					
-					response.'404' = {
-						println 'Not found'
-					}
-				}
-				
-				HTTP_BUILDER.request(Method.GET){
-					headers.Accept = 'application/json'
-					headers.'Authorization' = "Bearer " + token
-					uri.path = ME_URI
-					
-					println "Uri is " + uri
-					
-					response.success =
-					{ resp, reader ->
-						println "Success"
-						responseCode = resp.statusLine.statusCode
-						println "Got response: ${resp.statusLine}"
-						println "Content-Type: ${resp.headers.'Content-Type'}"
-						
-						reader.each
-						{
-							println "Response data: " + "$it"
-				
-							String user = "$it"
-							if (user.startsWith("userId"))
-							{
-								user = user.replace("userId=", "")
-								println "User values : " +user
-								USER_ID_ADMIN = user
-								println "Admin Id  : "+ user
-								
-							}
-							
-						}
-					}
-					
-					response.failure = { resp ->
-						println "Request failed with status ${resp.status}"
-						println resp.toString()
-						println resp.statusLine.statusCode
-					}
-				}
-			then:
-				assert responseCode == DataValues.requestValues.get("STATUS200")
-			
-		
-		
-	}
-	*/
-
 	
 	private def createJsonUser(){
 				def json = new JsonBuilder()
+				DYNAMIC_USER = DataValues.requestValues.get("HOUSER")+System.currentTimeMillis()+"@gid.com"
 				json {
-						"username" DataValues.requestValues.get("HOUSER")
+						"username" DYNAMIC_USER
 						"password" DataValues.requestValues.get("PASSWORD")
 				}
 				
 				println "Json is ${json.toString()}"
 				return json;
-			}
+		}
 	
 	
 		private def createUser(def json)
@@ -200,7 +94,7 @@ class AbstractHomeowner  extends Specification{
 			uri.path = GET_TOKEN_URI
 			uri.query = [
 				grant_type: DataValues.requestValues.get("PASSWORD"),
-				username: DataValues.requestValues.get("HOUSER"),
+				username: DYNAMIC_USER,
 				password:DataValues.requestValues.get("PASSWORD") ,
 				scope: 'all'
 			]
