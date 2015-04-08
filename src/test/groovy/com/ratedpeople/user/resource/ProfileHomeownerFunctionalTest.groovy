@@ -362,8 +362,9 @@ def "Get HomeOwners Profile"()
 						then:
 						responseCode == DataValues.requestValues.get("STATUS200")
 						cleanup:
-						def  getpHoneID = DatabaseHelper.select("select phone_id from profile.ho_profile where user_id =  '${DataValues.requestValues.get("USERIDHO")}'")
-						def getaddressId = DatabaseHelper.select("select address_id from profile.ho_profile where user_id =  '${DataValues.requestValues.get("USERIDHO")}'")
+						def  getpHoneID = DatabaseHelper.select("select phone_id from profile.ho_profile where user_id =  '${USER_ID_DYNAMIC_HO}'")
+						def getaddressId = DatabaseHelper.select("select address_id from profile.ho_profile where user_id =  '${USER_ID_DYNAMIC_HO}'")
+						
 						if (getpHoneID.startsWith("[{phone_id")){
 							getpHoneID = getpHoneID.replace("[{phone_id=", "").replace("}]","")
 							println "Phone Id : " +getpHoneID
@@ -374,7 +375,7 @@ def "Get HomeOwners Profile"()
 							println "Address Id : " +getaddressId
 						}
 						try{
-						DatabaseHelper.executeQuery("delete from profile.ho_profile where user_id = '${DataValues.requestValues.get("USERIDHO")}'")
+						DatabaseHelper.executeQuery("delete from profile.ho_profile where user_id = '${USER_ID_DYNAMIC_HO}'")
 						DatabaseHelper.executeQuery("delete from profile.phone where id = '$getpHoneID'")
 						DatabaseHelper.executeQuery("delete from profile.address where id = '$getaddressId'")
 						}catch(Exception e){
