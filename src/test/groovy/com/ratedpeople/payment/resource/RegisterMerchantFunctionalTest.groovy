@@ -68,9 +68,6 @@ class RegisterMerchantFunctionalTest extends AbstractUserToken{
 			def response = registerMerchant(json)
 			def resp = response['response']
 			def reader = response['reader']
-
-			assert resp.status.toString() == DataValues.requestValues.get("STATUS201")
-			
 			response = registerMerchant(json)
 			resp = response['response']
 			reader = response['reader']

@@ -26,7 +26,7 @@ public class DataValues {
 		requestValues.put("HOUSER","ho.test.");
 		//Only my user is configued to get emails from Amazon SES
 //		requestValues.put("HOUSER","shabana.khanam@ratedpeople.com");
-		requestValues.put("TMUSER","tm.test."+System.currentTimeMillis()+"@gid.com");
+		requestValues.put("TMUSER","tm.test.");
 		requestValues.put("HOSTATUS1","ACTIVE");
 		requestValues.put("HOSTATUS2","PENDING");
 		requestValues.put("HOSTATUS3","BLACKLISTED");
@@ -65,7 +65,7 @@ public class DataValues {
 		requestValues.put("USERNAME","functional.test.user@gid.com");
 		requestValues.put("USERNAME_HO","ho.functional.test.user@gid.com");
 		requestValues.put("ADMIN_USER","admin.test.user@gid.com");
-		requestValues.put("USERIDTM","1");
+//		requestValues.put("USERIDTM","1");
 		requestValues.put("USERIDHO","2");
 		requestValues.put("CCTOKEN","83f1c8e83a004ebdb8c8c35362a688ff");
 		

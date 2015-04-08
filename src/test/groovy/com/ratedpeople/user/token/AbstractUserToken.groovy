@@ -28,9 +28,15 @@ class AbstractUserToken extends Specification {
 	
 	private static final GET_TOKEN_URI = DataValues.requestValues.get("AUTHSERVICE") + 'oauth/token'
 	private static final ME_URI = DataValues.requestValues.get("USERSERVICE") +"v1.0/me"
+
 	
-	def "some tests"() {
-		given:
+	
+	def "setup"(){
+	
+		String [] userName = new String[2];
+		userName[0] = DataValues.requestValues.get("USERNAME")
+		userName[1]	= DataValues.requestValues.get("USERNAME_HO")
+
 			String responseCode = null
 			String token = null
 			
@@ -40,18 +46,22 @@ class AbstractUserToken extends Specification {
 			HTTP_BUILDER.handler.success = { resp, reader ->
 				[response:resp, reader:reader]
 			}
-		when:
+
+		for(int i=0; i<2;i++)
+		{
 			HTTP_BUILDER.request(Method.POST){
 				headers.Accept = 'application/json'
 				headers.'Authorization' = "Basic "+ DataValues.requestValues.get("CLIENT_ID").bytes.encodeBase64().toString()
 				uri.path = GET_TOKEN_URI
 				uri.query = [
 					grant_type: DataValues.requestValues.get("PASSWORD"),
-					username:userName,
+					username:userName[i],
+					
 					password:DataValues.requestValues.get("PASSWORD") ,
 					scope: 'all'
 				]
 				
+				println "username : "+ userName[i]
 				println "Uri is " + uri
 				
 				response.success = { resp, reader ->
@@ -67,11 +77,11 @@ class AbstractUserToken extends Specification {
 						String tokentemp = "$it"
 						if (tokentemp.startsWith("access_token")){
 							
-							println "userName"+userName
+							println "userName"+userName[i]
 							println " :"+userName.equals(DataValues.requestValues.get("USERNAME"))
 							token = tokentemp.substring(tokentemp.indexOf("=") + 1, tokentemp.length())
 							
-							if(userName.equals(DataValues.requestValues.get("USERNAME"))){
+							if(userName[i].equals(DataValues.requestValues.get("USERNAME"))){
 								ACCESS_TOKEN_TM = tokentemp.substring(tokentemp.indexOf("=") + 1, tokentemp.length())
 								println "Access Token TM: " + ACCESS_TOKEN_TM
 							}else {
@@ -82,7 +92,7 @@ class AbstractUserToken extends Specification {
 						}
 						if (tokentemp.startsWith("refresh_token")){
 							
-							if(userName.equals(DataValues.requestValues.get("USERNAME"))){
+							if(userName[i].equals(DataValues.requestValues.get("USERNAME"))){
 								REFRESH_TOKEN_TM = tokentemp.substring(tokentemp.indexOf("=") + 1, tokentemp.length())
 								println "Refresh Token TM: " + REFRESH_TOKEN_TM
 							}else {
@@ -118,7 +128,7 @@ class AbstractUserToken extends Specification {
 						if (user.startsWith("userId")){
 							user = user.replace("userId=", "")
 							println "User values : " +user
-							if(userName.equals(DataValues.requestValues.get("USERNAME"))){
+							if(userName[i].equals(DataValues.requestValues.get("USERNAME"))){
 								USER_ID_TM = user
 								println "User ID TM: " + USER_ID_TM
 							}else {
@@ -136,15 +146,14 @@ class AbstractUserToken extends Specification {
 					println resp.statusLine.statusCode
 				}
 			}
-		then:
+//		then:
 			assert responseCode == DataValues.requestValues.get("STATUS200")
 			ACCESS_TOKEN_TM != null
 			REFRESH_TOKEN_TM != null
 			USER_ID_TM != null
 			
-			
-		where :
-		userName << [	DataValues.requestValues.get("USERNAME"), DataValues.requestValues.get("USERNAME_HO") ]
+		}
+
 		
 				
 	}
@@ -154,6 +163,7 @@ class AbstractUserToken extends Specification {
 	def "Get Token for Admin"()
 	{
 		given:
+
 				String responseCode = null
 				String token = null
 				
@@ -164,6 +174,7 @@ class AbstractUserToken extends Specification {
 					[response:resp, reader:reader]
 				}
 		when:
+
 				HTTP_BUILDER.request(Method.POST){
 					headers.Accept = 'application/json'
 					headers.'Authorization' = "Basic "+ DataValues.requestValues.get("CLIENT_ID").bytes.encodeBase64().toString()
@@ -254,4 +265,7 @@ class AbstractUserToken extends Specification {
 		
 	}
 	
+	
+	
 }
+
