@@ -24,53 +24,6 @@ class ProfileHomeownerFunctionalTest  extends AbstractHomeowner{
 	private final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(DataValues.requestValues.get("URL"))
 	
 	
-	def "Create Homeowner Profile"()
-	{
-	
-						given:
-							String responseCode = null
-							println "User Id : Profile  : " + USER_ID_DYNAMIC_HO
-							def json = new JsonBuilder()
-							json {
-								"userId" USER_ID_DYNAMIC_HO
-								"firstName" DataValues.requestValues.get("FIRSTNAME")
-								"lastName" DataValues.requestValues.get("LASTNAME")
-								"email"  DYNAMIC_USER
-								"phone" {
-									"mobilePhone" DataValues.requestValues.get("PHONE")+randomMobile
-								}
-								
-							}
-							println "Json is " +  json.toString()
-							println "********************************"
-							println "Test Running .... Create Homeowner Profile"
-							
-						when:
-							HTTP_BUILDER.request(Method.POST,ContentType.JSON){
-								uri.path = DataValues.requestValues.get("PROFILESERVICE")+"v1.0/users/"+USER_ID_DYNAMIC_HO+"/hoprofiles"
-								headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_HO
-								body = json.toString()
-								requestContentType = ContentType.JSON
-								println "Uri is " + uri
-								response.success = { resp, reader ->
-									println "Success"
-									println "Got response: ${resp.statusLine}"
-									println "Content-Type: ${resp.headers.'Content-Type'}"
-									responseCode = resp.statusLine.statusCode
-									reader.each{
-										"Results  : "+ "$it"
-									}
-								}
-				
-								response.failure = {
-									resp, reader -> println " stacktrace : "+reader.each{"$it"}
-									println 'Not found'
-								}
-							}
-						then:
-							responseCode == DataValues.requestValues.get("STATUS201")
-	}
-
 
 	def "Matching Free Text"(){
 						given:
@@ -81,7 +34,8 @@ class ProfileHomeownerFunctionalTest  extends AbstractHomeowner{
 							HTTP_BUILDER.request(Method.GET){
 							headers.Accept = 'application/json'
 							headers.'Authorization' = "Bearer " + ACCESS_TOKEN_ADMIN
-							uri.path = DataValues.requestValues.get("PROFILESERVICE")+"v1.0/allhoprofiles"
+							println "Admin Token is : "+ACCESS_TOKEN_ADMIN
+							uri.path = DataValues.requestValues.get("PROFILESERVICE")+"v1.0/allprofiles"
 							println "Uri is " + uri
 							uri.query = [
 								freeText: DataValues.requestValues.get("FIRSTNAME"),
@@ -123,53 +77,7 @@ class ProfileHomeownerFunctionalTest  extends AbstractHomeowner{
 	}
 	
 			
-	def "Update Homeowner Profile"()
-	{
-	
-				given:
-					String responseCode = null
-					def json = new JsonBuilder()
-					json {
-						"userId" USER_ID_DYNAMIC_HO
-						"firstName" DataValues.requestValues.get("FIRSTNAME")+"Update"
-						"lastName" DataValues.requestValues.get("LASTNAME")
-						"email"  DataValues.requestValues.get("USERNAME_HO")
-						"phone" {
-							"mobilePhone" DataValues.requestValues.get("PHONE")+randomMobile
-						}
-						
-					}
-					println "Json is " +  json.toString()
-					println "********************************"
-					println "Test running ..  " +"Update Homeowner Profile"
-					
-				when:
-					HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
-						uri.path = DataValues.requestValues.get("PROFILESERVICE")+"v1.0/users/"+USER_ID_DYNAMIC_HO+"/hoprofiles"
-						headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_HO
-						body = json.toString()
-						requestContentType = ContentType.JSON
-						println "Uri is " + uri
-						
-						response.success = { resp, reader ->
-							println "Success"
-							println "Got response: ${resp.statusLine}"
-							println "Content-Type: ${resp.headers.'Content-Type'}"
-							responseCode = resp.statusLine.statusCode
-							reader.each{
-								"Results  : "+ "$it"
-							}
-						}
-			
-						response.failure = {
-							resp, reader -> println " stacktrace : "+reader.each{"$it"}
-							println 'Not found'
-						}
-					}
-				then:
-					responseCode == DataValues.requestValues.get("STATUS200")
-	}
-			
+		
 	
 	def "Add HO Address"()
 	{
@@ -189,7 +97,7 @@ class ProfileHomeownerFunctionalTest  extends AbstractHomeowner{
 						
 					when:
 						HTTP_BUILDER.request(Method.POST,ContentType.JSON){
-							uri.path = DataValues.requestValues.get("PROFILESERVICE")+"v1.0/users/"+USER_ID_DYNAMIC_HO+"/hoaddress"
+							uri.path = DataValues.requestValues.get("PROFILESERVICE")+"v1.0/users/"+USER_ID_DYNAMIC_HO+"/address"
 							headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_HO
 							body = json.toString()
 							requestContentType = ContentType.JSON
@@ -235,7 +143,7 @@ class ProfileHomeownerFunctionalTest  extends AbstractHomeowner{
 							
 						when:
 							HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
-								uri.path = DataValues.requestValues.get("PROFILESERVICE")+"v1.0/users/"+USER_ID_DYNAMIC_HO+"/hoaddress"
+								uri.path = DataValues.requestValues.get("PROFILESERVICE")+"v1.0/users/"+USER_ID_DYNAMIC_HO+"/address"
 								headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_HO
 								body = json.toString()
 								requestContentType = ContentType.JSON
@@ -277,7 +185,7 @@ class ProfileHomeownerFunctionalTest  extends AbstractHomeowner{
 					HTTP_BUILDER.request(Method.GET){
 					headers.Accept = 'application/json'
 					headers.'Authorization' = "Bearer " + ACCESS_TOKEN_DYNAMIC_HO
-					uri.path = ME_URI+USER_ID_DYNAMIC_HO+"/hoaddress"
+					uri.path = ME_URI+USER_ID_DYNAMIC_HO+"/address"
 					
 					println "Uri is " + uri
 					
@@ -319,20 +227,13 @@ def "Get HomeOwners Profile"()
 			
 					given:
 							String responseCode = null
-							
-//							HTTP_BUILDER.handler.failure = { resp, reader ->
-//								[response:resp, reader:reader]
-//							}
-//							HTTP_BUILDER.handler.success = { resp, reader ->
-//								[response:resp, reader:reader]
-//							}
 							println "********************************"
 							println "Test running ..  " +"Get HomeOwners Profile"
 					when:
 							HTTP_BUILDER.request(Method.GET){
 							headers.Accept = 'application/json'
 							headers.'Authorization' = "Bearer " + ACCESS_TOKEN_DYNAMIC_HO
-							uri.path = ME_URI+USER_ID_DYNAMIC_HO+"/hoprofiles"
+							uri.path = ME_URI+USER_ID_DYNAMIC_HO+"/profiles"
 							
 							println "Uri is " + uri
 							
@@ -362,8 +263,8 @@ def "Get HomeOwners Profile"()
 						then:
 						responseCode == DataValues.requestValues.get("STATUS200")
 						cleanup:
-						def  getpHoneID = DatabaseHelper.select("select phone_id from profile.ho_profile where user_id =  '${USER_ID_DYNAMIC_HO}'")
-						def getaddressId = DatabaseHelper.select("select address_id from profile.ho_profile where user_id =  '${USER_ID_DYNAMIC_HO}'")
+						def  getpHoneID = DatabaseHelper.select("select phone_id from hoprofile.ho_profile where user_id =  '${USER_ID_DYNAMIC_HO}'")
+						def getaddressId = DatabaseHelper.select("select address_id from hoprofile.ho_profile where user_id =  '${USER_ID_DYNAMIC_HO}'")
 						
 						if (getpHoneID.startsWith("[{phone_id")){
 							getpHoneID = getpHoneID.replace("[{phone_id=", "").replace("}]","")
@@ -375,9 +276,9 @@ def "Get HomeOwners Profile"()
 							println "Address Id : " +getaddressId
 						}
 						try{
-						DatabaseHelper.executeQuery("delete from profile.ho_profile where user_id = '${USER_ID_DYNAMIC_HO}'")
-						DatabaseHelper.executeQuery("delete from profile.phone where id = '$getpHoneID'")
-						DatabaseHelper.executeQuery("delete from profile.address where id = '$getaddressId'")
+						DatabaseHelper.executeQuery("delete from hoprofile.ho_profile where user_id = '${USER_ID_DYNAMIC_HO}'")
+						DatabaseHelper.executeQuery("delete from hoprofile.phone where id = '$getpHoneID'")
+						DatabaseHelper.executeQuery("delete from hoprofile.address where id = '$getaddressId'")
 						}catch(Exception e){
 								
 								println e.getMessage()

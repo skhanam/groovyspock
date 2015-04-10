@@ -16,7 +16,7 @@ import com.ratedpeople.support.DataValues
  */
 class AbstractHomeowner  extends Specification{
 	
-	
+	long randomMobile = Math.round(Math.random()*1000);
 	private static final String REGISTER_USER_HO_URI = DataValues.requestValues.get("USERSERVICE")+"v1.0/homeowners/register"
 	private final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(DataValues.requestValues.get("URL"))
 	private static final GET_TOKEN_URI = DataValues.requestValues.get("AUTHSERVICE") + 'oauth/token'
@@ -62,8 +62,12 @@ class AbstractHomeowner  extends Specification{
 				def json = new JsonBuilder()
 				DYNAMIC_USER = DataValues.requestValues.get("HOUSER")+System.currentTimeMillis()+"@gid.com"
 				json {
-						"username" DYNAMIC_USER
+						"email" DYNAMIC_USER
 						"password" DataValues.requestValues.get("PASSWORD")
+						"firstName" "hoprofile"
+						"lastName"  "Aws"
+						"phoneNumber" DataValues.requestValues.get("PHONE")+randomMobile
+						
 				}
 				
 				println "Json is ${json.toString()}"
@@ -74,7 +78,6 @@ class AbstractHomeowner  extends Specification{
 		private def createUser(def json)
 		{
 			def map = HTTP_BUILDER.request(Method.POST,ContentType.JSON) {
-				headers.'Authorization' = "Basic "+ DataValues.requestValues.get("CLIENT_ID").bytes.encodeBase64().toString()
 				uri.path = REGISTER_USER_HO_URI
 				body = json.toString()
 				requestContentType = ContentType.JSON
