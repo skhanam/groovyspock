@@ -146,7 +146,7 @@ class AbstractUserToken extends Specification {
 					println resp.statusLine.statusCode
 				}
 			}
-//		then:
+
 			assert responseCode == DataValues.requestValues.get("STATUS200")
 			ACCESS_TOKEN_TM != null
 			REFRESH_TOKEN_TM != null

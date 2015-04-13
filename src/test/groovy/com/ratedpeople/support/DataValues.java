@@ -12,7 +12,10 @@ import java.util.Map;
  */
 public class DataValues {
 		
+	static long randomMobile = Math.round(Math.random()*1000);
+	
 	private static Map<String,String> requestValues = new HashMap<String,String>();
+	
 	
 	static { 
 		
@@ -56,7 +59,10 @@ public class DataValues {
 		requestValues.put("AUTHSERVICE","/api/uaa/");
 		requestValues.put("PAYMENTSERVICE","/api/payment/");
 		requestValues.put("BILLINGSERVICE","/api/billing/");
-		requestValues.put("PROFILESERVICE","/api/profile/");
+		requestValues.put("PROFILESERVICE","/api/hoprofile/");
+		
+		// sms pin token
+
 			
 		//Default Client token
 		requestValues.put("CLIENT_ID","9ecc8459ea5f39f9da55cb4d71a70b5d1e0f0b80:1");
