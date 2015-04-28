@@ -40,7 +40,7 @@ class SmsPinTokenTest extends AbstractUserToken{
 							println "Success"
 							println "Got response: ${resp.statusLine}"
 							println "Content-Type: ${resp.headers.'Content-Type'}"
-					
+							responseStatus = resp.statusLine.statusCode
 							reader.each{
 								"Results  : "+ "$it"
 							}
@@ -90,6 +90,7 @@ class SmsPinTokenTest extends AbstractUserToken{
 						response.success = { resp, reader ->
 							println "Success"
 							println "Got response: ${resp.statusLine}"
+							responseStatus = resp.statusLine.statusCode
 							println "Content-Type: ${resp.headers.'Content-Type'}"
 							reader.each{
 								"Results  : "+ "$it"

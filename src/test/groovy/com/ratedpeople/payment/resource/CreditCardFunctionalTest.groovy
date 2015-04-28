@@ -22,7 +22,18 @@ import com.ratedpeople.user.token.AbstractUserToken
 class CreditCardFunctionalTest extends AbstractHomeowner {
 	
 	private final String CREDIT_CARD_RESOURCE_URI = DataValues.requestValues.get("PAYMENTSERVICE")+"v1.0/users/" 
-	private final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(DataValues.requestValues.get("URL"))
+	private final HTTPBuilder HTTP_BUILDER2 = new HTTPBuilder(DataValues.requestValues.get("URL"))
+	
+	def "setup"(){
+		
+		
+		HTTP_BUILDER2.handler.failure = { resp, reader ->
+			[response:resp, reader:reader]
+		}
+		HTTP_BUILDER2.handler.success = { resp, reader ->
+			[response:resp, reader:reader]
+		}
+	}
 	
 	def testCreditCardSuccess()
 	{
@@ -42,7 +53,7 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 			responseStatus = resp.status
 			println "*********************************"
 			println "response code :${resp.status}"
-			println "reader type: ${reader.get('cause')}"
+			println "reader type: ${reader.get('message')}"
 			println "*********************************"
 			
 			reader.each{
@@ -70,8 +81,9 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 		println "Test 2 :  testGetCardDetails"
 
 		given:
+			def response = postCreditCard(createJsonCreditCard());
 			String ccToken
-			def response = getCreditCard()
+			response = getCreditCard()
 			def resp = response['response']
 			def reader = response['reader']
 			
@@ -90,7 +102,7 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 			
 			String responseStatus
 		when:
-			def map = HTTP_BUILDER.request(Method.GET) {
+			def map = HTTP_BUILDER2.request(Method.GET) {
 				uri.path = CREDIT_CARD_RESOURCE_URI + USER_ID_DYNAMIC_HO +"/cards"
 				headers.'Authorization' = "Bearer " + ACCESS_TOKEN_DYNAMIC_HO
 				requestContentType = ContentType.JSON
@@ -152,7 +164,7 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 			
 			println "*********************************"
 			println "response code :${response.status}"
-			println "reader type: ${reader.get('cause')}"
+			println "reader type: ${reader.get('message')}"
 			println "*********************************"
 
 			println "Credit card fetched"
@@ -162,7 +174,7 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 			println "range : "+range.size
 			println "constant :"+messageValue
 			responseStatus = resp.status.toString()
-			def trimrightspaces = reader.get('cause').trim()
+			def trimrightspaces = reader.get('message').trim()
 			def watever = trimrightspaces.tokenize(delims)
 			def rangeresponse = watever
 			println "from Id :"+watever
@@ -218,7 +230,7 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 			reader = response['reader']
 
 			responseStatus = resp.status.toString()
-			errorMessage = reader.get('cause')
+			errorMessage = reader.get('message')
 			println "error Message : "+ errorMessage
 			println "From DataMap : "+ DataValues.requestValues.get("CARDEXISTS") 
 		then:
@@ -245,7 +257,7 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 	
 	private def postCreditCard(def json){
 		println "Access token for HO in CC :"+ACCESS_TOKEN_DYNAMIC_HO
-		def map = HTTP_BUILDER.request(Method.POST) {
+		def map = HTTP_BUILDER2.request(Method.POST) {
 			uri.path = CREDIT_CARD_RESOURCE_URI + USER_ID_DYNAMIC_HO +"/cards"
 			headers.'Authorization' = "Bearer " + ACCESS_TOKEN_DYNAMIC_HO
 			body = json.toString()
@@ -260,7 +272,7 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 	
 	
 	private def getCreditCard(){
-		def map = HTTP_BUILDER.request(Method.GET) {
+		def map = HTTP_BUILDER2.request(Method.GET) {
 			uri.path = CREDIT_CARD_RESOURCE_URI + USER_ID_DYNAMIC_HO +"/cards"
 			headers.'Authorization' = "Bearer " + ACCESS_TOKEN_DYNAMIC_HO
 				requestContentType = ContentType.JSON
