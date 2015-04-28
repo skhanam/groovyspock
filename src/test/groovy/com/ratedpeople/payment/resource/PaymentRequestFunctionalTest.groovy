@@ -30,8 +30,8 @@ class PaymentRequestFunctionalTest extends AbstractUserToken{
 		String responseStatus = null
 		def json = new JsonBuilder()
 		json {
-			"fromUserId" DataValues.requestValues.get("USERIDHO")
-			"toUserId" DataValues.requestValues.get("USERIDTM")
+			"fromUserId" USER_ID_HO
+			"toUserId" USER_ID_TM
 			"jobId" DataValues.requestValues.get("JOBID")
 			"token" "83f1c8e83a004ebdb8c8c35362a688ff"
 			"currency" DataValues.requestValues.get("CURRENCY")
