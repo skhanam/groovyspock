@@ -69,82 +69,69 @@ class RegisterUserFunctionalTest extends AbstractHomeowner {
 //	}
 	
 	
-  def "Generate and Verify Reset password"(){
-		given:
-		String responseStatus = null
-		println "********************************"
-		println "Test Running ........  Reset password"
+		def "Generate and Verify Reset password"(){
+			given:
+				String responseStatus = null
+				println "********************************"
+				println "Test Running ........  Reset password"
+			when:
+				HTTP_BUILDER.request(Method.POST){
+					headers.Accept = 'application/json'
+					uri.path = DataValues.requestValues.get("USERSERVICE")+"v1.0/users/"+USER_ID_DYNAMIC_HO+"/resetpassword"
+					
+					println "Uri : " + uri
+					
+					response.success = { resp, reader ->
+						println "Success"
+						println "Got response: ${resp.statusLine}"
+						println "Content-Type: ${resp.headers.'Content-Type'}"
+						
+						responseStatus = resp.statusLine.statusCode
 		
-		when:
-		
-		HTTP_BUILDER.request(Method.POST){
-			headers.Accept = 'application/json'
-			uri.path = DataValues.requestValues.get("USERSERVICE")+"v1.0/users/"+USER_ID_DYNAMIC_HO+"/resetpassword"
-			println "Uri : " + uri
-			response.success = { resp, reader ->
-				println "Success"
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-				
-				responseStatus = resp.statusLine.statusCode
-
-			}
-			
-			response.failure = { 
-				resp, reader -> println " stacktrace : "+reader.each{"$it"}
-				println 'Not found'
+					}
+					
+					response.failure = { 
+						resp, reader -> println " stacktrace : "+reader.each{"$it"}
+						println 'Not found'
+					}
 				}
-		}
-		
-	
-		try{
-		getToken = DatabaseHelper.select("select token from uaa.user_password_token where user_id= '${USER_ID_DYNAMIC_HO}'")
-		println "********************************"
-		println "Printing Token in Verify Reset Password  :"+getToken
-		if (getToken.startsWith("[{token")){
-			getToken = getToken.replace("[{token=", "").replace("}]","")
-			println "token is : " +getToken
-		}
-		}catch(Exception e){
-		println e.getMessage()
-		}
-	
-		println "********************************"
-		println "Test Running ........  Verify Reset password"
-	
-		HTTP_BUILDER.request(Method.PUT)
-		{
-			headers.Accept = 'application/json'
-			uri.path = DataValues.requestValues.get("USERSERVICE")+"v1.0/users/"+USER_ID_DYNAMIC_HO+"/resetpassword"
-			uri.query = [
-				token : getToken,
-				password : DataValues.requestValues.get("PASSWORD")]
-			println "Uri : " + uri
-			response.success =
-			{
-				
-				resp, reader ->
-				println "Success"
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-				
-				responseStatus = resp.statusLine.statusCode
-				
-		}
+						
+				try{
+					getToken = DatabaseHelper.select("select token from uaa.user_password_token where user_id= '${USER_ID_DYNAMIC_HO}'")
+					println "********************************"
+					println "Printing Token in Verify Reset Password  :"+getToken
+					if (getToken.startsWith("[{token")){
+						getToken = getToken.replace("[{token=", "").replace("}]","")
+						println "token is : " +getToken
+					}
+				}catch(Exception e){
+					println e.getMessage()
+				}
 			
-		
-		
-		
-			then:
-		responseStatus == DataValues.requestValues.get("STATUS201")
-	}
-	
-	
-	
-
+				println "********************************"
+				println "Test Running ........  Verify Reset password"
+			
+				HTTP_BUILDER.request(Method.PUT){
+					headers.Accept = 'application/json'
+					uri.path = DataValues.requestValues.get("USERSERVICE")+"v1.0/users/"+USER_ID_DYNAMIC_HO+"/resetpassword"
+					uri.query = [
+						token : getToken,
+						password : DataValues.requestValues.get("PASSWORD")
+					]
+					
+					println "Uri : " + uri
+					
+					response.success = {
+						resp, reader ->
+						println "Success"
+						println "Got response: ${resp.statusLine}"
+						println "Content-Type: ${resp.headers.'Content-Type'}"
+						
+						responseStatus = resp.statusLine.statusCode
+					}
+					responseStatus == DataValues.requestValues.get("STATUS201")
+				}
 			then:
 				responseStatus == DataValues.requestValues.get("STATUS200")
 		}
-
-	
 }
