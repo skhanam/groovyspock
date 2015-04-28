@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.ratedpeople.payment.resource
+package com.ratedpeople.billing.resource
 
 import com.ratedpeople.user.token.AbstractTradesman;
 
@@ -21,6 +21,7 @@ import groovyx.net.http.HTTPBuilder
 class CreateBankFunctionalTest extends AbstractTradesman{
 
 	private final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(DataValues.requestValues.get("URL"))
+	private static Integer randomBankAccount = (Math.random()*9000000)+10000000;
 	
 	def "Create bank account Success"(){	
 		given:
@@ -30,7 +31,7 @@ class CreateBankFunctionalTest extends AbstractTradesman{
 					"userId" USER_ID_DYNAMIC_TM
 					"beneficiaryName" DataValues.requestValues.get("BENEFICIARYNAME")
 					"bankCode" DataValues.requestValues.get("BANKCODE")
-					"accountNumber"  DataValues.requestValues.get("ACCOUNTNUMBER")
+					"accountNumber"  randomBankAccount
 					"bankAccountType" DataValues.requestValues.get("BANKACCOUNTTYPE")
 					"country" DataValues.requestValues.get("COUNTRY")
 				}
@@ -65,6 +66,7 @@ class CreateBankFunctionalTest extends AbstractTradesman{
 					
 					response.failure = { resp ->
 						println "Request failed with status ${resp.status}"
+						println resp
 						responseStatus = resp.statusLine.statusCode
 					}
 				}
