@@ -4,16 +4,13 @@
 package com.ratedpeople.payment.resource
 
 import groovy.json.*
-
-import com.ratedpeople.user.token.AbstractHomeowner
-
+import com.ratedpeople.user.resource.AbstractHomeowner;
+import com.ratedpeople.user.resource.AbstractUserToken;
 import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder;
 import groovyx.net.http.Method
-
 import com.ratedpeople.support.DataValues
 import com.ratedpeople.support.DatabaseHelper
-import com.ratedpeople.user.token.AbstractUserToken
 /**
  * @author shabana.khanam
  *

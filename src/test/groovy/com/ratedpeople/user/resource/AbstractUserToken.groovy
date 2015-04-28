@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.ratedpeople.user.token
+package com.ratedpeople.user.resource
 
 import groovy.json.*
 import groovyx.net.http.HTTPBuilder

@@ -3,7 +3,7 @@
  */
 package com.ratedpeople.payment.resource
 
-import com.ratedpeople.user.token.AbstractUserToken;
+import com.ratedpeople.user.resource.AbstractUserToken;
 import groovy.json.JsonBuilder;
 import spock.lang.Specification;
 import com.ratedpeople.support.DataValues;

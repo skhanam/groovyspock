@@ -3,7 +3,7 @@
  */
 package com.ratedpeople.payment.resource
 
-import com.ratedpeople.user.token.AbstractUserToken;
+import com.ratedpeople.user.resource.AbstractUserToken;
 import com.ratedpeople.support.DataValues;
 import groovy.json.*
 import groovyx.net.http.ContentType

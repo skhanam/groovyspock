@@ -3,12 +3,10 @@
  */
 package com.ratedpeople.billing.resource
 
-import com.ratedpeople.user.token.AbstractTradesman;
-
+import com.ratedpeople.user.resource.AbstractTradesman;
 import groovy.json.JsonBuilder
 import groovyx.net.http.ContentType
 import groovyx.net.http.Method
-
 import com.ratedpeople.support.DataValues
 import com.ratedpeople.support.DatabaseHelper
 import groovyx.net.http.HTTPBuilder

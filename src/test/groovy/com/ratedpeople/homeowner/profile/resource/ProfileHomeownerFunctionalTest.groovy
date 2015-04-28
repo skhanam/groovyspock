@@ -7,12 +7,10 @@ import groovy.json.JsonBuilder
 import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
-
 import org.apache.commons.lang.RandomStringUtils
-
 import com.ratedpeople.support.DataValues
 import com.ratedpeople.support.DatabaseHelper
-import com.ratedpeople.user.token.AbstractHomeowner
+import com.ratedpeople.user.resource.AbstractHomeowner;
 /**
  * @author shabana.khanam
  *

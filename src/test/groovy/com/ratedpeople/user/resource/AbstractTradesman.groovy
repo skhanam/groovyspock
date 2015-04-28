@@ -1,14 +1,14 @@
 /**
  * 
  */
-package com.ratedpeople.user.token
+package com.ratedpeople.user.resource
 
 import groovy.json.*
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
 import spock.lang.Specification
 import groovyx.net.http.ContentType
-import com.ratedpeople.user.token.AbstractTradesman
+import com.ratedpeople.user.resource.AbstractTradesman;
 import com.ratedpeople.support.DataValues
 
 /**

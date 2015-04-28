@@ -7,11 +7,8 @@ import groovy.json.*
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
 import spock.lang.Specification
-
 import com.ratedpeople.support.DatabaseHelper
 import com.ratedpeople.support.DataValues
-import com.ratedpeople.user.token.AbstractHomeowner;
-
 import groovy.json.JsonBuilder
 import groovyx.net.http.ContentType
 /**

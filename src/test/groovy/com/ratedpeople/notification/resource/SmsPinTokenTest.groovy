@@ -3,7 +3,7 @@
  */
 package com.ratedpeople.notification.resource
 
-import com.ratedpeople.user.token.AbstractUserToken;
+import com.ratedpeople.user.resource.AbstractUserToken;
 import groovyx.net.http.HTTPBuilder;
 import groovyx.net.http.ContentType
 import com.ratedpeople.support.DataValues

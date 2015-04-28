@@ -3,14 +3,12 @@
  */
 package com.ratedpeople.homeowner.profile.resource
 
-import com.ratedpeople.user.token.AbstractUserToken;
-
+import com.ratedpeople.user.resource.AbstractUserToken;
 import groovy.json.JsonBuilder
 import groovyx.net.http.HTTPBuilder;
 import groovyx.net.http.Method
 import com.ratedpeople.support.DataValues
 import groovyx.net.http.ContentType
-
 import com.ratedpeople.support.DataValues
 /**
  * @author shabana.khanam
