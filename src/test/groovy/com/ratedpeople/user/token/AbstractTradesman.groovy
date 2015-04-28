@@ -21,75 +21,69 @@ class AbstractTradesman extends Specification{
 	private static final String REGISTER_USER_TM_URI = DataValues.requestValues.get("USERSERVICE")+"v1.0/tradesmen/register"
 	private final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(DataValues.requestValues.get("URL"))
 	private static final GET_TOKEN_URI = DataValues.requestValues.get("AUTHSERVICE") + 'oauth/token'
-//	protected static String ACCESS_TOKEN_TM1
-//	protected static String REFRESH_TOKEN_TM1G
-//	protected static String USER_ID_TM1
 	private static final ME_URI = DataValues.requestValues.get("USERSERVICE") +"v1.0/me"
 	protected static String ACCESS_TOKEN_DYNAMIC_TM
 	protected static String REFRESH_TOKEN_DYNAMIC_TM
 	protected static String USER_ID_DYNAMIC_TM
 	protected static String ACCESS_TOKEN_ADMIN
 	protected static String REFRESH_TOKEN_ADMIN
+	protected static long randomMobile = Math.round(Math.random()*1000);
 	private static final STATUS_URI = DataValues.requestValues.get("USERSERVICE")+"v1.0/tradesmen/"
 	protected static String DYNAMIC_USER
-	
-	
 	
 	def "setup"(){
 		String responseStatus
 		
-					def response = createUser(createJsonUser());
-					
-					response.success = { resp, reader ->
-						println "Success"
-						println "Got response: ${resp.statusLine}"
-						println "Content-Type: ${resp.headers.'Content-Type'}"
-						responseCode = resp.statusLine.statusCode
-						reader.each{
-							"Results  : "+ "$it"
-						}
-					}
-					response.failure = {
-						resp, reader -> println " stacktrace : "+reader.each{"$it"}
-				
-					}
-				authToken()
-				getUserId()
-				getAdmin()
-				changeStatus()
-				authToken()
-       }				
+		def response = createUser(createJsonUser());
+		
+		response.success = { resp, reader ->
+			println "Success"
+			println "Got response: ${resp.statusLine}"
+			println "Content-Type: ${resp.headers.'Content-Type'}"
+			responseCode = resp.statusLine.statusCode
+			reader.each{
+				"Results  : "+ "$it"
+			}
+		}
+		response.failure = {
+			resp, reader -> println " stacktrace : "+reader.each{"$it"}
 	
-	
+		}
+		
+		authToken()
+		getUserId()
+		getAdmin()
+		changeStatus()
+		authToken()
+	}				
 	
 	private def createJsonUser(){
-				def json = new JsonBuilder()
-				DYNAMIC_USER = DataValues.requestValues.get("TMUSER")+System.currentTimeMillis()+"@gid.com"
-				json {
-						"username" DYNAMIC_USER
-						"password" DataValues.requestValues.get("PASSWORD")
-				}
-				
-				println "Json is ${json.toString()}"
-				return json;
+		def json = new JsonBuilder()
+		DYNAMIC_USER = DataValues.requestValues.get("TMUSER")+System.currentTimeMillis()+"@gid.com"
+		json {
+			"email" DYNAMIC_USER
+			"password" DataValues.requestValues.get("PASSWORD")
+			"firstName" "tmprofile"
+			"lastName"  "Aws"
+			"phoneNumber" DataValues.requestValues.get("PHONE")+randomMobile
 		}
-	
-	
-		private def createUser(def json)
-		{
-			def map = HTTP_BUILDER.request(Method.POST,ContentType.JSON) {
-				headers.'Authorization' = "Basic "+ DataValues.requestValues.get("CLIENT_ID").bytes.encodeBase64().toString()
-				uri.path = REGISTER_USER_TM_URI
-				body = json.toString()
-				requestContentType = ContentType.JSON
-				headers.Accept = ContentType.JSON
-	  			println "Post user Uri : " + uri
-			}
-			return map;
-		}
-	
+		
+		println "Json is ${json.toString()}"
+		return json;
+	}
 
-	
+	private def createUser(def json){
+		def map = HTTP_BUILDER.request(Method.POST,ContentType.JSON) {
+			headers.'Authorization' = "Basic "+ DataValues.requestValues.get("CLIENT_ID").bytes.encodeBase64().toString()
+			uri.path = REGISTER_USER_TM_URI
+			body = json.toString()
+			requestContentType = ContentType.JSON
+			headers.Accept = ContentType.JSON
+  			println "Post user Uri : " + uri
+		}
+		return map;
+	}
+
 	private def authToken(){
 		String token = null
 		HTTP_BUILDER.request(Method.POST){
@@ -105,13 +99,11 @@ class AbstractTradesman extends Specification{
 			
 			println "Uri is " + uri
 			
-			response.success =
-			{ resp, reader ->
+			response.success = { resp, reader ->
 				println "Success"
 				println "Got response: ${resp.statusLine}"
 				println "Content-Type: ${resp.headers.'Content-Type'}"
-				reader.each
-				{
+				reader.each {
 					println "Response data: "+"$it"
 		
 					String tokentemp = "$it"
