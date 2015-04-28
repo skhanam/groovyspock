@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.ratedpeople.user.resource
+package com.ratedpeople.notification.resource
 
 import com.ratedpeople.user.token.AbstractUserToken;
 import groovyx.net.http.HTTPBuilder;
