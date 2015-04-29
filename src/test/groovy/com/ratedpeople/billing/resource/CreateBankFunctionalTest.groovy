@@ -63,7 +63,6 @@ class CreateBankFunctionalTest extends AbstractTradesman{
 					
 					response.failure = { resp, reader -> 
 						println "Request failed with status ${resp.status}"
-						println resp
 						println " stacktrace : "+reader.each{"$it"}
 						responseStatus = resp.statusLine.statusCode
 					}
