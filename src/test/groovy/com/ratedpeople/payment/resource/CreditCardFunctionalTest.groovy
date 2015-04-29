@@ -7,20 +7,20 @@ import groovy.json.*
 import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
+
 import com.ratedpeople.support.DataValues
 import com.ratedpeople.support.DatabaseHelper
-import com.ratedpeople.user.resource.AbstractHomeowner;
+import com.ratedpeople.user.token.AbstractHomeownerNew
 /**
  * @author shabana.khanam
  *
  */
 
-class CreditCardFunctionalTest extends AbstractHomeowner {
+class CreditCardFunctionalTest extends AbstractHomeownerNew {
 
 	private final String CREDIT_CARD_RESOURCE_URI = DataValues.requestValues.get("PAYMENTSERVICE")+"v1.0/users/"
 	private HTTPBuilder HTTP_BUILDER2 = new HTTPBuilder(DataValues.requestValues.get("URL"))
 	def "setup"(){
-
 		HTTP_BUILDER2.handler.failure = { resp, reader ->
 			[response:resp, reader:reader]
 		}
@@ -34,32 +34,32 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 		println "Test 1 :  testCreditCardSuccess"
 
 		given:
-			String responseStatus
-			String ccToken
+		String responseStatus
+		String ccToken
 		when:
-			def response = postCreditCard(createJsonCreditCard());
-	
-			def resp = response['response']
-			def reader = response['reader']
-	
-			responseStatus = resp.status
-			println "*********************************"
-			println "response code :${resp.status}"
-			println "reader type: ${reader.get('message')}"
-			println "*********************************"
-	
-			reader.each{
-				println "Response data: " + "$it"
-	
-				String data = "$it"
-				if (data.startsWith("token")){
-					ccToken = data.replace("token=", "")
-				}
+		def response = postCreditCard(createJsonCreditCard());
+
+		def resp = response['response']
+		def reader = response['reader']
+
+		responseStatus = resp.status
+		println "*********************************"
+		println "response code :${resp.status}"
+		println "reader type: ${reader.get('message')}"
+		println "*********************************"
+
+		reader.each{
+			println "Response data: " + "$it"
+
+			String data = "$it"
+			if (data.startsWith("token")){
+				ccToken = data.replace("token=", "")
 			}
+		}
 		then:
-			responseStatus == DataValues.requestValues.get("STATUS201")
+		responseStatus == DataValues.requestValues.get("STATUS201")
 		cleanup:
-			DatabaseHelper.executeQuery("delete from payment.credit_card where token = '${ccToken}'")
+		DatabaseHelper.executeQuery("delete from payment.credit_card where token = '${ccToken}'")
 	}
 
 
@@ -67,55 +67,55 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 		println "Test 2 :  testGetCardDetails"
 
 		given:
-			def response = postCreditCard(createJsonCreditCard());
-			String ccToken
-			response = getCreditCard()
-			def resp = response['response']
-			def reader = response['reader']
-	
-			reader.each{
-				println "Response data: " + "$it"
-	
-				String data = "$it"
-				if (data.startsWith("token")){
-					ccToken = data.replace("token=", "")
-					println "ccToken : "+ccToken
-				}
-			}
+		def response = postCreditCard(createJsonCreditCard());
+		String ccToken
+		response = getCreditCard()
+		def resp = response['response']
+		def reader = response['reader']
 
-			assert resp.status.toString() == DataValues.requestValues.get("STATUS200")
-			println "Credit card fetched"
-	
-			String responseStatus
+		reader.each{
+			println "Response data: " + "$it"
+
+			String data = "$it"
+			if (data.startsWith("token")){
+				ccToken = data.replace("token=", "")
+				println "ccToken : "+ccToken
+			}
+		}
+
+		assert resp.status.toString() == DataValues.requestValues.get("STATUS200")
+		println "Credit card fetched"
+
+		String responseStatus
 		when:
-			def map = HTTP_BUILDER2.request(Method.GET) {
-				uri.path = CREDIT_CARD_RESOURCE_URI + USER_ID_DYNAMIC_HO +"/cards"
-				headers.'Authorization' = "Bearer " + ACCESS_TOKEN_DYNAMIC_HO
-				requestContentType = ContentType.JSON
-				headers.Accept = ContentType.JSON
-	
-				println "Get credit card Uri: ${uri}"
+		def map = HTTP_BUILDER2.request(Method.GET) {
+			uri.path = CREDIT_CARD_RESOURCE_URI + USER_ID_DYNAMIC_HO +"/cards"
+			headers.'Authorization' = "Bearer " + ACCESS_TOKEN_DYNAMIC_HO
+			requestContentType = ContentType.JSON
+			headers.Accept = ContentType.JSON
+
+			println "Get credit card Uri: ${uri}"
+		}
+
+		resp = map['response']
+		reader = map['reader']
+
+		responseStatus = resp.status.toString()
+
+		def getToken
+		reader.each{
+			println "Response data: " + "$it"
+
+			String data = "$it"
+			if (data.startsWith("token")){
+				getToken = data.replace("token=", "")
 			}
-	
-			resp = map['response']
-			reader = map['reader']
-	
-			responseStatus = resp.status.toString()
-	
-			def getToken
-			reader.each{
-				println "Response data: " + "$it"
-	
-				String data = "$it"
-				if (data.startsWith("token")){
-					getToken = data.replace("token=", "")
-				}
-			}
+		}
 		then:
-			responseStatus == DataValues.requestValues.get("STATUS200")
-			getToken == ccToken
-			cleanup:
-			DatabaseHelper.executeQuery("delete from payment.credit_card where token = '${ccToken}'")
+		responseStatus == DataValues.requestValues.get("STATUS200")
+		getToken == ccToken
+		cleanup:
+		DatabaseHelper.executeQuery("delete from payment.credit_card where token = '${ccToken}'")
 	}
 
 
@@ -160,24 +160,12 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 
 		responseStatus = resp.status.toString()
 
-		/*
-		 def range = aspectResult
-		 println "range : "+range.size
-		 println "constant :"+aspectResult
-		 def watever = trimrightspaces.tokenize(delims)
-		 def rangeresponse = watever
-		 println "from Id :"+watever
-		 println"range of watever :"+rangeresponse.size
-		 watever.each{println "watever: $it"}
-		 aspectResult.each{println "messageValue:$it"}
-		 */
 		then:
 		for(String aspectResult:aspectResultList){
 			resultFound.contains(aspectResult)
 
-		}
-		//responseStatus == status
 
+		}
 
 
 		where :
