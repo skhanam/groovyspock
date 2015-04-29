@@ -21,7 +21,7 @@ class ProfileHomeownerFunctionalTest  extends AbstractHomeowner{
 	long randomMobile = Math.round(Math.random()*1000);
 	private static final ME_URI = DataValues.requestValues.get("PROFILESERVICE") +"v1.0/users/"
 	private final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(DataValues.requestValues.get("URL"))
-
+	def responseStatus = null
 	def "Matching Free Text"(){
 		given:
 		String responseCode = null
@@ -51,10 +51,10 @@ class ProfileHomeownerFunctionalTest  extends AbstractHomeowner{
 					String user = "$it"
 				}
 			}
-			response.failure = { resp ->
+			response.failure = { resp, reader ->
 				println "Request failed with status ${resp.status}"
-				println resp.toString()
-				println resp.statusLine.statusCode
+				reader.each{ println "Error values : "+"$it" }
+				responseStatus = resp.statusLine.statusCode
 			}
 		}
 		then:
@@ -93,8 +93,9 @@ class ProfileHomeownerFunctionalTest  extends AbstractHomeowner{
 			}
 
 			response.failure = { resp, reader ->
-				println " stacktrace : "+reader.each{"$it"}
-				println 'Not found'
+				println "Request failed with status ${resp.status}"
+				reader.each{ println "Error values : "+"$it" }
+				responseStatus = resp.statusLine.statusCode
 			}
 		}
 		then:
@@ -142,8 +143,9 @@ class ProfileHomeownerFunctionalTest  extends AbstractHomeowner{
 				reader.each{ "Results  : "+ "$it" }
 			}
 			response.failure = { resp, reader ->
-				println " stacktrace : "+reader.each{"$it"}
-				println 'Not found'
+				println "Request failed with status ${resp.status}"
+				reader.each{ println "Error values : "+"$it" }
+				responseStatus = resp.statusLine.statusCode
 			}
 		}
 		then:
@@ -152,117 +154,118 @@ class ProfileHomeownerFunctionalTest  extends AbstractHomeowner{
 
 	def "Get HO address"(){
 		given:
-			def json = getAddress()
-			String responseCode = null
-			println "********************************"
-			println "Test running ..  " +"Get HO address"
+		def json = getAddress()
+		String responseCode = null
+		println "********************************"
+		println "Test running ..  " +"Get HO address"
 		when:
-			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
-				uri.path = DataValues.requestValues.get("PROFILESERVICE")+"v1.0/users/"+USER_ID_DYNAMIC_HO+"/address"
-				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_HO
-				body = json.toString()
-				requestContentType = ContentType.JSON
-				println "Uri is " + uri
-	
-				response.success = { resp, reader ->
-					println "Success"
-					println "Got response: ${resp.statusLine}"
-					println "Content-Type: ${resp.headers.'Content-Type'}"
-					responseCode = resp.statusLine.statusCode
-					reader.each{ "Results  : "+ "$it" }
-				}
-	
-				response.failure = { resp, reader ->
-					println " stacktrace : "+reader.each{"$it"}
-					println 'Not found'
-				}
+		HTTP_BUILDER.request(Method.POST,ContentType.JSON){
+			uri.path = DataValues.requestValues.get("PROFILESERVICE")+"v1.0/users/"+USER_ID_DYNAMIC_HO+"/address"
+			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_HO
+			body = json.toString()
+			requestContentType = ContentType.JSON
+			println "Uri is " + uri
+
+			response.success = { resp, reader ->
+				println "Success"
+				println "Got response: ${resp.statusLine}"
+				println "Content-Type: ${resp.headers.'Content-Type'}"
+				responseCode = resp.statusLine.statusCode
+				reader.each{ "Results  : "+ "$it" }
 			}
-	
-			HTTP_BUILDER.request(Method.GET){
-				headers.Accept = 'application/json'
-				headers.'Authorization' = "Bearer " + ACCESS_TOKEN_DYNAMIC_HO
-				uri.path = ME_URI+USER_ID_DYNAMIC_HO+"/address"
-	
-				println "Uri is " + uri
-	
-				response.success = { resp, reader ->
-					println "Success"
-					responseCode = resp.statusLine.statusCode
-					println "Got response: ${resp.statusLine}"
-					println "Content-Type: ${resp.headers.'Content-Type'}"
-	
-					reader.each{
-						println "Response data: " + "$it"
-	
-						String user = "$it"
-						if (user.startsWith("userId")){
-							user = user.replace("userId=", "")
-							println "User values : " +user
-						}
+
+			response.failure = { resp, reader ->
+				println "Request failed with status ${resp.status}"
+				reader.each{ println "Error values : "+"$it" }
+				responseStatus = resp.statusLine.statusCode
+			}
+		}
+
+		HTTP_BUILDER.request(Method.GET){
+			headers.Accept = 'application/json'
+			headers.'Authorization' = "Bearer " + ACCESS_TOKEN_DYNAMIC_HO
+			uri.path = ME_URI+USER_ID_DYNAMIC_HO+"/address"
+
+			println "Uri is " + uri
+
+			response.success = { resp, reader ->
+				println "Success"
+				responseCode = resp.statusLine.statusCode
+				println "Got response: ${resp.statusLine}"
+				println "Content-Type: ${resp.headers.'Content-Type'}"
+
+				reader.each{
+					println "Response data: " + "$it"
+
+					String user = "$it"
+					if (user.startsWith("userId")){
+						user = user.replace("userId=", "")
+						println "User values : " +user
 					}
 				}
-	
-				response.failure = { resp ->
-					println "Request failed with status ${resp.status}"
-					println resp.toString()
-					println resp.statusLine.statusCode
-				}
 			}
+
+			response.failure = { resp, reader ->
+				println "Request failed with status ${resp.status}"
+				reader.each{ println "Error values : "+"$it" }
+				responseStatus = resp.statusLine.statusCode
+			}
+		}
 		then:
-			responseCode == DataValues.requestValues.get("STATUS200")
+		responseCode == DataValues.requestValues.get("STATUS200")
 	}
 
 	def "Get HomeOwners Profile"() {
 		given:
-			String responseCode = null
-			println "********************************"
-			println "Test running ..  " +"Get HomeOwners Profile"
+		String responseCode = null
+		println "********************************"
+		println "Test running ..  " +"Get HomeOwners Profile"
 		when:
-			HTTP_BUILDER.request(Method.GET){
-				headers.Accept = 'application/json'
-				headers.'Authorization' = "Bearer " + ACCESS_TOKEN_DYNAMIC_HO
-				uri.path = ME_URI+USER_ID_DYNAMIC_HO+"/profiles"
-				println "Uri is " + uri
-				response.success = { resp, reader ->
-					println "Success"
-					responseCode = resp.statusLine.statusCode
-					println "Got response: ${resp.statusLine}"
-					println "Content-Type: ${resp.headers.'Content-Type'}"
-					reader.each{
-						println "Response data: " + "$it"
-						String user = "$it"
-						if (user.startsWith("userId")){
-							user = user.replace("userId=", "")
-							println "User values : " +user
-						}
+		HTTP_BUILDER.request(Method.GET){
+			headers.Accept = 'application/json'
+			headers.'Authorization' = "Bearer " + ACCESS_TOKEN_DYNAMIC_HO
+			uri.path = ME_URI+USER_ID_DYNAMIC_HO+"/profiles"
+			println "Uri is " + uri
+			response.success = { resp, reader ->
+				println "Success"
+				responseCode = resp.statusLine.statusCode
+				println "Got response: ${resp.statusLine}"
+				println "Content-Type: ${resp.headers.'Content-Type'}"
+				reader.each{
+					println "Response data: " + "$it"
+					String user = "$it"
+					if (user.startsWith("userId")){
+						user = user.replace("userId=", "")
+						println "User values : " +user
 					}
 				}
-				response.failure = { resp ->
-					println "Request failed with status ${resp.status}"
-					println resp.toString()
-					println resp.statusLine.statusCode
-				}
 			}
+			response.failure = { resp, reader ->
+				println "Request failed with status ${resp.status}"
+				reader.each{ println "Error values : "+"$it" }
+				responseStatus = resp.statusLine.statusCode
+			}
+		}
 		then:
-			responseCode == DataValues.requestValues.get("STATUS200")
+		responseCode == DataValues.requestValues.get("STATUS200")
 		cleanup:
-			def  getpHoneID = DatabaseHelper.select("select phone_id from hoprofile.ho_profile where user_id =  '${USER_ID_DYNAMIC_HO}'")
-			def getaddressId = DatabaseHelper.select("select address_id from hoprofile.ho_profile where user_id =  '${USER_ID_DYNAMIC_HO}'")
-			if (getpHoneID.startsWith("[{phone_id")){
-				getpHoneID = getpHoneID.replace("[{phone_id=", "").replace("}]","")
-				println "Phone Id : " +getpHoneID
-			}
+		def  getpHoneID = DatabaseHelper.select("select phone_id from hoprofile.ho_profile where user_id =  '${USER_ID_DYNAMIC_HO}'")
+		def getaddressId = DatabaseHelper.select("select address_id from hoprofile.ho_profile where user_id =  '${USER_ID_DYNAMIC_HO}'")
+		if (getpHoneID.startsWith("[{phone_id")){
+			getpHoneID = getpHoneID.replace("[{phone_id=", "").replace("}]","")
+			println "Phone Id : " +getpHoneID
+		}
+		println "Address Id : " +getaddressId
+		if (getaddressId.startsWith("[{address_id")){
+			getaddressId = getaddressId.replace("[{address_id=", "").replace("}]","")
 			println "Address Id : " +getaddressId
-			if (getaddressId.startsWith("[{address_id")){
-				getaddressId = getaddressId.replace("[{address_id=", "").replace("}]","")
-				println "Address Id : " +getaddressId
-			}
-			try{
-				DatabaseHelper.executeQuery("delete from hoprofile.ho_profile where user_id = '${USER_ID_DYNAMIC_HO}'")
-				DatabaseHelper.executeQuery("delete from hoprofile.phone where id = '$getpHoneID'")
-				DatabaseHelper.executeQuery("delete from hoprofile.address where id = '$getaddressId'")
-			}catch(Exception e){
-				println e.getMessage()
-			}
+		}
+		try{
+			DatabaseHelper.executeQuery("delete from hoprofile.ho_profile where user_id = '${USER_ID_DYNAMIC_HO}'")
+			DatabaseHelper.executeQuery("delete from hoprofile.phone where id = '$getpHoneID'")
+			DatabaseHelper.executeQuery("delete from hoprofile.address where id = '$getaddressId'")
+		}catch(Exception e){
+			println e.getMessage()
+		}
 	}
 }
