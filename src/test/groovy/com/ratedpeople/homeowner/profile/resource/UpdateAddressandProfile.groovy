@@ -18,7 +18,7 @@ class UpdateAddressandProfile extends AbstractUserToken{
 
 	long randomMobile = Math.round(Math.random()*1000);
 	private final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(DataValues.requestValues.get("URL"))
-
+	def responseStatus = null;
 	def "Update Homeowner Profile"(){
 		given :
 		String responseCode = null
