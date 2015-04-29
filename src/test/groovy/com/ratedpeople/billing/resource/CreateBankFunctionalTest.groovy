@@ -18,8 +18,9 @@ import groovyx.net.http.HTTPBuilder
  */
 class CreateBankFunctionalTest extends AbstractTradesman{
 
-	private static Integer RANDOM_BANK_ACCOUNT = (Math.random()*9000000)+10000000;
 	private static final String BILLING_URI_PREFIX = CommonVariable.BILLING_SERVICE_PREFIX + "v1.0/users/"
+	private static Integer RANDOM_BANK_ACCOUNT = (Math.random()*9000000)+10000000;
+	
 	def "Create bank account Success"(){	
 		given:
 				String responseStatus = null
@@ -76,10 +77,10 @@ class CreateBankFunctionalTest extends AbstractTradesman{
 				String responseStatus = null
 				def json = new JsonBuilder()
 				json {
-					"userId" CommonVariable.DEFAULT_TM_ID
+					"userId" USER_ID_DYNAMIC_TM
 					"beneficiaryName" CommonVariable.DEFAULT_BENEFICIARY_NAME + " Update"
 					"bankCode" CommonVariable.DEFAULT_BANKCODE
-					"accountNumber"  RANDOM_BANK_ACCOUNT
+					"accountNumber"  RANDOM_BANK_ACCOUNT.toString()
 					"bankAccountType" CommonVariable.DEFAULT_BANK_ACCOUNT_TYPE
 					"country" CommonVariable.DEFAULT_BANK_COUNTRY
 				}
@@ -111,13 +112,14 @@ class CreateBankFunctionalTest extends AbstractTradesman{
 					}
 				}
 				
-				response.failure = { resp ->
-					println "Request failed with status ${resp.status}"
-					responseStatus = resp.statusLine.statusCode
-				}
+				response.failure = { resp, reader -> 
+						println "Request failed with status ${resp.status}"
+						println " stacktrace : "+reader.each{"$it"}
+						responseStatus = resp.statusLine.statusCode
+					}
 			}
 		then:
-			responseStatus == CommonVariable.STATUS_400
+			responseStatus == CommonVariable.STATUS_200
 		cleanup:
 			DatabaseHelper.executeQuery("delete from billing.bank_details where user_id = '${USER_ID_DYNAMIC_TM}'")
 		}

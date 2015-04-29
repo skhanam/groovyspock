@@ -19,7 +19,7 @@ class AbstractHomeowner  extends Specification{
 	
 	private static final String HOMEOWNER_URI_PREFIX = CommonVariable.USER_SERVICE_PREFIX + "v1.0/homeowners/"
 
-	protected static long RANDOM_MOBILE = Math.round(Math.random()*100000000);
+	protected static long RANDOM_MOBILE = Math.round(Math.random()*100000000)+100000000;
 	protected static String ACCESS_TOKEN_DYNAMIC_HO
 	protected static String REFRESH_TOKEN_DYNAMIC_HO
 	protected static String USER_ID_DYNAMIC_HO
