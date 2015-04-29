@@ -24,8 +24,10 @@ class SmsPinTokenTest extends AbstractUserToken{
 		println "****************************************************"
 		println "SmsPinToken"
 		println "Test Running ............. :  testRegeneratePINToken"
+		
 
 		given:
+		cleanDB()
 		String responseStatus = null
 
 
@@ -53,6 +55,16 @@ class SmsPinTokenTest extends AbstractUserToken{
 		}
 		then:
 		responseStatus == DataValues.requestValues.get("STATUS200")
+	}
+
+	private cleanDB() {
+		def getphoneId = DatabaseHelper.select("select phone_id from hoprofile.ho_profile where user_id =  '${USER_ID_HO}'")
+		getpinToken = DatabaseHelper.select("select pin_token from hoprofile.phone where id IN ( select phone_id from hoprofile.ho_profile where user_id = '${USER_ID_HO}')")
+		if (getpinToken.startsWith("[{pin_token")){
+			getpinToken = getpinToken.replace("[{pin_token=", "").replace("}]","")
+			println "pin token is : " +getpinToken
+		}
+		DatabaseHelper.executeQuery("update hoprofile.phone set pin_generated_times= '0', pin_validation_times= '0' where pin_token = '${getpinToken}'")
 	}
 
 
