@@ -35,6 +35,7 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 
 		given:
 			String responseStatus
+			String ccToken
 		when:
 			def response = postCreditCard(createJsonCreditCard());
 	
