@@ -4,25 +4,23 @@
 package com.ratedpeople.payment.resource
 
 import groovy.json.*
-import com.ratedpeople.user.resource.AbstractHomeowner;
-import com.ratedpeople.user.resource.AbstractUserToken;
 import groovyx.net.http.ContentType
-import groovyx.net.http.HTTPBuilder;
+import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
+
 import com.ratedpeople.support.DataValues
 import com.ratedpeople.support.DatabaseHelper
+import com.ratedpeople.user.token.AbstractHomeownerNew
 /**
  * @author shabana.khanam
  *
  */
 
-class CreditCardFunctionalTest extends AbstractHomeowner {
+class CreditCardFunctionalTest extends AbstractHomeownerNew {
 
 	private final String CREDIT_CARD_RESOURCE_URI = DataValues.requestValues.get("PAYMENTSERVICE")+"v1.0/users/"
-	private final HTTPBuilder HTTP_BUILDER2 = new HTTPBuilder(DataValues.requestValues.get("URL"))
-
+	private HTTPBuilder HTTP_BUILDER2 = new HTTPBuilder(DataValues.requestValues.get("URL"))
 	def "setup"(){
-
 
 		HTTP_BUILDER2.handler.failure = { resp, reader ->
 			[response:resp, reader:reader]
@@ -64,13 +62,7 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 		responseStatus == DataValues.requestValues.get("STATUS201")
 		cleanup:
 		DatabaseHelper.executeQuery("delete from payment.credit_card where token = '${ccToken}'")
-		//		DatabaseHelper.executeQuery("UPDATE payment.credit_card SET `masked`='400000******0060' WHERE user_id=2")
-
 	}
-
-
-
-
 
 
 	def testGetCardDetails(){
@@ -165,22 +157,28 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 
 		println "Credit card fetched"
 		String delims = "[-\\,]+"
-		def messageValue = message.tokenize(delims)
-		def range = messageValue
-		println "range : "+range.size
-		println "constant :"+messageValue
+		def aspectResultList = message.tokenize(delims)
+		def resultFound = reader.get('message').trim()
+
 		responseStatus = resp.status.toString()
-		def trimrightspaces = reader.get('message').trim()
-		def watever = trimrightspaces.tokenize(delims)
-		def rangeresponse = watever
-		println "from Id :"+watever
-		println"range of watever :"+rangeresponse.size
-		watever.each{println "watever: $it"}
-		messageValue.each{println "messageValue:$it"}
 
-
+		/*
+		 def range = aspectResult
+		 println "range : "+range.size
+		 println "constant :"+aspectResult
+		 def watever = trimrightspaces.tokenize(delims)
+		 def rangeresponse = watever
+		 println "from Id :"+watever
+		 println"range of watever :"+rangeresponse.size
+		 watever.each{println "watever: $it"}
+		 aspectResult.each{println "messageValue:$it"}
+		 */
 		then:
-		responseStatus == status
+		for(String aspectResult:aspectResultList){
+			resultFound.contains(aspectResult)
+
+		}
+		//responseStatus == status
 
 
 
