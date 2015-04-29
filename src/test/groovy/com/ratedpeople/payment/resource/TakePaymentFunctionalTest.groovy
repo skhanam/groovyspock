@@ -16,7 +16,7 @@ import groovyx.net.http.Method
  */
 class TakePaymentFunctionalTest extends AbstractUserToken{
 	
-	
+	/*
 	def "test payment from user "(){	
 		given:
 			String responseStatus = null
@@ -53,5 +53,5 @@ class TakePaymentFunctionalTest extends AbstractUserToken{
 		then:
 			responseStatus == DataValues.requestValues.get("STATUS200")
 
-		}
+		}*/
 	}
