@@ -10,12 +10,12 @@ import groovyx.net.http.Method
 import org.apache.commons.lang.RandomStringUtils
 import com.ratedpeople.support.DataValues
 import com.ratedpeople.support.DatabaseHelper
-import com.ratedpeople.user.resource.AbstractHomeowner;
+import com.ratedpeople.user.resource.AbstractHomeownerOld;
 /**
  * @author shabana.khanam
  *
  */
-class ProfileHomeownerFunctionalTest  extends AbstractHomeowner{
+class ProfileHomeownerFunctionalTest  extends AbstractHomeownerOld{
 	
 	long randomMobile = Math.round(Math.random()*1000);
 	private static final ME_URI = DataValues.requestValues.get("PROFILESERVICE") +"v1.0/users/"

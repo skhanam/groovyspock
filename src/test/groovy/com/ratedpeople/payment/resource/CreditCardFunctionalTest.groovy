@@ -7,16 +7,15 @@ import groovy.json.*
 import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
-
 import com.ratedpeople.support.DataValues
 import com.ratedpeople.support.DatabaseHelper
-import com.ratedpeople.user.token.AbstractHomeownerNew
+import com.ratedpeople.user.resource.AbstractHomeowner;
 /**
  * @author shabana.khanam
  *
  */
 
-class CreditCardFunctionalTest extends AbstractHomeownerNew {
+class CreditCardFunctionalTest extends AbstractHomeowner {
 
 	private final String CREDIT_CARD_RESOURCE_URI = DataValues.requestValues.get("PAYMENTSERVICE")+"v1.0/users/"
 	private HTTPBuilder HTTP_BUILDER2 = new HTTPBuilder(DataValues.requestValues.get("URL"))

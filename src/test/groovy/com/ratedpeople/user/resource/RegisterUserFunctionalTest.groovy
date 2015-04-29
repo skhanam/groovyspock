@@ -16,7 +16,7 @@ import groovyx.net.http.ContentType
  *
  */
 
-class RegisterUserFunctionalTest extends AbstractHomeowner {
+class RegisterUserFunctionalTest extends AbstractHomeownerOld {
 	
 	private static final String REGISTER_USER_HO_URI = DataValues.requestValues.get("USERSERVICE")+"v1.0/homeowners/register"
 	private static final String REGISTER_USER_TM_URI = DataValues.requestValues.get("USERSERVICE")+"v1.0/tradesmen/register"
