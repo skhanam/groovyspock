@@ -79,7 +79,7 @@ class TakePaymentFunctionalTest extends AbstractUserToken{
 			String responseStatus = null
 		when:
 			HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
-				uri.path = CommonVariable.PAYMENT_SERVICE_PREFIX+"v1.0/users/"+USER_ID_HO+"/jobs/${RANDOM_JOB_ID}"
+				uri.path = CommonVariable.PAYMENT_SERVICE_PREFIX + "v1.0/users/${USER_ID_HO}/jobs/${RANDOM_JOB_ID}"
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_HO
 				requestContentType = ContentType.JSON
 				

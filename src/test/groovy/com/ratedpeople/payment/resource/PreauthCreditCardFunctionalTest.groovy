@@ -8,7 +8,6 @@ import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
 import com.ratedpeople.support.CommonVariable
-import com.ratedpeople.support.DataValues
 import com.ratedpeople.support.DatabaseHelper
 import com.ratedpeople.user.resource.AbstractUserToken
 

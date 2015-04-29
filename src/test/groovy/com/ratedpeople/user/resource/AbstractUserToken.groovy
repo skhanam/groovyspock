@@ -8,7 +8,6 @@ import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
 import spock.lang.Specification
 import com.ratedpeople.support.CommonVariable
-import com.ratedpeople.support.DataValues
 
 /**
  * @author shabana.khanam

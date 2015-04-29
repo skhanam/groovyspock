@@ -58,6 +58,7 @@ class UpdateAddressandProfile extends AbstractUserToken{
 				}
 	
 				response.failure = { resp, reader -> 
+					responseCode = resp.statusLine.statusCode
 					println " stacktrace : "+reader.each{"$it"}
 				}
 			}
