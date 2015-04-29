@@ -24,14 +24,14 @@ class AbstractUserToken extends Specification {
 	protected static String ACCESS_TOKEN_ADMIN
 	protected static String REFRESH_TOKEN_ADMIN
 	protected static String USER_ID_ADMIN
-	protected final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(DataValues.requestValues.get("URL"))
-	
+	private static final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(DataValues.requestValues.get("URL"))
+
 	private static final GET_TOKEN_URI = DataValues.requestValues.get("AUTHSERVICE") + 'oauth/token'
 	private static final ME_URI = DataValues.requestValues.get("USERSERVICE") +"v1.0/me"
 
 	
 	
-	def "setup"(){
+	def "setupSpec"(){
 	
 		String [] userName = new String[2];
 		userName[0] = DataValues.requestValues.get("USERNAME")
@@ -160,7 +160,7 @@ class AbstractUserToken extends Specification {
 	
 	
 	
-	def "Get Token for Admin"()
+	/*def "Get Token for Admin"()
 	{
 		given:
 
@@ -263,7 +263,7 @@ class AbstractUserToken extends Specification {
 			
 		
 		
-	}
+	}*/
 	
 	
 	
