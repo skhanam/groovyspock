@@ -6,25 +6,20 @@ package com.ratedpeople.user.resource
 import groovy.json.*
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
-import spock.lang.Specification
+import com.ratedpeople.support.CommonVariable
 import com.ratedpeople.support.DatabaseHelper
-import com.ratedpeople.support.DataValues
-import groovy.json.JsonBuilder
-import groovyx.net.http.ContentType
 /**
  * @author shabana.khanam
  *
  */
 
-class RegisterUserFunctionalTest extends AbstractHomeownerOld {
+class ResetPasswordFunctionalTest extends AbstractHomeowner {
 	
-	private static final String REGISTER_USER_HO_URI = DataValues.requestValues.get("USERSERVICE")+"v1.0/homeowners/register"
-	private static final String REGISTER_USER_TM_URI = DataValues.requestValues.get("USERSERVICE")+"v1.0/tradesmen/register"
-	private final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(DataValues.requestValues.get("URL"))
-	private static final GET_TOKEN_URI = DataValues.requestValues.get("AUTHSERVICE") + 'oauth/token'
-	private static String getToken
-	private static final ME_URI = DataValues.requestValues.get("USERSERVICE") +"v1.0/me"
+	private static final String REGISTER_USER_HO_URI = CommonVariable.USER_SERVICE_PREFIX + "v1.0/homeowners/register"
+	private static final String REGISTER_USER_TM_URI = CommonVariable.USER_SERVICE_PREFIX + "v1.0/tradesmen/register"
 	
+	private static String ACCESS_TOKEN
+
 //	def "Create  User TM"()
 //	{
 //		given:
@@ -74,7 +69,7 @@ class RegisterUserFunctionalTest extends AbstractHomeownerOld {
 			when:
 				HTTP_BUILDER.request(Method.POST){
 					headers.Accept = 'application/json'
-					uri.path = DataValues.requestValues.get("USERSERVICE")+"v1.0/users/"+USER_ID_DYNAMIC_HO+"/resetpassword"
+					uri.path = CommonVariable.USER_SERVICE_PREFIX + "v1.0/users/" + USER_ID_DYNAMIC_HO + "/resetpassword"
 					
 					println "Uri : " + uri
 					
@@ -94,12 +89,12 @@ class RegisterUserFunctionalTest extends AbstractHomeownerOld {
 				}
 						
 				try{
-					getToken = DatabaseHelper.select("select token from uaa.user_password_token where user_id= '${USER_ID_DYNAMIC_HO}'")
+					ACCESS_TOKEN = DatabaseHelper.select("select token from uaa.user_password_token where user_id= '${USER_ID_DYNAMIC_HO}'")
 					println "********************************"
-					println "Printing Token in Verify Reset Password  :"+getToken
-					if (getToken.startsWith("[{token")){
-						getToken = getToken.replace("[{token=", "").replace("}]","")
-						println "token is : " +getToken
+					println "Printing Token in Verify Reset Password  :"+ACCESS_TOKEN
+					if (ACCESS_TOKEN.startsWith("[{token")){
+						ACCESS_TOKEN = ACCESS_TOKEN.replace("[{token=", "").replace("}]","")
+						println "token is : " +ACCESS_TOKEN
 					}
 				}catch(Exception e){
 					println e.getMessage()
@@ -110,10 +105,10 @@ class RegisterUserFunctionalTest extends AbstractHomeownerOld {
 			
 				HTTP_BUILDER.request(Method.PUT){
 					headers.Accept = 'application/json'
-					uri.path = DataValues.requestValues.get("USERSERVICE")+"v1.0/users/"+USER_ID_DYNAMIC_HO+"/resetpassword"
+					uri.path = CommonVariable.USER_SERVICE_PREFIX + "v1.0/users/" + USER_ID_DYNAMIC_HO + "/resetpassword"
 					uri.query = [
-						token : getToken,
-						password : DataValues.requestValues.get("PASSWORD")
+						token : ACCESS_TOKEN,
+						password : CommonVariable.DEFAULT_PASSWORD
 					]
 					
 					println "Uri : " + uri
@@ -126,9 +121,9 @@ class RegisterUserFunctionalTest extends AbstractHomeownerOld {
 						
 						responseStatus = resp.statusLine.statusCode
 					}
-					responseStatus == DataValues.requestValues.get("STATUS201")
+					responseStatus == CommonVariable.STATUS_201
 				}
 			then:
-				responseStatus == DataValues.requestValues.get("STATUS200")
+				responseStatus == CommonVariable.STATUS_200
 		}
 }

@@ -4,12 +4,11 @@
 package com.ratedpeople.user.resource
 
 import groovy.json.*
+import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
 import spock.lang.Specification
-import groovyx.net.http.ContentType
-import com.ratedpeople.user.resource.AbstractTradesman;
-import com.ratedpeople.support.DataValues
+import com.ratedpeople.support.CommonVariable
 
 /**
  * @author shabana.khanam
@@ -17,12 +16,11 @@ import com.ratedpeople.support.DataValues
  */
 class AbstractTradesman extends Specification{
 	
-	private static final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(DataValues.requestValues.get("URL"))
+	public static final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(CommonVariable.SERVER_URL)
 	
-	private static final String REGISTER_USER_TM_URI = DataValues.requestValues.get("USERSERVICE")+"v1.0/tradesmen/register"
-	private static final GET_TOKEN_URI = DataValues.requestValues.get("AUTHSERVICE") + 'oauth/token'
-	private static final ME_URI = DataValues.requestValues.get("USERSERVICE") +"v1.0/me"
-	private static final STATUS_URI = DataValues.requestValues.get("USERSERVICE")+"v1.0/tradesmen/"
+	private static final String REGISTER_USER_TM_URI = CommonVariable.USER_SERVICE_PREFIX + "v1.0/tradesmen/register"
+	private static final STATUS_URI = CommonVariable.USER_SERVICE_PREFIX + "v1.0/tradesmen/"
+	protected static long RANDOM_MOBILE = Math.round(Math.random()*100000000);
 	
 	protected static String ACCESS_TOKEN_DYNAMIC_TM
 	protected static String REFRESH_TOKEN_DYNAMIC_TM
@@ -30,10 +28,7 @@ class AbstractTradesman extends Specification{
 	protected static String ACCESS_TOKEN_ADMIN
 	protected static String REFRESH_TOKEN_ADMIN
 	protected static String DYNAMIC_USER
-	
-	protected static long randomMobile = Math.round(Math.random()*1000);
-	
-	
+		
 	def "setupSpec"(){
 		String responseStatus
 		
@@ -62,13 +57,13 @@ class AbstractTradesman extends Specification{
 	
 	private static def createJsonUser(){
 		def json = new JsonBuilder()
-		DYNAMIC_USER = DataValues.requestValues.get("TMUSER")+System.currentTimeMillis()+"@gid.com"
+		DYNAMIC_USER = CommonVariable.TM_USER_PREFIX + System.currentTimeMillis()+"@gid.com"
 		json {
 			"email" DYNAMIC_USER
-			"password" DataValues.requestValues.get("PASSWORD")
+			"password" CommonVariable.DEFAULT_PASSWORD
 			"firstName" "tmprofile"
 			"lastName"  "Aws"
-			"phoneNumber" DataValues.requestValues.get("PHONE")+randomMobile
+			"phoneNumber" CommonVariable.DEFAULT_MOBILE_PREFIX + RANDOM_MOBILE
 		}
 		
 		println "Json is ${json.toString()}"
@@ -77,7 +72,7 @@ class AbstractTradesman extends Specification{
 
 	private static def createUser(def json){
 		def map = HTTP_BUILDER.request(Method.POST,ContentType.JSON) {
-			headers.'Authorization' = "Basic "+ DataValues.requestValues.get("CLIENT_ID").bytes.encodeBase64().toString()
+			headers.'Authorization' = "Basic "+ CommonVariable.DEFAULT_CLIENT_CREDENTIAL.bytes.encodeBase64().toString()
 			uri.path = REGISTER_USER_TM_URI
 			body = json.toString()
 			requestContentType = ContentType.JSON
@@ -91,12 +86,12 @@ class AbstractTradesman extends Specification{
 		String token = null
 		HTTP_BUILDER.request(Method.POST){
 			headers.Accept = 'application/json'
-			headers.'Authorization' = "Basic "+ DataValues.requestValues.get("CLIENT_ID").bytes.encodeBase64().toString()
-			uri.path = GET_TOKEN_URI
+			headers.'Authorization' = "Basic "+ CommonVariable.DEFAULT_CLIENT_CREDENTIAL.bytes.encodeBase64().toString()
+			uri.path = CommonVariable.DEFAULT_GET_TOKEN_URI
 			uri.query = [
-				grant_type: DataValues.requestValues.get("PASSWORD"),
+				grant_type: CommonVariable.DEFAULT_PASSWORD,
 				username: DYNAMIC_USER,
-				password:DataValues.requestValues.get("PASSWORD") ,
+				password:CommonVariable.DEFAULT_PASSWORD ,
 				scope: 'all'
 			]
 			
@@ -133,9 +128,8 @@ class AbstractTradesman extends Specification{
 				}
 			}
 			
-			
-			response.'404' = {
-				println 'Not found'
+			response.failure = { resp, reader -> 
+				println " stacktrace : "+reader.each{"$it"}
 			}
 		}
 	}
@@ -147,7 +141,7 @@ class AbstractTradesman extends Specification{
 		HTTP_BUILDER.request(Method.GET){
 			headers.Accept = 'application/json'
 			headers.'Authorization' = "Bearer " + ACCESS_TOKEN_DYNAMIC_TM
-			uri.path = ME_URI
+			uri.path = CommonVariable.DEFAULT_ME_URI
 			
 			println "Uri is " + uri
 			
@@ -174,10 +168,11 @@ class AbstractTradesman extends Specification{
 				}
 			}
 			
-			response.failure = { resp ->
+			response.failure = { resp, reader->
 				println "Request failed with status ${resp.status}"
 				println resp.toString()
 				println resp.statusLine.statusCode
+				println " stacktrace : "+reader.each{"$it"}
 			}
 		}
 	
@@ -188,12 +183,12 @@ class AbstractTradesman extends Specification{
 		String token = null
 		HTTP_BUILDER.request(Method.POST){
 			headers.Accept = 'application/json'
-			headers.'Authorization' = "Basic "+ DataValues.requestValues.get("CLIENT_ID").bytes.encodeBase64().toString()
-			uri.path = GET_TOKEN_URI
+			headers.'Authorization' = "Basic "+ CommonVariable.DEFAULT_CLIENT_CREDENTIAL.bytes.encodeBase64().toString()
+			uri.path = CommonVariable.DEFAULT_GET_TOKEN_URI
 			uri.query = [
-				grant_type: DataValues.requestValues.get("PASSWORD"),
-				username: DataValues.requestValues.get("ADMIN_USER"),
-				password:DataValues.requestValues.get("PASSWORD") ,
+				grant_type: CommonVariable.DEFAULT_PASSWORD,
+				username: CommonVariable.DEFAULT_ADMIN_USERNAME,
+				password:CommonVariable.DEFAULT_PASSWORD ,
 				scope: 'all'
 			]
 			println "Uri is " + uri
@@ -222,8 +217,11 @@ class AbstractTradesman extends Specification{
 			}
 			
 			
-			response.'404' = {
-				println 'Not found'
+			response.failure = { resp, reader->
+				println "Request failed with status ${resp.status}"
+				println resp.toString()
+				println resp.statusLine.statusCode
+				println " stacktrace : "+reader.each{"$it"}
 			}
 		}
 		
@@ -236,11 +234,11 @@ class AbstractTradesman extends Specification{
 		   headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_ADMIN
 		   uri.path = STATUS_URI+USER_ID_DYNAMIC_TM+"/status"
 		   uri.query = [
-			   status: DataValues.requestValues.get("HOSTATUS1"),
+			   status: CommonVariable.STATUS_ACTIVE,
 			   ]
 		   println "Uri is " + uri
-		   response.success =
-		   { resp, reader ->
+		   
+		   response.success = { resp, reader ->
 			   println "Success"
 			   println "Got response: ${resp.statusLine}"
 			   println "Content-Type: ${resp.headers.'Content-Type'}"
@@ -249,9 +247,13 @@ class AbstractTradesman extends Specification{
 				   println "Response data: status change "+"$it"
 	   		   }
 		   }
-		   response.'404' = {
-			   println 'Not found'
-		   }
+		   
+		   response.failure = { resp, reader->
+				println "Request failed with status ${resp.status}"
+				println resp.toString()
+				println resp.statusLine.statusCode
+				println " stacktrace : "+reader.each{"$it"}
+			}
 	   }
    }
 }

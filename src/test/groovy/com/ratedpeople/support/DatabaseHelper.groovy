@@ -4,9 +4,9 @@ import spock.lang.Specification
 import groovy.sql.Sql
 
 
-class DatabaseHelper {
+public abstract class DatabaseHelper {
 
-	def static sqlconn = Sql.newInstance(DataValues.requestValues.get("CONNECTURL"), DataValues.requestValues.get("DBUSERNAME"),DataValues.requestValues.get("DBPWD"), DataValues.requestValues.get("DBDRIVER"))
+	def static sqlconn = Sql.newInstance(CommonVariable.DB_URL, CommonVariable.DB_USERNAME,CommonVariable.DB_PWD, CommonVariable.DB_DRIVER)
 
 	static executeQuery(final String query){
 		sqlconn.execute(query)
