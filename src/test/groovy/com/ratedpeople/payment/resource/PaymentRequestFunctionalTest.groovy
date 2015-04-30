@@ -7,6 +7,8 @@ import groovy.json.*
 import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
+import java.time.LocalDate
+import spock.lang.IgnoreIf
 import com.ratedpeople.support.CommonVariable
 import com.ratedpeople.user.resource.AbstractUserToken
 
@@ -23,7 +25,9 @@ class PaymentRequestFunctionalTest extends AbstractUserToken{
 	 */
 	
 	private static final long RANDOM_JOB_ID = Math.round(Math.random()*1000);
+	private static final LocalDate IGNORE_TILL_DATE = new LocalDate(2015, 05, 5);
 	
+	@IgnoreIf({ LocalDate.now() < IGNORE_TILL_DATE})
 	def "test request payment "(){	
 		given:
 			String responseStatus = null
