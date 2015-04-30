@@ -21,6 +21,7 @@ class TakePaymentFunctionalTest extends AbstractUserToken{
 	private static final long RANDOM_JOB_ID = Math.round(Math.random()*1000);
 	private static final LocalDate IGNORE_TILL_DATE = new LocalDate(2015, 05, 5);
 	
+	@IgnoreIf({ LocalDate.now() < IGNORE_TILL_DATE})
 	def "setupSpec"(){
 		String responseStatus = null
 		def json = new JsonBuilder()

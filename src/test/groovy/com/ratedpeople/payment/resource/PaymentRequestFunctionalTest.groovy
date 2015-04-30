@@ -44,8 +44,8 @@ class PaymentRequestFunctionalTest extends AbstractUserToken{
 			println "Json is " +  json.toString()
 		when:
 			HTTP_BUILDER.request(Method.POST, ContentType.JSON){
-				uri.path = CommonVariable.PAYMENT_SERVICE_PREFIX + "v1.0/users/${USER_ID_HO}/jobs/${RANDOM_JOB_ID}"
-				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_HO
+				uri.path = CommonVariable.PAYMENT_SERVICE_PREFIX + "v1.0/users/${USER_ID_TM}/jobs/${RANDOM_JOB_ID}"
+				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
 				body = json.toString()
 				requestContentType = ContentType.JSON
 				
