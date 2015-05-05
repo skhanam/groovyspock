@@ -19,7 +19,7 @@ import com.ratedpeople.user.resource.AbstractUserToken
 class TakePaymentFunctionalTest extends AbstractUserToken{
 	
 	private static final long RANDOM_JOB_ID = Math.round(Math.random()*1000);
-	private static final LocalDate IGNORE_TILL_DATE = new LocalDate(2015, 05, 5);
+	private static final LocalDate IGNORE_TILL_DATE = new LocalDate(2015, 11, 5);
 	
 	def "setupSpec"(){
 		String responseStatus = null
