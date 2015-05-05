@@ -72,7 +72,51 @@ class CreateBankFunctionalTest extends AbstractTradesman{
 				responseStatus == CommonVariable.STATUS_201
 	}
 	
-	def "Create bank account Update"(){
+	
+	def "Get bank account"(){
+		given:
+				String responseStatus = null
+					
+		when:
+			HTTP_BUILDER.request(Method.GET, ContentType.JSON){
+				uri.path = BILLING_URI_PREFIX + USER_ID_DYNAMIC_TM + "/bankdetails"
+				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
+				requestContentType = ContentType.JSON
+				
+				println "Uri : " + uri
+				response.success = { resp, reader ->
+					println "Success"
+					println "Got response: ${resp.statusLine}"
+					println "Content-Type: ${resp.headers.'Content-Type'}"
+					
+					responseStatus = resp.statusLine.statusCode
+					
+					reader.each{
+						println "Token values : "+"$it"
+						
+						String token = "$it"
+						String key = token.substring(0, token.indexOf("="))
+						String value = token.substring(token.indexOf("=") + 1, token.length())
+						println key
+						println value
+					}
+				}
+				
+				response.failure = { resp, reader ->
+						println "Request failed with status ${resp.status}"
+						println " stacktrace : "+reader.each{"$it"}
+						responseStatus = resp.statusLine.statusCode
+					}
+			}
+		then:
+			responseStatus == CommonVariable.STATUS_200
+
+		}
+	
+	
+	
+	
+	def "Update bank account "(){
 		given:
 				String responseStatus = null
 				def json = new JsonBuilder()
@@ -123,5 +167,9 @@ class CreateBankFunctionalTest extends AbstractTradesman{
 		cleanup:
 			DatabaseHelper.executeQuery("delete from billing.bank_details where user_id = '${USER_ID_DYNAMIC_TM}'")
 		}
+	
+	
+	
+	
 
 }
