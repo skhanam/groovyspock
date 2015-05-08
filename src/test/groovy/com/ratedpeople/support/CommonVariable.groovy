@@ -4,16 +4,18 @@ package com.ratedpeople.support
 public abstract class CommonVariable {
 	
 	public static final String DB_URL = "jdbc:mysql://minerva.ratedcloud.net:3306/"
-	public static final String DB_USERNAME = "admin"
-	public static final String DB_PWD = "123456"
+	public static final String DB_USERNAME = "ratedpeople"
+	public static final String DB_PWD = "ratedpeople"
 	public static final String DB_DRIVER = "com.mysql.jdbc.Driver"
 	
 	public static final String SERVER_URL = "http://minerva.ratedcloud.net:8765"
+//	public static final String SERVER_URL = "http://davide-devbox.ratedcloud.net:8765"
 	public static final String USER_SERVICE_PREFIX = "/api/user/"
 	public static final String AUTHORIZATION_SERVER_PREFIX = "/api/uaa/"
 	public static final String PAYMENT_SERVICE_PREFIX = "/api/payment/"
 	public static final String BILLING_SERVICE_PREFIX = "/api/billing/"
 	public static final String HOPROFILE_SERVICE_PREFIX = "/api/hoprofile/"
+	public static final String JOB_SERVICE_PREFIX = "/api/chores/"
 	
 	public static final String DEFAULT_MOBILE_PREFIX = "07"
 	
@@ -89,4 +91,14 @@ public abstract class CommonVariable {
 	private static final String DEFAULT_IP = "12.12.12.12"
 	private static final String DEFAULT_CURRENCY = "GBP"
 	private static final String DEFAULT_AMOUNT = "1000"
+	
+	
+	/* Job section */
+	
+	private static final String NAME = "CLEANER"
+	private static final String DEFAULT_DESCRIPTION = "This is a test job with 30 or more character"
+	private static final String DEFAULT_HOURRATE = "12.00"
+
+	
+	
 }
