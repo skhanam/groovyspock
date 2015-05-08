@@ -129,7 +129,7 @@ class TMJobList extends AbstractUserToken {
 		when:
 		HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
 			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/1/invoice"
+			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/1/status"
 			println "uri job is : "+uri.path
 			body = json.toString()
 			uri.query = [

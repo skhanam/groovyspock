@@ -24,123 +24,57 @@ class JobTest extends AbstractHomeowner{
 	protected static long RANDOM_MOBILE = Math.round(Math.random()*100000000);
 	private static final String JOB_URI_PREFIX = CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/"
 	
-	
-	def "post a job"(){
-		given:
-				String responseStatus = null
-				def json = new JsonBuilder()
-				json {
-					"homeownerUserId" USER_ID_DYNAMIC_HO
-					"tradesmanUserId" CommonVariable.DEFAULT_TM_ID
-					"name" CommonVariable.NAME
-					"description"  CommonVariable.DEFAULT_DESCRIPTION
-					"hourRate" CommonVariable.DEFAULT_HOURRATE
-					"jobContactDetails" {
-						"email" "test@gid.com"
-						"mobilePhone" CommonVariable.DEFAULT_MOBILE_PREFIX  + RANDOM_MOBILE
-						"line1" CommonVariable.DEFAULT_LINE1
-						"city" CommonVariable.DEFAULT_CITY
-						"postcode" CommonVariable.DEFAULT_POSTCODE
-						
-					}
-				}
-		
-				println "Json is " +  json.toString()
-		when:
-				HTTP_BUILDER.request(Method.POST, ContentType.JSON){
-					uri.path =  JOB_URI_PREFIX + USER_ID_DYNAMIC_HO + "/jobs"
-					println "uri job is : "+uri.path
-					headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_HO
-					body = json.toString()
-					requestContentType = ContentType.JSON
-					
-					println "Uri : " + uri
-					response.success = { resp, reader ->
-						println "Success"
-						println "Got response: ${resp.statusLine}"
-						println "Content-Type: ${resp.headers.'Content-Type'}"
-						
-						responseStatus = resp.statusLine.statusCode
-						
-						reader.each{
-							println "Token values : "+"$it"
-							
-							String token = "$it"
-							String key = token.substring(0, token.indexOf("="))
-							String value = token.substring(token.indexOf("=") + 1, token.length())
-							println key
-							println value
-						}
-					}
-					
-					response.failure = { resp, reader -> 
-						println "Request failed with status ${resp.status}"
-						println " stacktrace : "+reader.each{"$it"}
-						responseStatus = resp.statusLine.statusCode
-					}
-				}
-		then:
-				responseStatus == CommonVariable.STATUS_201
+	def "setup"(){
+		HTTP_BUILDER.handler.failure = { resp, reader ->
+			[response:resp, reader:reader]
+		}
+		HTTP_BUILDER.handler.success = { resp, reader ->
+			[response:resp, reader:reader]
+		}
 	}
 	
+	
+   def "post a job Test"(){
+	given:
+		String  responseStatus
+		
+	when :
+		def response = postajob(createJsonPostaJob(""));
+		def  resp = response['response']
+		def reader = response['reader']
+		responseStatus = resp.status
+		println "response code :${resp.status}"
+		reader.each{
+			println "Response data: " + "$it"
+
+			String data = "$it"
+			
+		}
+		
+	then:
+		responseStatus == CommonVariable.STATUS_201
+	
+		
+	}
 	
 	
 	def "post a job with foul language"(){
 		given:
-				String responseStatus = null
-				def json = new JsonBuilder()
-				json {
-					"homeownerUserId" USER_ID_DYNAMIC_HO
-					"tradesmanUserId" CommonVariable.DEFAULT_TM_ID
-					"name" CommonVariable.NAME
-					"description"  CommonVariable.DEFAULT_DESCRIPTION +"conman"
-					"hourRate" CommonVariable.DEFAULT_HOURRATE
-					"jobContactDetails" {
-						"email" "test@gid.com"
-						"mobilePhone" CommonVariable.DEFAULT_MOBILE_PREFIX  + RANDOM_MOBILE
-						"line1" CommonVariable.DEFAULT_LINE1
-						"city" CommonVariable.DEFAULT_CITY
-						"postcode" CommonVariable.DEFAULT_POSTCODE
-						
-					}
-				}
+		String  responseStatus
 		
-				println "Json is " +  json.toString()
-		when:
-				HTTP_BUILDER.request(Method.POST, ContentType.JSON){
-					uri.path =  JOB_URI_PREFIX + USER_ID_DYNAMIC_HO + "/jobs"
-					println "uri job is : "+uri.path
-					headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_HO
-					body = json.toString()
-					requestContentType = ContentType.JSON
-					
-					println "Uri : " + uri
-					response.success = { resp, reader ->
-						println "Success"
-						println "Got response: ${resp.statusLine}"
-						println "Content-Type: ${resp.headers.'Content-Type'}"
-						
-						responseStatus = resp.statusLine.statusCode
-						
-						reader.each{
-							println "Token values : "+"$it"
-							
-							String token = "$it"
-							String key = token.substring(0, token.indexOf("="))
-							String value = token.substring(token.indexOf("=") + 1, token.length())
-							println key
-							println value
-						}
-					}
-					
-					response.failure = { resp, reader ->
-						println "Request failed with status ${resp.status}"
-						println " stacktrace : "+reader.each{"$it"}
-						responseStatus = resp.statusLine.statusCode
-					}
-				}
-		then:
-				responseStatus == CommonVariable.STATUS_400
+	when :
+		def response = postajob(createJsonPostaJob(" Abuse"));
+		def  resp = response['response']
+		def reader = response['reader']
+		responseStatus = resp.status
+		println "response code :${resp.status}"
+		reader.each{
+			println "Response data: " + "$it"
+			String data = "$it"
+		}
+		
+	then:
+		responseStatus == CommonVariable.STATUS_400
 	}
 	
 	
@@ -148,8 +82,17 @@ class JobTest extends AbstractHomeowner{
 	def "Get Job List for HomeOwner"() {
 		given:
 		String responseStatus = null
+		def response = postajob(createJsonPostaJob("Get List"));
+		def  resp = response['response']
+		def reader = response['reader']
+		responseStatus = resp.status
+		println "response code :${resp.status}"
+		reader.each{
+			println "Response data: " + "$it"
+			String data = "$it"
+		}
 		when:
-		HTTP_BUILDER.request(Method.GET, ContentType.JSON){
+		def map = HTTP_BUILDER.request(Method.GET, ContentType.JSON){
 			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_HO
 			uri.path =  JOB_URI_PREFIX + USER_ID_DYNAMIC_HO + "/hojobs"
 			uri.query = [
@@ -157,78 +100,102 @@ class JobTest extends AbstractHomeowner{
 				offset:0,
 				limit:10
 				]
-			println "uri job is : "+uri.path
-
 			requestContentType = ContentType.JSON
+			println "uri job is : "+uri.path
+			}
+			resp = map['response']
+			reader = map['reader']
+	
+			responseStatus = resp.status
+			println "response code :${resp.status}"
 			
-			println "Uri : " + uri
-			response.success = { resp, reader ->
-				println "Success"
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-				
-				responseStatus = resp.statusLine.statusCode
-				
-				reader.each{
-					println "Token values : "+"$it"
-					
-					String token = "$it"
-					String key = token.substring(0, token.indexOf("="))
-					String value = token.substring(token.indexOf("=") + 1, token.length())
-					println key
-					println value
-				}
+			reader.each{
+				println "Response data:for getting a  List of Jobs for HO " + "$it"
+				String data = "$it"
 			}
 			
-			response.failure = { resp, reader ->
-				println "Request failed with status ${resp.status}"
-				println " stacktrace : "+reader.each{"$it"}
-				responseStatus = resp.statusLine.statusCode
-			}
-		}
 		then:
 		responseStatus == CommonVariable.STATUS_200
 	}
 	
 	
 	
-	def "Get Single Job List Homeowner"(){
-		given:
+	def "Get Single Job Homeowner"(){
+	given:
 		String responseStatus = null
-		when:
-		HTTP_BUILDER.request(Method.GET, ContentType.JSON){
-			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_HO
-			uri.path =  JOB_URI_PREFIX +USER_ID_DYNAMIC_HO+"/hojobs/1"
-			println "uri job is : "+uri.path
-			requestContentType = ContentType.JSON
-			
-			println "Uri : " + uri
-			response.success = { resp, reader ->
-				println "Success"
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-				
-				responseStatus = resp.statusLine.statusCode
-				
-				reader.each{
-					println "Token values : "+"$it"
-					
-					String token = "$it"
-					String key = token.substring(0, token.indexOf("="))
-					String value = token.substring(token.indexOf("=") + 1, token.length())
-					println key
-					println value
-				}
-			}
-			
-			response.failure = { resp, reader ->
-				println "Request failed with status ${resp.status}"
-				println " stacktrace : "+reader.each{"$it"}
-				responseStatus = resp.statusLine.statusCode
-			}
+		def response = postajob(createJsonPostaJob(""));
+		def  resp = response['response']
+		def reader = response['reader']
+		responseStatus = resp.status
+		println "response code :${resp.status}"
+		reader.each{
+			println "Response data: " + "$it"
+			String data = "$it"
 		}
-		then:
+		def getJobId = DatabaseHelper.select("select id from job.job where homeowner_user_id = '${USER_ID_DYNAMIC_HO}' ")
+		println "id of Job is :"+getJobId
+		if (getJobId.startsWith("[{id")){
+			getJobId = getJobId.replace("[{id=", "").replace("}]","")
+			println "JobId is : " +getJobId
+		}
+	when:
+		def map = HTTP_BUILDER.request(Method.GET, ContentType.JSON){
+			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_HO
+			uri.path =  JOB_URI_PREFIX + USER_ID_DYNAMIC_HO + "/hojobs/"+getJobId
+			requestContentType = ContentType.JSON
+			println "uri job is : "+uri.path
+			}
+			resp = map['response']
+			reader = map['reader']
+	
+			responseStatus = resp.status
+			println "response code :${resp.status}"
+			
+			reader.each{
+				println "Response data:for getting a  List of Jobs for HO " + "$it"
+				String data = "$it"
+			}
+			
+	then:
 		responseStatus == CommonVariable.STATUS_201
 		}
+	
+	
+	private def postajob(def json){
+		def map = HTTP_BUILDER.request(Method.POST, ContentType.JSON)
+		{
+			uri.path =  JOB_URI_PREFIX + USER_ID_DYNAMIC_HO + "/jobs"
+			println "uri job is : "+uri.path
+			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_HO
+			body = json.toString()
+			requestContentType = ContentType.JSON
+		}
+		println "return map : "+map
+		return map;
+			
+	}
+	
+	
+	private def createJsonPostaJob(String adddescription){
+		def json = new JsonBuilder()
+		json {
+			"homeownerUserId" USER_ID_DYNAMIC_HO
+			"tradesmanUserId" CommonVariable.DEFAULT_TM_ID
+			"name" CommonVariable.NAME
+			"description"  CommonVariable.DEFAULT_DESCRIPTION + adddescription
+			"hourRate" CommonVariable.DEFAULT_HOURRATE
+			"jobContactDetails" {
+				"email" "test@gid.com"
+				"mobilePhone" CommonVariable.DEFAULT_MOBILE_PREFIX  + RANDOM_MOBILE
+				"line1" CommonVariable.DEFAULT_LINE1
+				"city" CommonVariable.DEFAULT_CITY
+				"postcode" CommonVariable.DEFAULT_POSTCODE
+				
+			}
+		}
+
+		println "Json is   : ${json.toString()}"
+		return json;
+	}
 	
 }
