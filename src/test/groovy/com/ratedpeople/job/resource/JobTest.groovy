@@ -21,7 +21,7 @@ import groovyx.net.http.HTTPBuilder
 class JobTest extends AbstractHomeowner{
 
 	private final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(CommonVariable.SERVER_URL)
-	protected static long RANDOM_MOBILE = Math.round(Math.random()*100000000);
+	protected static long RANDOM_MOBILE = Math.round(Math.random()*1000000000);
 	private static final String JOB_URI_PREFIX = CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/"
 	
 	def "setup"(){
@@ -132,7 +132,7 @@ class JobTest extends AbstractHomeowner{
 			println "Response data: " + "$it"
 			String data = "$it"
 		}
-		def getJobId = DatabaseHelper.select("select id from job.job where homeowner_user_id = '${USER_ID_DYNAMIC_HO}' ")
+		def getJobId = DatabaseHelper.select("select id from job.job where homeowner_user_id = '${USER_ID_DYNAMIC_HO}' limit 1 ")
 		println "id of Job is :"+getJobId
 		if (getJobId.startsWith("[{id")){
 			getJobId = getJobId.replace("[{id=", "").replace("}]","")
@@ -157,7 +157,7 @@ class JobTest extends AbstractHomeowner{
 			}
 			
 	then:
-		responseStatus == CommonVariable.STATUS_201
+		responseStatus == CommonVariable.STATUS_200
 		}
 	
 	
