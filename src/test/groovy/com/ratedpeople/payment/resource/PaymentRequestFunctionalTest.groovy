@@ -23,7 +23,7 @@ class PaymentRequestFunctionalTest extends AbstractUserToken{
 	 */
 	
 	private static final long RANDOM_JOB_ID = Math.round(Math.random()*1000);
-
+/*
 	def "test request payment "(){	
 		given:
 			String responseStatus = null
@@ -77,4 +77,6 @@ class PaymentRequestFunctionalTest extends AbstractUserToken{
 		then:
 			responseStatus == CommonVariable.STATUS_201
 	}
+	*/
 }
+

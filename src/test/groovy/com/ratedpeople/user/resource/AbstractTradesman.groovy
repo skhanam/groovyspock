@@ -109,12 +109,12 @@ class AbstractTradesman extends Specification{
 					{
 						token = tokentemp.substring(tokentemp.indexOf("=") + 1, tokentemp.length())
 							ACCESS_TOKEN_DYNAMIC_TM = tokentemp.substring(tokentemp.indexOf("=") + 1, tokentemp.length())
-							println "Access Token Dynamic HO : " + ACCESS_TOKEN_DYNAMIC_TM
+							println "Access Token Dynamic TM : " + ACCESS_TOKEN_DYNAMIC_TM
 						}
 					if (tokentemp.startsWith("refresh_token"))
 					{
 						REFRESH_TOKEN_DYNAMIC_TM = tokentemp.substring(tokentemp.indexOf("=") + 1, tokentemp.length())
-							println "Refresh Token Dynamic HO : " + REFRESH_TOKEN_DYNAMIC_TM
+							println "Refresh Token Dynamic TM : " + REFRESH_TOKEN_DYNAMIC_TM
 					}
 					if (tokentemp.startsWith("user_id"))
 					{
