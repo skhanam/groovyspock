@@ -134,7 +134,7 @@ class TMJobList extends AbstractUserToken {
 		json {
 			"jobId" jobRejectId
 			"rejectedBy" USER_ID_TM
-			"description" "I am not available"
+			"description" "I am not available hence i am rejecting the job sorry for inconvenience caused"
 		}
 		when:
 		HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
@@ -173,7 +173,7 @@ class TMJobList extends AbstractUserToken {
 			}
 		}
 		then:
-		responseStatus == CommonVariable.STATUS_201
+		responseStatus == CommonVariable.STATUS_200
 		}
 	
 	
