@@ -16,6 +16,7 @@ public abstract class CommonVariable {
 	public static final String BILLING_SERVICE_PREFIX = "/api/billing/"
 	public static final String HOPROFILE_SERVICE_PREFIX = "/api/hoprofile/"
 	public static final String JOB_SERVICE_PREFIX = "/api/chores/"
+	public static final String TMPROFILE_SERVICE_PREFIX = "/api/tmprofile/"
 	
 	public static final String DEFAULT_MOBILE_PREFIX = "07"
 	
@@ -54,6 +55,11 @@ public abstract class CommonVariable {
 	/* Homeowner Details Section */
 	public static final String DEFAULT_HO_FIRSTNAME = "hoprofile"
 	public static final String DEFAULT_HO_LASTNAME = "aws"
+	
+	
+	/* tradesman Details Section */
+	public static final String DEFAULT_TM_FIRSTNAME = "tmprofile"
+	public static final String DEFAULT_TM_LASTNAME = "aws"
 
 	/* User Status */
 	public static final String STATUS_ACTIVE = "ACTIVE"
