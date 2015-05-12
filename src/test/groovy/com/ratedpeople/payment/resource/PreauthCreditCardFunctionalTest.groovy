@@ -29,7 +29,7 @@ class PreauthCreditCardFunctionalTest extends AbstractUserToken{
 				"fromUserId" USER_ID_HO
 				"toUserId" USER_ID_TM
 				"jobId" RANDOM_JOB_ID
-				"token" CommonVariable.DEFAULT_CC_TOKEN
+				"ccToken" CommonVariable.DEFAULT_CC_TOKEN
 				"currency" CommonVariable.DEFAULT_CURRENCY
 				"skrillTransaction" ""
 				"amount" CommonVariable.DEFAULT_AMOUNT
