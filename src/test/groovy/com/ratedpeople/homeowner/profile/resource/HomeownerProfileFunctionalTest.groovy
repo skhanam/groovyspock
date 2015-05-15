@@ -64,7 +64,7 @@ class HomeownerProfileFunctionalTest  extends AbstractHomeowner{
 	def "Add HO Address"() {
 		given:
 			String responseCode = null
-			def json = getAddress()
+			def json = getAddress("")
 			println "Json is " +  json.toString()
 			println "********************************"
 			println "Test Running .... Add HO Address"
@@ -94,18 +94,12 @@ class HomeownerProfileFunctionalTest  extends AbstractHomeowner{
 			responseCode == CommonVariable.STATUS_201
 	}
 
+
+	
 	def "Update HO Address"(){
 		given:
 			String responseCode = null
-			def json = new JsonBuilder()
-			
-			json {
-				"postcode" CommonVariable.DEFAULT_POSTCODE
-				"line1" CommonVariable.DEFAULT_LINE1 + "Update"
-				"line2" CommonVariable.DEFAULT_LINE2 + "Update"
-				"city"  CommonVariable.DEFAULT_CITY
-				"country" CommonVariable.DEFAULT_COUNTRY
-			}
+			def json = getAddress("Update")
 			
 			println "Json is " +  json.toString()
 			println "********************************"
@@ -136,7 +130,7 @@ class HomeownerProfileFunctionalTest  extends AbstractHomeowner{
 
 	def "Get HO address"(){
 		given:
-		def json = getAddress()
+		def json = getAddress("")
 		String responseCode = null
 		println "********************************"
 		println "Test running ..  " +"Get HO address"
@@ -261,12 +255,12 @@ class HomeownerProfileFunctionalTest  extends AbstractHomeowner{
 		return randomString
 	}
 	
-	private def getAddress(){
+	private def getAddress(String additionInfo){
 		def json = new JsonBuilder()
 		json {
 			"postcode" CommonVariable.DEFAULT_POSTCODE
-			"line1" CommonVariable.DEFAULT_LINE1
-			"line2" CommonVariable.DEFAULT_LINE2
+			"line1" CommonVariable.DEFAULT_LINE1+additionInfo
+			"line2" CommonVariable.DEFAULT_LINE2+additionInfo
 			"city"  CommonVariable.DEFAULT_CITY
 			"country" CommonVariable.DEFAULT_COUNTRY
 		}

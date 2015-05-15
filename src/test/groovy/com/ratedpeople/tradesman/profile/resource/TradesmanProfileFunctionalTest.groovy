@@ -128,7 +128,7 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 			
 			println "Json is " +  json.toString()
 			println "********************************"
-			println "Test running ..  Update Tradesman Profile"
+			println "Test running ..  Add Tradesman Profile"
 		when:
 			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
 				uri.path = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"+USER_ID_DYNAMIC_TM+"/trades"
@@ -161,12 +161,325 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 	
 	
 	
+	def "Update  Tradesman Trade"(){
+		given :
+			String responseCode = null
+			def json = new JsonBuilder()
+			json{
+//				"tradeName" CommonVariable.NAME
+				"tradeName" "gardening"
+				"rate" CommonVariable.DEFAULT_HOURRATE
+			}
+			
+			println "Json is " +  json.toString()
+			println "********************************"
+			println "Test running ..  Update Tradesman Trade"
+		when:
+			HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
+				uri.path = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"+USER_ID_DYNAMIC_TM+"/trades"
+				println "uri.path   :"+uri.path
+				println "Access Token TM : "+ ACCESS_TOKEN_DYNAMIC_TM
+				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
+				body = json.toString()
+				requestContentType = ContentType.JSON
+				println "Uri is " + uri
+				
+				response.success = { resp, reader ->
+					println "Success"
+					println "Got response: ${resp.statusLine}"
+					println "Content-Type: ${resp.headers.'Content-Type'}"
+					responseCode = resp.statusLine.statusCode
+					reader.each{
+						"Results  : "+ "$it"
+					}
+				}
+	
+				response.failure = { resp, reader ->
+					responseCode = resp.statusLine.statusCode
+					println " stacktrace : "+reader.each{"$it"}
+				}
+			}
+		then:
+			responseCode == CommonVariable.STATUS_201
+	}
 	
 	
 	
+	def "Add TM Address"() {
+		given:
+			String responseCode = null
+			def json = getAddress("")
+			println "Json is " +  json.toString()
+			println "********************************"
+			println "Test Running .... Add TM Address"
+		when:
+			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
+				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_TM + "/addresses"
+				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
+				body = json.toString()
+				requestContentType = ContentType.JSON
+				println "Uri is " + uri
+	
+				response.success = { resp, reader ->
+					println "Success"
+					println "Got response: ${resp.statusLine}"
+					println "Content-Type: ${resp.headers.'Content-Type'}"
+					responseCode = resp.statusLine.statusCode
+					reader.each{ "Results  : "+ "$it" }
+				}
+	
+				response.failure = { resp, reader ->
+					println " stacktrace : "+reader.each{"$it"}
+					println 'Not found'
+					responseCode = resp.statusLine.statusCode
+				}
+			}
+		then:
+			responseCode == CommonVariable.STATUS_201
+	}
 	
 	
+	def "Get TM address"(){
+		given:
+		def json = getAddress("")
+		String responseCode = null
+		println "********************************"
+		println "Test running ..  " +"Get HO address"
+		when:
+			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
+				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_TM + "/addresses"
+				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
+				body = json.toString()
+				requestContentType = ContentType.JSON
+				println "Uri is " + uri
+	
+				response.success = { resp, reader ->
+					println "Success"
+					println "Got response: ${resp.statusLine}"
+					println "Content-Type: ${resp.headers.'Content-Type'}"
+					responseCode = resp.statusLine.statusCode
+					reader.each{ "Results  : "+ "$it" }
+				}
+	
+				response.failure = { resp, reader ->
+					println " stacktrace : "+reader.each{"$it"}
+					println 'Not found'
+					responseCode = resp.statusLine.statusCode
+				}
+			}
+	
+			HTTP_BUILDER.request(Method.GET){
+				headers.Accept = 'application/json'
+				headers.'Authorization' = "Bearer " + ACCESS_TOKEN_DYNAMIC_TM
+				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_TM + "/addresses"
+	
+				println "Uri is " + uri
+	
+				response.success = { resp, reader ->
+					println "Success"
+					responseCode = resp.statusLine.statusCode
+					println "Got response: ${resp.statusLine}"
+					println "Content-Type: ${resp.headers.'Content-Type'}"
+	
+					reader.each{
+						println "Response data: " + "$it"
+	
+						String user = "$it"
+						if (user.startsWith("userId")){
+							user = user.replace("userId=", "")
+							println "User values : " +user
+						}
+					}
+				}
+				
+				response.failure = { resp, reader ->
+					println "Request failed with status ${resp.status}"
+					reader.each{ println "Error values : "+"$it" }
+					responseStatus = resp.statusLine.statusCode
+				}
+			}
+		then:
+			responseCode == CommonVariable.STATUS_200
+	}
+	
+	def "Update TM Address"(){
+		given:
+			String responseCode = null
+			def json = getAddress("Update")
+			println "Json is " +  json.toString()
+			println "********************************"
+			println "Test Running .... Update TM Address"
+		when:
+			HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
+				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_TM + "/addresses"
+				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
+				body = json.toString()
+				requestContentType = ContentType.JSON
+				println "Uri is " + uri
+				response.success = { resp, reader ->
+					println "Success"
+					println "Got response: ${resp.statusLine}"
+					println "Content-Type: ${resp.headers.'Content-Type'}"
+					responseCode = resp.statusLine.statusCode
+					reader.each{ "Results  : "+ "$it" }
+				}
+				response.failure = { resp, reader ->
+					println " stacktrace : "+reader.each{"$it"}
+					println 'Not found'
+					responseCode = resp.statusLine.statusCode
+				}
+			}
+		then:
+			responseCode == CommonVariable.STATUS_200
+	}
+
 	
 	
+	def "Post a Tradesman Workingarea"(){
+		given:
+			String responseCode = null
+			def json = getWorkingarea("")
+			println "Json is " +  json.toString()
+			println "********************************"
+			println "Test Running .... Post TM Workingarea"
+		when:
+			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
+				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_TM + "/workingarea"
+				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
+				body = json.toString()
+				requestContentType = ContentType.JSON
+				println "Uri is " + uri
+				response.success = { resp, reader ->
+					println "Success"
+					println "Got response: ${resp.statusLine}"
+					println "Content-Type: ${resp.headers.'Content-Type'}"
+					responseCode = resp.statusLine.statusCode
+					reader.each{ "Results  : "+ "$it" }
+				}
+				response.failure = { resp, reader ->
+					println " stacktrace : "+reader.each{"$it"}
+					println 'Not found'
+					responseCode = resp.statusLine.statusCode
+				}
+			}
+		then:
+			responseCode == CommonVariable.STATUS_200
+	}
+	
+	def "Update a Tradesman Workingarea"(){
+		given:
+			String responseCode = null
+			def json = getWorkingarea("")
+			println "Json is " +  json.toString()
+			println "********************************"
+			println "Test Running .... Update TM Workingarea"
+		when:
+			HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
+				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_TM + "/workingarea/1"
+				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
+				body = json.toString()
+				requestContentType = ContentType.JSON
+				println "Uri is " + uri
+				response.success = { resp, reader ->
+					println "Success"
+					println "Got response: ${resp.statusLine}"
+					println "Content-Type: ${resp.headers.'Content-Type'}"
+					responseCode = resp.statusLine.statusCode
+					reader.each{ "Results  : "+ "$it" }
+				}
+				response.failure = { resp, reader ->
+					println " stacktrace : "+reader.each{"$it"}
+					println 'Not found'
+					responseCode = resp.statusLine.statusCode
+				}
+			}
+		then:
+			responseCode == CommonVariable.STATUS_200
+	}
+	
+	def "Get a Tradesman Workingarea"(){
+		given:
+			String responseCode = null
+			println "********************************"
+			println "Test Running .... Get TM Workingarea"
+		when:
+			HTTP_BUILDER.request(Method.GET,ContentType.JSON){
+				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_TM + "/workingarea"
+				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
+				requestContentType = ContentType.JSON
+				println "Uri is " + uri
+				response.success = { resp, reader ->
+					println "Success"
+					println "Got response: ${resp.statusLine}"
+					println "Content-Type: ${resp.headers.'Content-Type'}"
+					responseCode = resp.statusLine.statusCode
+					reader.each{ "Results  : "+ "$it" }
+				}
+				response.failure = { resp, reader ->
+					println " stacktrace : "+reader.each{"$it"}
+					println 'Not found'
+					responseCode = resp.statusLine.statusCode
+				}
+			}
+		then:
+			responseCode == CommonVariable.STATUS_200
+	}
+	
+/*
+	def "Post a Image for Tradesman"(){
+		given:
+			String responseCode = null
+			println "********************************"
+			println "Test Running .... Post a Image TM"
+		when:
+			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
+				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_TM + "/images"
+				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
+				File file = new File("Tulips.jpg")
+				requestContentType = ContentType.JSON
+				println "Uri is " + uri
+				response.success = { resp, reader ->
+					println "Success"
+					println "Got response: ${resp.statusLine}"
+					println "Content-Type: ${resp.headers.'Content-Type'}"
+					responseCode = resp.statusLine.statusCode
+					reader.each{ "Results  : "+ "$it" }
+				}
+				response.failure = { resp, reader ->
+					println " stacktrace : "+reader.each{"$it"}
+					println 'Not found'
+					responseCode = resp.statusLine.statusCode
+				}
+			}
+		then:
+			responseCode == CommonVariable.STATUS_200
+	}
+
+	 */
+	
+	
+	private def getAddress(String additionalInfo){
+		def json = new JsonBuilder()
+		json {
+			"postcode" CommonVariable.DEFAULT_POSTCODE
+			"line1" CommonVariable.DEFAULT_LINE1+additionalInfo
+			"line2" CommonVariable.DEFAULT_LINE2+additionalInfo
+			"city"  CommonVariable.DEFAULT_CITY
+			"country" CommonVariable.DEFAULT_COUNTRY
+		}
+		return json;
+	}
+	
+	private def getWorkingarea(String additionalInfo){
+		def json = new JsonBuilder()
+		json {
+			"longitude" CommonVariable.DEFAULT_POSTCODE
+			"latitude" CommonVariable.DEFAULT_LINE1+additionalInfo
+			"radius" CommonVariable.DEFAULT_LINE2+additionalInfo
+			"city"  CommonVariable.DEFAULT_CITY
+			"country" CommonVariable.DEFAULT_COUNTRY
+		}
+		return json;
+	}
 	
 }

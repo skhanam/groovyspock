@@ -104,6 +104,14 @@ public abstract class CommonVariable {
 	private static final String NAME = "CLEANER"
 	private static final String DEFAULT_DESCRIPTION = "This is a test job with 30 or more character"
 	private static final String DEFAULT_HOURRATE = "12.00"
+	
+	/* Working area */
+	
+	private static final String DEFAULT_LONGITUDE = "-0.057477"
+	private static final String DEFAULT_LATITUDE = "51.5009274587931"
+	private static final String DEFAULT_RADIUS = "3"
+	
+	
 
 	
 	
