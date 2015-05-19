@@ -12,6 +12,9 @@ import groovy.json.JsonBuilder
 import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
+import org.apache.http.entity.mime.MultipartEntity
+import org.apache.http.entity.mime.content.ByteArrayBody
+import org.apache.http.entity.mime.content.FileBody
 /**
  * @author shabana.khanam
  *
@@ -121,7 +124,6 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 			String responseCode = null
 			def json = new JsonBuilder()
 			json{
-//				"tradeName" CommonVariable.NAME
 				"tradeName" "gardening"
 				"rate" CommonVariable.DEFAULT_HOURRATE
 			}
@@ -166,7 +168,6 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 			String responseCode = null
 			def json = new JsonBuilder()
 			json{
-//				"tradeName" CommonVariable.NAME
 				"tradeName" "gardening"
 				"rate" CommonVariable.DEFAULT_HOURRATE
 			}
@@ -200,7 +201,7 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 				}
 			}
 		then:
-			responseCode == CommonVariable.STATUS_201
+			responseCode == CommonVariable.STATUS_200
 	}
 	
 	
@@ -298,9 +299,12 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 					responseStatus = resp.statusLine.statusCode
 				}
 			}
+			
 		then:
 			responseCode == CommonVariable.STATUS_200
 	}
+	
+	
 	
 	def "Update TM Address"(){
 		given:
@@ -308,10 +312,38 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 			def json = getAddress("Update")
 			println "Json is " +  json.toString()
 			println "********************************"
+			println "Test Running .... Add TM Address"
+			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
+				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_TM + "/addresses"
+				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
+				body = json.toString()
+				requestContentType = ContentType.JSON
+				println "Uri is " + uri
+	
+				response.success = { resp, reader ->
+					println "Success"
+					println "Got response: ${resp.statusLine}"
+					println "Content-Type: ${resp.headers.'Content-Type'}"
+					responseCode = resp.statusLine.statusCode
+					reader.each{ "Results  : "+ "$it" }
+				}
+	
+				response.failure = { resp, reader ->
+					println " stacktrace : "+reader.each{"$it"}
+					println 'Not found'
+					responseCode = resp.statusLine.statusCode
+				}
+			}
+			def  getaddressID = DatabaseHelper.select("select id from tmprofile.address where updated_by =  '${USER_ID_DYNAMIC_TM}'")
+			if (getaddressID.startsWith("[{id=")){
+				getaddressID = getaddressID.replace("[{id=", "").replace("}]","")
+				println "Address id : " +getaddressID
+			}
+			println "********************************"
 			println "Test Running .... Update TM Address"
 		when:
 			HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
-				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_TM + "/addresses"
+				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_TM + "/addresses/"+getaddressID
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
 				body = json.toString()
 				requestContentType = ContentType.JSON
@@ -363,19 +395,50 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 				}
 			}
 		then:
-			responseCode == CommonVariable.STATUS_200
+			responseCode == CommonVariable.STATUS_201
 	}
 	
+	
+	/*
+	 * There is a  big GID-324 which needs fixing
+	 * 
+	 */
 	def "Update a Tradesman Workingarea"(){
 		given:
 			String responseCode = null
 			def json = getWorkingarea("")
 			println "Json is " +  json.toString()
 			println "********************************"
-			println "Test Running .... Update TM Workingarea"
+			println "Test Running .... Add TM Workingarea"
+			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
+				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_TM + "/workingarea"
+				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
+				body = json.toString()
+				requestContentType = ContentType.JSON
+				println "Uri is " + uri
+				response.success = { resp, reader ->
+					println "Success"
+					println "Got response: ${resp.statusLine}"
+					println "Content-Type: ${resp.headers.'Content-Type'}"
+					responseCode = resp.statusLine.statusCode
+					reader.each{ "Results  : "+ "$it" }
+				}
+				response.failure = { resp, reader ->
+					println " stacktrace : "+reader.each{"$it"}
+					println 'Not found'
+					responseCode = resp.statusLine.statusCode
+				}
+			}
+			def  getworkingID = DatabaseHelper.select("select id from tmprofile.working_area where updated_by =  '${USER_ID_DYNAMIC_TM}'")
+			if (getworkingID.startsWith("[{id=")){
+				getworkingID = getworkingID.replace("[{id=", "").replace("}]","")
+				println "Address id : " +getworkingID
+			}
 		when:
+		println "********************************"
+		println "Test Running .... Update TM Workingarea"
 			HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
-				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_TM + "/workingarea/1"
+				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_TM + "/workingarea/"+getworkingID
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
 				body = json.toString()
 				requestContentType = ContentType.JSON
@@ -400,9 +463,32 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 	def "Get a Tradesman Workingarea"(){
 		given:
 			String responseCode = null
+			def json = getWorkingarea("")
+			println "Json is " +  json.toString()
 			println "********************************"
-			println "Test Running .... Get TM Workingarea"
+			println "Test Running .... Add TM Workingarea"
+			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
+				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_TM + "/workingarea"
+				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
+				body = json.toString()
+				requestContentType = ContentType.JSON
+				println "Uri is " + uri
+				response.success = { resp, reader ->
+					println "Success"
+					println "Got response: ${resp.statusLine}"
+					println "Content-Type: ${resp.headers.'Content-Type'}"
+					responseCode = resp.statusLine.statusCode
+					reader.each{ "Results  : "+ "$it" }
+				}
+				response.failure = { resp, reader ->
+					println " stacktrace : "+reader.each{"$it"}
+					println 'Not found'
+					responseCode = resp.statusLine.statusCode
+				}
+			}
 		when:
+		println "********************************"
+		println "Test Running .... Get TM Workingarea"
 			HTTP_BUILDER.request(Method.GET,ContentType.JSON){
 				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_TM + "/workingarea"
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
@@ -425,17 +511,81 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 			responseCode == CommonVariable.STATUS_200
 	}
 	
-/*
+
 	def "Post a Image for Tradesman"(){
 		given:
 			String responseCode = null
 			println "********************************"
 			println "Test Running .... Post a Image TM"
 		when:
+
 			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
+				req -> 
 				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_TM + "/images"
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
-				File file = new File("Tulips.jpg")
+				requestContentType = 'multipart/form-data'
+				MultipartEntity entity = new MultipartEntity()
+				def file = new File('src/test/resources/imageTest1.jpg');
+				entity.addPart("file",new ByteArrayBody(file.getBytes(), 'src/test/resources/imageTest1.jpg'))
+				req.entity = entity
+				println "Uri is " + uri
+				response.success = 
+				{ resp, reader ->
+					println "Success"
+					println "Got response: ${resp.statusLine}"
+					println "Content-Type: ${resp.headers.'Content-Type'}"
+					responseCode = resp.statusLine.statusCode
+					reader.each{ "Results  : "+ "$it" }
+				}
+				response.failure = 
+				{ resp, reader ->
+					println " stacktrace : "+reader.each{"$it"}
+					println 'Not found'
+					responseCode = resp.statusLine.statusCode
+				}
+			}
+		then:
+			responseCode == CommonVariable.STATUS_201
+	}
+
+	 
+	def "Get a Image from Tradesman profile"(){
+		given:
+			String responseCode = null
+			println "********************************"
+			println "Test Running .... Post TM Image profile"
+			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
+				req ->
+				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_TM + "/images"
+				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
+				requestContentType = 'multipart/form-data'
+				MultipartEntity entity = new MultipartEntity()
+				def file = new File('src/test/resources/imageTest1.jpg');
+				entity.addPart("file",new ByteArrayBody(file.getBytes(), 'src/test/resources/imageTest1.jpg'))
+				req.entity = entity
+				println "Uri is " + uri
+				response.success =
+				{ resp, reader ->
+					println "Success"
+					println "Got response: ${resp.statusLine}"
+					println "Content-Type: ${resp.headers.'Content-Type'}"
+					responseCode = resp.statusLine.statusCode
+					reader.each{ "Results  : "+ "$it" }
+				}
+				response.failure =
+				{ resp, reader ->
+					println " stacktrace : "+reader.each{"$it"}
+					println 'Not found'
+					responseCode = resp.statusLine.statusCode
+				}
+			}
+			Thread.sleep(3000);
+		when:
+		println "********************************"
+		println "Test Running .... Get Image to TM Profile"
+			HTTP_BUILDER.request(Method.GET,ContentType.JSON){
+				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_TM + "/images"
+				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
 				requestContentType = ContentType.JSON
 				println "Uri is " + uri
 				response.success = { resp, reader ->
@@ -454,9 +604,6 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 		then:
 			responseCode == CommonVariable.STATUS_200
 	}
-
-	 */
-	
 	
 	private def getAddress(String additionalInfo){
 		def json = new JsonBuilder()
@@ -473,11 +620,9 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 	private def getWorkingarea(String additionalInfo){
 		def json = new JsonBuilder()
 		json {
-			"longitude" CommonVariable.DEFAULT_POSTCODE
-			"latitude" CommonVariable.DEFAULT_LINE1+additionalInfo
-			"radius" CommonVariable.DEFAULT_LINE2+additionalInfo
-			"city"  CommonVariable.DEFAULT_CITY
-			"country" CommonVariable.DEFAULT_COUNTRY
+			"longitude" CommonVariable.DEFAULT_LONGITUDE
+			"latitude" CommonVariable.DEFAULT_LATITUDE
+			"radius" CommonVariable.DEFAULT_RADIUS+additionalInfo
 		}
 		return json;
 	}
