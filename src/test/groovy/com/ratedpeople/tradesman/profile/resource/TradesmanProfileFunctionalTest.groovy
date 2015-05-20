@@ -614,22 +614,14 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 			String responseCode = null
 			def json = new JsonBuilder()
 			json {
-				"reacheableFlag" "true"
+				"reacheableFlag" true
 				}
-
 			println "Json is " +  json.toString()
-			println "********************************"
-			println "Test Running .... TM Availability"
-			def userId = DatabaseHelper.select("select user_id  from uaa.tradesman where tradesman_status_id = 1 limit 1")
-			if (userId.startsWith("[{id")){
-				userId = userId.replace("[{id=", "").replace("}]","")
-				println ("Job Id is : " +userId)
-			}
     when:
 		println "********************************"
 		println "Test Running .... Update TM Workingarea"
 			HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
-				uri.path = PROFILE_PREFIX + userId + "/availability/"
+				uri.path = PROFILE_PREFIX +USER_ID_DYNAMIC_TM  + "/availability/"
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
 				body = json.toString()
 				requestContentType = ContentType.JSON
@@ -652,7 +644,34 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 	}
 	
 	
-	
+	def "Get a Tradesman Availability"(){
+	given:
+			String responseCode = null
+			
+	when:
+		println "********************************"
+		println "Test Running .... Update TM Workingarea"
+			HTTP_BUILDER.request(Method.GET,ContentType.JSON){
+				uri.path = PROFILE_PREFIX +USER_ID_DYNAMIC_TM+"/availability/"
+				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
+				requestContentType = ContentType.JSON
+				println "Uri is " + uri
+				response.success = { resp, reader ->
+					println "Success"
+					println "Got response: ${resp.statusLine}"
+					println "Content-Type: ${resp.headers.'Content-Type'}"
+					responseCode = resp.statusLine.statusCode
+					reader.each{ "Results  : "+ "$it" }
+				}
+				response.failure = { resp, reader ->
+					println " stacktrace : "+reader.each{"$it"}
+					println 'Not found'
+					responseCode = resp.statusLine.statusCode
+				}
+			}
+		then:
+			responseCode == CommonVariable.STATUS_200
+	}
 	
 	
 	
