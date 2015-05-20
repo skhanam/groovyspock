@@ -24,7 +24,7 @@ class TMJobList extends AbstractUserToken {
 	private final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(CommonVariable.SERVER_URL)
 	protected static long RANDOM_MOBILE = Math.round(Math.random()*100000000);
 	private static final String JOB_URI_PREFIX = CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/"
-	
+	/*
 	def "Get Tradesman Job List"(){
 	given:
 	String responseStatus = null
@@ -69,9 +69,9 @@ class TMJobList extends AbstractUserToken {
 	responseStatus == CommonVariable.STATUS_200
 	}
 	
+	*/
 	
-	
-	
+	/*
 	def "Tradesman Accept Job"(){
 		given:
 		String responseStatus = null
@@ -120,8 +120,8 @@ class TMJobList extends AbstractUserToken {
 		}
 	
 	
-	
-	
+	*/
+	/*
 	def "Tradesman Reject Job"(){
 		given:
 		String responseStatus = null
@@ -177,10 +177,10 @@ class TMJobList extends AbstractUserToken {
 		}
 	
 	
+	*/
 	
 	
-	
-	
+	/*
 	
 	def "Get Single Job List Tradesman"(){
 		given:
@@ -227,13 +227,13 @@ class TMJobList extends AbstractUserToken {
 		responseStatus == CommonVariable.STATUS_200
 		}
 	
-	
+	*/
 	
 	/*
 	 * Need to change this test when fully implemented for start & complete status
 	 * change the query
 	 */
-	
+	/*
 	def "Raise an Invoice by Tradesman"(){
 		given:
 		String responseStatus = null
@@ -283,7 +283,7 @@ class TMJobList extends AbstractUserToken {
 		responseStatus == CommonVariable.STATUS_200
 		}
 	
-	
+	*/
 	
 	
 	
