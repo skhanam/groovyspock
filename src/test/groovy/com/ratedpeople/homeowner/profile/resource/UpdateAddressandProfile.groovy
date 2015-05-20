@@ -16,7 +16,7 @@ import com.ratedpeople.user.resource.AbstractUserToken
 class UpdateAddressandProfile extends AbstractUserToken{
 
 	private final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(CommonVariable.SERVER_URL)
-	protected static long RANDOM_MOBILE = Math.round(Math.random()*100000000);
+	protected static long RANDOM_MOBILE = Math.round(Math.random()*10000);
 	
 	def "Update Homeowner Profile"(){	
 		given :		
@@ -28,7 +28,7 @@ class UpdateAddressandProfile extends AbstractUserToken{
 				"lastName" CommonVariable.DEFAULT_HO_LASTNAME
 				"email" CommonVariable.DEFAULT_HO_USERNAME
 				"phone" {
-					"mobilePhone" CommonVariable.DEFAULT_MOBILE_PREFIX  + RANDOM_MOBILE
+					"mobilePhone" CommonVariable.DEFAULT_MOBILE_PREFIX  + (829300000+RANDOM_MOBILE)
 				} 
 		
 			}	
