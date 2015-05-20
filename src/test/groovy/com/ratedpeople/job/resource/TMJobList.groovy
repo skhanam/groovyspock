@@ -120,6 +120,107 @@ class TMJobList extends AbstractUserToken {
 		}
 	
 	
+	def "Tradesman Start Job"(){
+		given:
+		String responseStatus = null
+		def jobId = DatabaseHelper.select("select id  from job.job where job_status_id = 2 limit 1")
+		if (jobId.startsWith("[{id")){
+			jobId = jobId.replace("[{id=", "").replace("}]","")
+			println ("Job Id is : " +jobId)
+		}
+		def json = getWorkingLatitude(jobId)
+		when:
+		HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
+			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
+			body = json.toString()
+			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+jobId+"/start"
+			println "uri job is : "+uri.path
+			requestContentType = ContentType.JSON
+			
+			println "Uri : " + uri
+			response.success = { resp, reader ->
+				println "Success"
+				println "Got response: ${resp.statusLine}"
+				println "Content-Type: ${resp.headers.'Content-Type'}"
+				
+				responseStatus = resp.statusLine.statusCode
+				
+				reader.each{
+					println "Token values : "+"$it"
+					
+					String token = "$it"
+					String key = token.substring(0, token.indexOf("="))
+					String value = token.substring(token.indexOf("=") + 1, token.length())
+					println key
+					println value
+				}
+			}
+			
+			response.failure = { resp, reader ->
+				println "Request failed with status ${resp.status}"
+				println " stacktrace : "+reader.each{"$it"}
+				responseStatus = resp.statusLine.statusCode
+			}
+		}
+		then:
+		responseStatus == CommonVariable.STATUS_200
+	}
+	
+	
+	
+	def "Tradesman Complete Job"(){
+		given:
+		String responseStatus = null
+		def jobrefId = DatabaseHelper.select("select id  from job.job where job_status_id = 4 limit 1")
+		if (jobrefId.startsWith("[{id")){
+			jobrefId = jobrefId.replace("[{id=", "").replace("}]","")
+			println ("Job Id is : " +jobrefId)
+		}
+		def json = new JsonBuilder()
+		json {
+			"jobId" jobrefId
+			"stopLatitude" "10.00"
+			"stopLongitude" "11.00"
+		}
+		when:
+		HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
+			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
+			body = json.toString()
+			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+jobrefId+"/complete"
+			println "uri job is : "+uri.path
+			requestContentType = ContentType.JSON
+			
+			println "Uri : " + uri
+			response.success = { resp, reader ->
+				println "Success"
+				println "Got response: ${resp.statusLine}"
+				println "Content-Type: ${resp.headers.'Content-Type'}"
+				
+				responseStatus = resp.statusLine.statusCode
+				
+				reader.each{
+					println "Token values : "+"$it"
+					
+					String token = "$it"
+					String key = token.substring(0, token.indexOf("="))
+					String value = token.substring(token.indexOf("=") + 1, token.length())
+					println key
+					println value
+				}
+			}
+			
+			response.failure = { resp, reader ->
+				println "Request failed with status ${resp.status}"
+				println " stacktrace : "+reader.each{"$it"}
+				responseStatus = resp.statusLine.statusCode
+			}
+		}
+		then:
+		responseStatus == CommonVariable.STATUS_200
+	}
+
+	
+	
 	
 	
 	def "Tradesman Reject Job"(){
@@ -229,15 +330,12 @@ class TMJobList extends AbstractUserToken {
 	
 	
 	
-	/*
-	 * Need to change this test when fully implemented for start & complete status
-	 * change the query
-	 */
+	
 	
 	def "Raise an Invoice by Tradesman"(){
 		given:
 		String responseStatus = null
-		def jobRaiseInvoice = DatabaseHelper.select("select id  from job.job where job_status_id = 2 limit 1")
+		def jobRaiseInvoice = DatabaseHelper.select("select id  from job.job where job_status_id = 6 limit 1")
 		if (jobRaiseInvoice.startsWith("[{id")){
 			jobRaiseInvoice = jobRaiseInvoice.replace("[{id=", "").replace("}]","")
 			println ("Job Id is : " +jobRaiseInvoice)
@@ -287,7 +385,16 @@ class TMJobList extends AbstractUserToken {
 	
 	
 	
-	
+	private def getWorkingLatitude(String additionalInfo){
+		def json = new JsonBuilder()
+		json {
+			"jobId" additionalInfo
+			"startLatitude" CommonVariable.DEFAULT_LONGITUDE
+			"startLongitude" CommonVariable.DEFAULT_LATITUDE
+			
+		}
+		return json;
+	}
 	
 	
 	
