@@ -219,10 +219,7 @@ class TMJobList extends AbstractUserToken {
 		responseStatus == CommonVariable.STATUS_200
 	}
 
-	
-	
-	
-	
+
 	def "Tradesman Reject Job"(){
 		given:
 		String responseStatus = null
@@ -276,12 +273,7 @@ class TMJobList extends AbstractUserToken {
 		then:
 		responseStatus == CommonVariable.STATUS_200
 		}
-	
-	
-	
-	
-	
-	
+
 	
 	def "Get Single Job List Tradesman"(){
 		given:
@@ -328,10 +320,7 @@ class TMJobList extends AbstractUserToken {
 		responseStatus == CommonVariable.STATUS_200
 		}
 	
-	
-	
-	
-	
+
 	def "Raise an Invoice by Tradesman"(){
 		given:
 		String responseStatus = null
@@ -380,8 +369,7 @@ class TMJobList extends AbstractUserToken {
 		then:
 		responseStatus == CommonVariable.STATUS_200
 		}
-	
-	
+
 	
 	
 	
@@ -395,13 +383,6 @@ class TMJobList extends AbstractUserToken {
 		}
 		return json;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 }
