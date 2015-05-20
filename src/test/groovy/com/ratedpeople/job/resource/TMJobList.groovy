@@ -168,10 +168,67 @@ class TMJobList extends AbstractUserToken {
 	
 	
 	
-	def "Tradesman Complete Job"(){
+	
+	def "Tradesman Pause Job"(){
 		given:
 		String responseStatus = null
 		def jobrefId = DatabaseHelper.select("select id  from job.job where job_status_id = 4 limit 1")
+		if (jobrefId.startsWith("[{id")){
+			jobrefId = jobrefId.replace("[{id=", "").replace("}]","")
+			println ("Job Id is : " +jobrefId)
+		}
+		def json = new JsonBuilder()
+		json {
+			"jobId" jobrefId
+			"stopLatitude" "10.00"
+			"stopLongitude" "11.00"
+		}
+		when:
+		HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
+			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
+			body = json.toString()
+			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+jobrefId+"/pause"
+			println "uri job is : "+uri.path
+			requestContentType = ContentType.JSON
+			
+			println "Uri : " + uri
+			response.success = { resp, reader ->
+				println "Success"
+				println "Got response: ${resp.statusLine}"
+				println "Content-Type: ${resp.headers.'Content-Type'}"
+				
+				responseStatus = resp.statusLine.statusCode
+				
+				reader.each{
+					println "Token values : "+"$it"
+					
+					String token = "$it"
+					String key = token.substring(0, token.indexOf("="))
+					String value = token.substring(token.indexOf("=") + 1, token.length())
+					println key
+					println value
+				}
+			}
+			
+			response.failure = { resp, reader ->
+				println "Request failed with status ${resp.status}"
+				println " stacktrace : "+reader.each{"$it"}
+				responseStatus = resp.statusLine.statusCode
+			}
+		}
+		then:
+		responseStatus == CommonVariable.STATUS_200
+	}
+	
+	
+	
+	
+	
+	
+	def "Tradesman Complete Job"(){
+		given:
+		String responseStatus = null
+		def jobrefId = DatabaseHelper.select("select id  from job.job where job_status_id = 5 limit 1")
 		if (jobrefId.startsWith("[{id")){
 			jobrefId = jobrefId.replace("[{id=", "").replace("}]","")
 			println ("Job Id is : " +jobrefId)
