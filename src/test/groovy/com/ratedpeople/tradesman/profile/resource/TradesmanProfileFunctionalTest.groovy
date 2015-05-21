@@ -399,10 +399,7 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 	}
 	
 	
-	/*
-	 * There is a  big GID-324 which needs fixing
-	 * 
-	 */
+	
 	def "Update a Tradesman Workingarea"(){
 		given:
 			String responseCode = null
@@ -470,7 +467,7 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 	def "Get a Tradesman Workingarea"(){
 		given:
 			String responseCode = null
-			def json = getWorkingarea("")
+			def json = getWorkingarea(0)
 			println "Json is " +  json.toString()
 			println "********************************"
 			println "Test Running .... Add TM Workingarea"
