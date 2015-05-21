@@ -12,7 +12,7 @@ import groovy.json.JsonBuilder
 import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
-import org.apache.http.entity.mime.MultipartEntity
+import org.apache.http.entity.mime.MultipartEntityBuilder
 import org.apache.http.entity.mime.content.ByteArrayBody
 import org.apache.http.entity.mime.content.FileBody
 /**
@@ -524,10 +524,10 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_TM + "/images"
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
 				requestContentType = 'multipart/form-data'
-				MultipartEntity entity = new MultipartEntity()
+				MultipartEntityBuilder entity = new MultipartEntityBuilder()
 				def file = new File('src/test/resources/imageTest1.jpg');
 				entity.addPart("file",new ByteArrayBody(file.getBytes(), 'src/test/resources/imageTest1.jpg'))
-				req.entity = entity
+				req.entity = entity.build();
 				println "Uri is " + uri
 				response.success = 
 				{ resp, reader ->
@@ -559,10 +559,10 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_TM + "/images"
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
 				requestContentType = 'multipart/form-data'
-				MultipartEntity entity = new MultipartEntity()
+				MultipartEntityBuilder entity = new MultipartEntityBuilder()
 				def file = new File('src/test/resources/imageTest1.jpg');
 				entity.addPart("file",new ByteArrayBody(file.getBytes(), 'src/test/resources/imageTest1.jpg'))
-				req.entity = entity
+				req.entity = entity.build();
 				println "Uri is " + uri
 				response.success =
 				{ resp, reader ->
@@ -614,12 +614,12 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 			String responseCode = null
 			def json = new JsonBuilder()
 			json {
-				"reacheableFlag" true
+				"reacheableFlag" "true"
 				}
 			println "Json is " +  json.toString()
     when:
 		println "********************************"
-		println "Test Running .... Update TM Workingarea"
+		println "Test Running .... Update Tradesman Availability"
 			HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
 				uri.path = PROFILE_PREFIX +USER_ID_DYNAMIC_TM  + "/availability/"
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
