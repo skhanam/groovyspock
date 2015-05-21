@@ -370,7 +370,7 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 	def "Post a Tradesman Workingarea"(){
 		given:
 			String responseCode = null
-			def json = getWorkingarea("")
+			def json = getWorkingarea(0)
 			println "Json is " +  json.toString()
 			println "********************************"
 			println "Test Running .... Post TM Workingarea"
@@ -406,7 +406,7 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 	def "Update a Tradesman Workingarea"(){
 		given:
 			String responseCode = null
-			def json = getWorkingarea("")
+			def json = getWorkingarea(1)
 			println "Json is " +  json.toString()
 			println "********************************"
 			println "Test Running .... Add TM Workingarea"
@@ -434,13 +434,20 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 				getworkingID = getworkingID.replace("[{id=", "").replace("}]","")
 				println "Address id : " +getworkingID
 			}
+			def jsonOne = new JsonBuilder()
+			jsonOne {
+				"id" getworkingID
+				"longitude" CommonVariable.DEFAULT_LONGITUDE
+				"latitude" CommonVariable.DEFAULT_LATITUDE
+				"radius" CommonVariable.DEFAULT_RADIUS
+			}
 		when:
-		println "********************************"
-		println "Test Running .... Update TM Workingarea"
+			println "********************************"
+			println "Test Running .... Update TM Workingarea"
 			HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
 				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_TM + "/workingarea/"+getworkingID
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
-				body = json.toString()
+				body = jsonOne.toString()
 				requestContentType = ContentType.JSON
 				println "Uri is " + uri
 				response.success = { resp, reader ->
@@ -692,7 +699,7 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 		return json;
 	}
 	
-	private def getWorkingarea(String additionalInfo){
+	private def getWorkingarea(int additionalInfo){
 		def json = new JsonBuilder()
 		json {
 			"longitude" CommonVariable.DEFAULT_LONGITUDE

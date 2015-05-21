@@ -109,7 +109,7 @@ public abstract class CommonVariable {
 	
 	private static final String DEFAULT_LONGITUDE = "-0.057477"
 	private static final String DEFAULT_LATITUDE = "51.5009274587931"
-	private static final String DEFAULT_RADIUS = "3"
+	private static final String DEFAULT_RADIUS = "1"
 	
 	
 
