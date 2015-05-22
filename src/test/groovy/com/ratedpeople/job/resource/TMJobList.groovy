@@ -75,15 +75,16 @@ class TMJobList extends AbstractUserToken {
 	def "Tradesman Accept Job"(){
 		given:
 		String responseStatus = null
-		def jobId = DatabaseHelper.select("select id  from job.job where job_status_id = 1 limit 1")
-		if (jobId.startsWith("[{id")){
-			jobId = jobId.replace("[{id=", "").replace("}]","")
-			println ("Job Id is : " +jobId)
-		}
+//		def jobId = DatabaseHelper.select("select id  from job.job where job_status_id = 1 limit 1")
+//		if (jobId.startsWith("[{id")){
+//			jobId = jobId.replace("[{id=", "").replace("}]","")
+//			println ("Job Id is : " +jobId)
+//		}
 		when:
 		HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
 			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+jobId+"/status"
+//			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+jobId+"/status"
+			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+1+"/status"
 			println "uri job is : "+uri.path
 			uri.query = [
 				jobStatus:'SCHEDULED'
@@ -117,23 +118,25 @@ class TMJobList extends AbstractUserToken {
 		}
 		then:
 		responseStatus == CommonVariable.STATUS_200
+		cleanup:
+		DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id = 1 WHERE id = 1")
 		}
 	
 	
 	def "Tradesman Start Job"(){
 		given:
 		String responseStatus = null
-		def jobId = DatabaseHelper.select("select id  from job.job where job_status_id = 2 limit 1")
-		if (jobId.startsWith("[{id")){
-			jobId = jobId.replace("[{id=", "").replace("}]","")
-			println ("Job Id is : " +jobId)
-		}
-		def json = getWorkingLatitude(jobId)
+//		def jobId = DatabaseHelper.select("select id  from job.job where job_status_id = 2 limit 1")
+//		if (jobId.startsWith("[{id")){
+//			jobId = jobId.replace("[{id=", "").replace("}]","")
+//			println ("Job Id is : " +jobId)
+//		}
+		def json = getWorkingLatitude("2")
 		when:
 		HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
 			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
 			body = json.toString()
-			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+jobId+"/start"
+			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+2+"/start"
 			println "uri job is : "+uri.path
 			requestContentType = ContentType.JSON
 			
@@ -144,7 +147,6 @@ class TMJobList extends AbstractUserToken {
 				println "Content-Type: ${resp.headers.'Content-Type'}"
 				
 				responseStatus = resp.statusLine.statusCode
-				
 				reader.each{
 					println "Token values : "+"$it"
 					
@@ -164,6 +166,8 @@ class TMJobList extends AbstractUserToken {
 		}
 		then:
 		responseStatus == CommonVariable.STATUS_200
+		cleanup:
+		DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id = 2 WHERE id = 2")
 	}
 	
 	
@@ -172,22 +176,23 @@ class TMJobList extends AbstractUserToken {
 	def "Tradesman Pause Job"(){
 		given:
 		String responseStatus = null
-		def jobrefId = DatabaseHelper.select("select id  from job.job where job_status_id = 4 limit 1")
-		if (jobrefId.startsWith("[{id")){
-			jobrefId = jobrefId.replace("[{id=", "").replace("}]","")
-			println ("Job Id is : " +jobrefId)
-		}
+//		def jobrefId = DatabaseHelper.select("select id  from job.job where job_status_id = 4 limit 1")
+//		if (jobrefId.startsWith("[{id")){
+//			jobrefId = jobrefId.replace("[{id=", "").replace("}]","")
+//			println ("Job Id is : " +jobrefId)
+//		}
 		def json = new JsonBuilder()
 		json {
-			"jobId" jobrefId
+			"jobId" 4
 			"stopLatitude" "10.00"
 			"stopLongitude" "11.00"
 		}
+//		def json = getWorkingLatitude("4")
 		when:
 		HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
 			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
 			body = json.toString()
-			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+jobrefId+"/pause"
+			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+4+"/pause"
 			println "uri job is : "+uri.path
 			requestContentType = ContentType.JSON
 			
@@ -218,6 +223,9 @@ class TMJobList extends AbstractUserToken {
 		}
 		then:
 		responseStatus == CommonVariable.STATUS_200
+		cleanup:
+		DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id = 4 WHERE id = 4")
+		DatabaseHelper.executeQuery("UPDATE job.job_tracking SET stop_ts = null  WHERE job_id = 4")
 	}
 	
 	
@@ -228,14 +236,14 @@ class TMJobList extends AbstractUserToken {
 	def "Tradesman Complete Job"(){
 		given:
 		String responseStatus = null
-		def jobrefId = DatabaseHelper.select("select id  from job.job where job_status_id = 5 limit 1")
-		if (jobrefId.startsWith("[{id")){
-			jobrefId = jobrefId.replace("[{id=", "").replace("}]","")
-			println ("Job Id is : " +jobrefId)
-		}
+//		def jobrefId = DatabaseHelper.select("select id  from job.job where job_status_id = 5 limit 1")
+//		if (jobrefId.startsWith("[{id")){
+//			jobrefId = jobrefId.replace("[{id=", "").replace("}]","")
+//			println ("Job Id is : " +jobrefId)
+//		}
 		def json = new JsonBuilder()
 		json {
-			"jobId" jobrefId
+			"jobId" 5
 			"stopLatitude" "10.00"
 			"stopLongitude" "11.00"
 		}
@@ -243,7 +251,7 @@ class TMJobList extends AbstractUserToken {
 		HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
 			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
 			body = json.toString()
-			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+jobrefId+"/complete"
+			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+5+"/complete"
 			println "uri job is : "+uri.path
 			requestContentType = ContentType.JSON
 			
@@ -274,27 +282,30 @@ class TMJobList extends AbstractUserToken {
 		}
 		then:
 		responseStatus == CommonVariable.STATUS_200
+		cleanup:
+		DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id = 5 WHERE id = 5")
+		DatabaseHelper.executeQuery("UPDATE job.job_tracking SET stop_ts = null  WHERE job_id = 5")
 	}
 
 
 	def "Tradesman Reject Job"(){
 		given:
 		String responseStatus = null
-		def jobRejectId = DatabaseHelper.select("select id  from job.job where job_status_id = 1 limit 1")
-		if (jobRejectId.startsWith("[{id")){
-			jobRejectId = jobRejectId.replace("[{id=", "").replace("}]","")
-			println ("Job Id is : " +jobRejectId)
-		}
+//		def jobRejectId = DatabaseHelper.select("select id  from job.job where job_status_id = 1 limit 1")
+//		if (jobRejectId.startsWith("[{id")){
+//			jobRejectId = jobRejectId.replace("[{id=", "").replace("}]","")
+//			println ("Job Id is : " +jobRejectId)
+//		}
 		def json = new JsonBuilder()
 		json {
-			"jobId" jobRejectId
+			"jobId" 3
 			"rejectedBy" USER_ID_TM
 			"description" "I am not available hence i am rejecting the job sorry for inconvenience caused"
 		}
 		when:
 		HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
 			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+jobRejectId+"/status"
+			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+3+"/status"
 			println "uri job is : "+uri.path
 			body = json.toString()
 			uri.query = [
@@ -329,6 +340,8 @@ class TMJobList extends AbstractUserToken {
 		}
 		then:
 		responseStatus == CommonVariable.STATUS_200
+//		cleanup:
+//		DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id = 1 WHERE id = 3")
 		}
 
 	

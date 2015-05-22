@@ -27,4 +27,3 @@ test {
 	testLogging.showStandardStreams = true
   }
 
-
