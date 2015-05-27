@@ -554,6 +554,7 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 	 
 	def "Get a Image from Tradesman profile"(){
 		given:
+			Thread.sleep(1000)
 			String responseCode = null
 			println "********************************"
 			println "Test Running .... Post TM Image profile"
