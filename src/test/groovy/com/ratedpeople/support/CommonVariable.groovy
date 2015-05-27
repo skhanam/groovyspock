@@ -8,6 +8,7 @@ public abstract class CommonVariable {
 	public static final String DB_PWD = "ratedpeople"
 	public static final String DB_DRIVER = "com.mysql.jdbc.Driver"
 	
+//	public static final String SERVER_URL = System.getProperty('env')
 	public static final String SERVER_URL = "http://minerva.ratedcloud.net:8765"
 //	public static final String SERVER_URL = "http://davide-devbox.ratedcloud.net:8765"
 	public static final String USER_SERVICE_PREFIX = "/api/user/"
@@ -101,9 +102,10 @@ public abstract class CommonVariable {
 	
 	/* Job section */
 	
-	private static final String NAME = "CLEANER"
+	private static final String DEFAULT_TITLE = "CLEANER"
 	private static final String DEFAULT_DESCRIPTION = "This is a test job with 30 or more character"
 	private static final String DEFAULT_HOURRATE = "12.00"
+	private static final String DEFAULT_TRADE_ID = "2"
 	
 	/* Working area */
 	

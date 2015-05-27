@@ -21,7 +21,6 @@ import groovyx.net.http.HTTPBuilder
  */
 class TMJobList extends AbstractUserToken {
 	
-	private final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(CommonVariable.SERVER_URL)
 	protected static long RANDOM_MOBILE = Math.round(Math.random()*100000000);
 	private static final String JOB_URI_PREFIX = CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/"
 	

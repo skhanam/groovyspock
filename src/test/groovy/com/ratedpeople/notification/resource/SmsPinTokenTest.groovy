@@ -16,7 +16,6 @@ import com.ratedpeople.user.resource.AbstractUserToken
  */
 class SmsPinTokenTest extends AbstractUserToken{
 	
-	private static final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(CommonVariable.SERVER_URL)
     private static String getpinToken
 	
 	def testRegeneratePINToken(){

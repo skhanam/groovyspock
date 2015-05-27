@@ -21,7 +21,6 @@ import org.apache.http.entity.mime.content.FileBody
  */
 class TradesmanProfileFunctionalTest extends AbstractTradesman {
 
-	private final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(CommonVariable.SERVER_URL)
 	private static final PROFILE_PREFIX = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"
 	
 	def "Get TradesMan Profile"() {

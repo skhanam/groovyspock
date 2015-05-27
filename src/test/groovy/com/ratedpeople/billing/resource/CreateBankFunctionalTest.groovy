@@ -20,6 +20,7 @@ class CreateBankFunctionalTest extends AbstractTradesman{
 
 	private static final String BILLING_URI_PREFIX = CommonVariable.BILLING_SERVICE_PREFIX + "v1.0/users/"
 	private static Integer RANDOM_BANK_ACCOUNT = (Math.random()*9000000)+10000000;
+//	private final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(CommonVariable.SERVER_URL)
 	
 	def "Create bank account Success"(){	
 		given:

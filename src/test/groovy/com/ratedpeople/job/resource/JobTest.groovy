@@ -20,7 +20,6 @@ import groovyx.net.http.HTTPBuilder
  */
 class JobTest extends AbstractHomeowner{
 
-	private final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(CommonVariable.SERVER_URL)
 	protected static long RANDOM_MOBILE = Math.round(Math.random()*1000000000);
 	private static final String JOB_URI_PREFIX = CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/"
 	
@@ -96,7 +95,7 @@ class JobTest extends AbstractHomeowner{
 			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_HO
 			uri.path =  JOB_URI_PREFIX + USER_ID_DYNAMIC_HO + "/hojobs"
 			uri.query = [
-				jobStatus:'REQUESTED',
+				jobStatus:'PENDING',
 				offset:0,
 				limit:10
 				]
@@ -179,9 +178,10 @@ class JobTest extends AbstractHomeowner{
 	private def createJsonPostaJob(String adddescription){
 		def json = new JsonBuilder()
 		json {
+			"tradeId" CommonVariable.DEFAULT_TRADE_ID
 			"homeownerUserId" USER_ID_DYNAMIC_HO
 			"tradesmanUserId" CommonVariable.DEFAULT_TM_ID
-			"name" CommonVariable.NAME
+			"title"	CommonVariable.DEFAULT_TITLE
 			"description"  CommonVariable.DEFAULT_DESCRIPTION + adddescription
 			"hourRate" CommonVariable.DEFAULT_HOURRATE
 			"jobContactDetails" {
@@ -190,6 +190,8 @@ class JobTest extends AbstractHomeowner{
 				"line1" CommonVariable.DEFAULT_LINE1
 				"city" CommonVariable.DEFAULT_CITY
 				"postcode" CommonVariable.DEFAULT_POSTCODE
+				"longitude" CommonVariable.DEFAULT_LONGITUDE
+				"latitude" CommonVariable.DEFAULT_LATITUDE
 				
 			}
 		}

@@ -16,8 +16,9 @@ import com.ratedpeople.support.CommonVariable
  */
 class AbstractTradesman extends Specification{
 	
-	public static final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(CommonVariable.SERVER_URL)
+//	public static final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(java.lang.System.getenv('SERVER_URL'))
 	
+	public static final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(CommonVariable.SERVER_URL)
 	private static final String REGISTER_USER_TM_URI = CommonVariable.USER_SERVICE_PREFIX + "v1.0/tradesmen/register"
 	private static final STATUS_URI = CommonVariable.USER_SERVICE_PREFIX + "v1.0/tradesmen/"
 	protected static long RANDOM_MOBILE = Math.round(Math.random()*100000000)+100000000;
@@ -33,6 +34,7 @@ class AbstractTradesman extends Specification{
 		String responseStatus
 		
 		def response = createUser(createJsonUser());
+		println "response :  "+response
 		
 		response.success = { resp, reader ->
 			println "Success"
@@ -67,6 +69,7 @@ class AbstractTradesman extends Specification{
 		}
 		
 		println "Json is ${json.toString()}"
+//		println java.lang.System.getenv('SERVER_URL')
 		return json;
 	}
 
