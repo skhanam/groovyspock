@@ -27,6 +27,8 @@ class TMJobList extends AbstractUserToken {
 	def "Get Tradesman Job List"(){
 	given:
 	String responseStatus = null
+	println "********************************"
+	println "Test running ..  " +"Get Tradesman Job List"
 	when:
 	HTTP_BUILDER.request(Method.GET, ContentType.JSON){
 		headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
@@ -83,11 +85,11 @@ class TMJobList extends AbstractUserToken {
 		HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
 			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
 //			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+jobId+"/status"
-			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+1+"/status"
+			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+2+"/schedule"
 			println "uri job is : "+uri.path
-			uri.query = [
-				jobStatus:'SCHEDULED'
-				]
+//			uri.query = [
+//				jobStatus:'accept'
+//				]
 			requestContentType = ContentType.JSON
 			
 			println "Uri : " + uri
@@ -98,54 +100,6 @@ class TMJobList extends AbstractUserToken {
 				
 				responseStatus = resp.statusLine.statusCode
 				
-				reader.each{
-					println "Token values : "+"$it"
-					
-					String token = "$it"
-					String key = token.substring(0, token.indexOf("="))
-					String value = token.substring(token.indexOf("=") + 1, token.length())
-					println key
-					println value
-				}
-			}
-			
-			response.failure = { resp, reader ->
-				println "Request failed with status ${resp.status}"
-				println " stacktrace : "+reader.each{"$it"}
-				responseStatus = resp.statusLine.statusCode
-			}
-		}
-		then:
-		responseStatus == CommonVariable.STATUS_200
-		cleanup:
-		DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id = 1 WHERE id = 1")
-		}
-	
-	
-	def "Tradesman Start Job"(){
-		given:
-		String responseStatus = null
-//		def jobId = DatabaseHelper.select("select id  from job.job where job_status_id = 2 limit 1")
-//		if (jobId.startsWith("[{id")){
-//			jobId = jobId.replace("[{id=", "").replace("}]","")
-//			println ("Job Id is : " +jobId)
-//		}
-		def json = getWorkingLatitude("2")
-		when:
-		HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
-			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-			body = json.toString()
-			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+2+"/start"
-			println "uri job is : "+uri.path
-			requestContentType = ContentType.JSON
-			
-			println "Uri : " + uri
-			response.success = { resp, reader ->
-				println "Success"
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-				
-				responseStatus = resp.statusLine.statusCode
 				reader.each{
 					println "Token values : "+"$it"
 					
@@ -167,6 +121,54 @@ class TMJobList extends AbstractUserToken {
 		responseStatus == CommonVariable.STATUS_200
 		cleanup:
 		DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id = 2 WHERE id = 2")
+		}
+	
+	
+	def "Tradesman Start Job"(){
+		given:
+		String responseStatus = null
+//		def jobId = DatabaseHelper.select("select id  from job.job where job_status_id = 2 limit 1")
+//		if (jobId.startsWith("[{id")){
+//			jobId = jobId.replace("[{id=", "").replace("}]","")
+//			println ("Job Id is : " +jobId)
+//		}
+		def json = getWorkingLatitude("2")
+		when:
+		HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
+			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
+			body = json.toString()
+			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+3+"/start"
+			println "uri job is : "+uri.path
+			requestContentType = ContentType.JSON
+			
+			println "Uri : " + uri
+			response.success = { resp, reader ->
+				println "Success"
+				println "Got response: ${resp.statusLine}"
+				println "Content-Type: ${resp.headers.'Content-Type'}"
+				
+				responseStatus = resp.statusLine.statusCode
+				reader.each{
+					println "Token values : "+"$it"
+					
+					String token = "$it"
+					String key = token.substring(0, token.indexOf("="))
+					String value = token.substring(token.indexOf("=") + 1, token.length())
+					println key
+					println value
+				}
+			}
+			
+			response.failure = { resp, reader ->
+				println "Request failed with status ${resp.status}"
+				println " stacktrace : "+reader.each{"$it"}
+				responseStatus = resp.statusLine.statusCode
+			}
+		}
+		then:
+		responseStatus == CommonVariable.STATUS_200
+		cleanup:
+		DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id = 3 WHERE id = 3")
 	}
 	
 	
@@ -182,7 +184,7 @@ class TMJobList extends AbstractUserToken {
 //		}
 		def json = new JsonBuilder()
 		json {
-			"jobId" 4
+			"jobId" 5
 			"stopLatitude" "10.00"
 			"stopLongitude" "11.00"
 		}
@@ -191,7 +193,7 @@ class TMJobList extends AbstractUserToken {
 		HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
 			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
 			body = json.toString()
-			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+4+"/pause"
+			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+5+"/pause"
 			println "uri job is : "+uri.path
 			requestContentType = ContentType.JSON
 			
@@ -223,8 +225,8 @@ class TMJobList extends AbstractUserToken {
 		then:
 		responseStatus == CommonVariable.STATUS_200
 		cleanup:
-		DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id = 4 WHERE id = 4")
-		DatabaseHelper.executeQuery("UPDATE job.job_tracking SET stop_ts = null  WHERE job_id = 4")
+		DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id = 5 WHERE id = 5")
+		DatabaseHelper.executeQuery("UPDATE job.job_tracking SET stop_ts = null  WHERE job_id = 5")
 	}
 	
 	
@@ -290,26 +292,19 @@ class TMJobList extends AbstractUserToken {
 	def "Tradesman Reject Job"(){
 		given:
 		String responseStatus = null
-//		def jobRejectId = DatabaseHelper.select("select id  from job.job where job_status_id = 1 limit 1")
-//		if (jobRejectId.startsWith("[{id")){
-//			jobRejectId = jobRejectId.replace("[{id=", "").replace("}]","")
-//			println ("Job Id is : " +jobRejectId)
-//		}
 		def json = new JsonBuilder()
 		json {
-			"jobId" 3
+			"jobId" 2
 			"rejectedBy" USER_ID_TM
 			"description" "I am not available hence i am rejecting the job sorry for inconvenience caused"
 		}
+		println "JSON is : "+json.toString()
 		when:
 		HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
 			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+3+"/status"
+			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+2+"/reject"
 			println "uri job is : "+uri.path
 			body = json.toString()
-			uri.query = [
-				jobStatus:'REJECTED'
-				]
 			requestContentType = ContentType.JSON
 			
 			println "Uri : " + uri
@@ -339,8 +334,10 @@ class TMJobList extends AbstractUserToken {
 		}
 		then:
 		responseStatus == CommonVariable.STATUS_200
-//		cleanup:
-//		DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id = 1 WHERE id = 3")
+		cleanup:
+		DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id = 2 WHERE id = 2")
+		DatabaseHelper.executeQuery("DELETE from job.job_rejected where job_id = 2")
+	
 		}
 
 	
@@ -393,20 +390,20 @@ class TMJobList extends AbstractUserToken {
 	def "Raise an Invoice by Tradesman"(){
 		given:
 		String responseStatus = null
-		def jobRaiseInvoice = DatabaseHelper.select("select id  from job.job where job_status_id = 6 limit 1")
-		if (jobRaiseInvoice.startsWith("[{id")){
-			jobRaiseInvoice = jobRaiseInvoice.replace("[{id=", "").replace("}]","")
-			println ("Job Id is : " +jobRaiseInvoice)
-		}
+//		def jobRaiseInvoice = DatabaseHelper.select("select id  from job.job where job_status_id = 6 limit 1")
+//		if (jobRaiseInvoice.startsWith("[{id")){
+//			jobRaiseInvoice = jobRaiseInvoice.replace("[{id=", "").replace("}]","")
+//			println ("Job Id is : " +jobRaiseInvoice)
+//		}
 		def json = new JsonBuilder()
 		json {
-			"jobId" jobRaiseInvoice
+			"jobId" '7'
 			"hoursWorked" '1.5'
 		}
 		when:
 		HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
 			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+jobRaiseInvoice+"/invoice"
+			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+7+"/invoice"
 			println "uri job is : "+uri.path
 			requestContentType = ContentType.JSON
 			body = json.toString()
@@ -437,6 +434,8 @@ class TMJobList extends AbstractUserToken {
 		}
 		then:
 		responseStatus == CommonVariable.STATUS_200
+		cleanup:
+		DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id = 7 WHERE id = 7")
 		}
 
 	
