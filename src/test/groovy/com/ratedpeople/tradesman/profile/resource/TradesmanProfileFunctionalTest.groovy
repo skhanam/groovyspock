@@ -21,7 +21,9 @@ import org.apache.http.entity.mime.content.FileBody
  */
 class TradesmanProfileFunctionalTest extends AbstractTradesman {
 
-	private static final PROFILE_PREFIX = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"
+	private static final String PROFILE_PREFIX = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"
+	
+	private static final String MATCH_PREFIX = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/match"
 	
 	def "Get TradesMan Profile"() {
 		given:
@@ -237,6 +239,61 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 		then:
 			responseCode == CommonVariable.STATUS_201
 	}
+	
+	
+	
+	
+	
+	def "Get Matching tradesman"(){
+		given:
+		String responseCode = null
+		println "********************************"
+		println "Test running ..  " +"Get Match tradesman"
+		when:
+			   HTTP_BUILDER.request(Method.GET,ContentType.JSON){
+				headers.Accept = 'application/json'
+				uri.path = MATCH_PREFIX
+				uri.query = [
+					longitude: CommonVariable.DEFAULT_LONGITUDE	,
+					latitude: CommonVariable.DEFAULT_LATITUDE ,
+					tradeId:CommonVariable.DEFAULT_TRADE_ID	
+					]
+				println "Uri is " + uri
+	
+				response.success = { resp, reader ->
+					println "Success"
+					responseCode = resp.statusLine.statusCode
+					println "Got response: ${resp.statusLine}"
+					println "Content-Type: ${resp.headers.'Content-Type'}"
+	
+					reader.each{
+						println "Response data: " + "$it"
+	
+						String user = "$it"
+						if (user.startsWith("userId")){
+							user = user.replace("userId=", "")
+							println "User values : " +user
+						}
+					}
+				}
+				
+				response.failure = { resp, reader ->
+					println "Request failed with status ${resp.status}"
+					reader.each{ println "Error values : "+"$it" }
+					responseStatus = resp.statusLine.statusCode
+				}
+			}
+			
+		then:
+			responseCode == CommonVariable.STATUS_200
+	}
+
+
+	
+	
+	
+	
+	
 	
 	
 	def "Get TM address"(){
