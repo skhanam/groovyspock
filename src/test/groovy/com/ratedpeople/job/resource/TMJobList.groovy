@@ -30,6 +30,7 @@ class TMJobList extends AbstractUserToken {
 	println "********************************"
 	println "Test running ..  " +"Get Tradesman Job List"
 	when:
+	try{
 	HTTP_BUILDER.request(Method.GET, ContentType.JSON){
 		headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
 		uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs"
@@ -66,6 +67,10 @@ class TMJobList extends AbstractUserToken {
 			responseStatus = resp.statusLine.statusCode
 		}
 	}
+	
+	} catch(java.net.ConnectException ex){
+		ex.printStackTrace()
+	}
 	then:
 	responseStatus == CommonVariable.STATUS_200
 	}
@@ -76,22 +81,14 @@ class TMJobList extends AbstractUserToken {
 	def "Tradesman Accept Job"(){
 		given:
 		String responseStatus = null
-//		def jobId = DatabaseHelper.select("select id  from job.job where job_status_id = 1 limit 1")
-//		if (jobId.startsWith("[{id")){
-//			jobId = jobId.replace("[{id=", "").replace("}]","")
-//			println ("Job Id is : " +jobId)
-//		}
+
 		when:
+		try{
 		HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
 			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-//			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+jobId+"/status"
 			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+2+"/schedule"
 			println "uri job is : "+uri.path
-//			uri.query = [
-//				jobStatus:'accept'
-//				]
 			requestContentType = ContentType.JSON
-			
 			println "Uri : " + uri
 			response.success = { resp, reader ->
 				println "Success"
@@ -116,7 +113,9 @@ class TMJobList extends AbstractUserToken {
 				println " stacktrace : "+reader.each{"$it"}
 				responseStatus = resp.statusLine.statusCode
 			}
-		}
+		}}catch(java.net.ConnectException ex){
+		ex.printStackTrace()
+	}
 		then:
 		responseStatus == CommonVariable.STATUS_200
 		cleanup:
@@ -127,13 +126,9 @@ class TMJobList extends AbstractUserToken {
 	def "Tradesman Start Job"(){
 		given:
 		String responseStatus = null
-//		def jobId = DatabaseHelper.select("select id  from job.job where job_status_id = 2 limit 1")
-//		if (jobId.startsWith("[{id")){
-//			jobId = jobId.replace("[{id=", "").replace("}]","")
-//			println ("Job Id is : " +jobId)
-//		}
 		def json = getWorkingLatitude("2")
 		when:
+		try{
 		HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
 			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
 			body = json.toString()
@@ -165,6 +160,9 @@ class TMJobList extends AbstractUserToken {
 				responseStatus = resp.statusLine.statusCode
 			}
 		}
+		}catch(java.net.ConnectException ex){
+		ex.printStackTrace()
+	}
 		then:
 		responseStatus == CommonVariable.STATUS_200
 		cleanup:
@@ -177,19 +175,15 @@ class TMJobList extends AbstractUserToken {
 	def "Tradesman Pause Job"(){
 		given:
 		String responseStatus = null
-//		def jobrefId = DatabaseHelper.select("select id  from job.job where job_status_id = 4 limit 1")
-//		if (jobrefId.startsWith("[{id")){
-//			jobrefId = jobrefId.replace("[{id=", "").replace("}]","")
-//			println ("Job Id is : " +jobrefId)
-//		}
 		def json = new JsonBuilder()
 		json {
 			"jobId" 5
 			"stopLatitude" "10.00"
 			"stopLongitude" "11.00"
 		}
-//		def json = getWorkingLatitude("4")
+
 		when:
+		try{
 		HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
 			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
 			body = json.toString()
@@ -221,7 +215,9 @@ class TMJobList extends AbstractUserToken {
 				println " stacktrace : "+reader.each{"$it"}
 				responseStatus = resp.statusLine.statusCode
 			}
-		}
+		}}catch(java.net.ConnectException ex){
+		ex.printStackTrace()
+	}
 		then:
 		responseStatus == CommonVariable.STATUS_200
 		cleanup:
@@ -237,11 +233,7 @@ class TMJobList extends AbstractUserToken {
 	def "Tradesman Complete Job"(){
 		given:
 		String responseStatus = null
-//		def jobrefId = DatabaseHelper.select("select id  from job.job where job_status_id = 5 limit 1")
-//		if (jobrefId.startsWith("[{id")){
-//			jobrefId = jobrefId.replace("[{id=", "").replace("}]","")
-//			println ("Job Id is : " +jobrefId)
-//		}
+
 		def json = new JsonBuilder()
 		json {
 			"jobId" 5
@@ -249,6 +241,7 @@ class TMJobList extends AbstractUserToken {
 			"stopLongitude" "11.00"
 		}
 		when:
+		try{
 		HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
 			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
 			body = json.toString()
@@ -280,7 +273,9 @@ class TMJobList extends AbstractUserToken {
 				println " stacktrace : "+reader.each{"$it"}
 				responseStatus = resp.statusLine.statusCode
 			}
-		}
+		}}catch(java.net.ConnectException ex){
+		ex.printStackTrace()
+	}
 		then:
 		responseStatus == CommonVariable.STATUS_200
 		cleanup:
@@ -300,6 +295,7 @@ class TMJobList extends AbstractUserToken {
 		}
 		println "JSON is : "+json.toString()
 		when:
+		try{
 		HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
 			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
 			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+2+"/reject"
@@ -331,7 +327,9 @@ class TMJobList extends AbstractUserToken {
 				println " stacktrace : "+reader.each{"$it"}
 				responseStatus = resp.statusLine.statusCode
 			}
-		}
+		} }catch(java.net.ConnectException ex){
+		ex.printStackTrace()
+	}
 		then:
 		responseStatus == CommonVariable.STATUS_200
 		cleanup:
@@ -390,17 +388,12 @@ class TMJobList extends AbstractUserToken {
 	def "Raise an Invoice by Tradesman"(){
 		given:
 		String responseStatus = null
-//		def jobRaiseInvoice = DatabaseHelper.select("select id  from job.job where job_status_id = 6 limit 1")
-//		if (jobRaiseInvoice.startsWith("[{id")){
-//			jobRaiseInvoice = jobRaiseInvoice.replace("[{id=", "").replace("}]","")
-//			println ("Job Id is : " +jobRaiseInvoice)
-//		}
 		def json = new JsonBuilder()
 		json {
 			"jobId" '7'
 			"hoursWorked" '1.5'
 		}
-		when:
+		when:try{
 		HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
 			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
 			uri.path =  JOB_URI_PREFIX +USER_ID_TM+"/tmjobs/"+7+"/invoice"
@@ -432,6 +425,9 @@ class TMJobList extends AbstractUserToken {
 				responseStatus = resp.statusLine.statusCode
 			}
 		}
+		}catch(java.net.ConnectException ex){
+		ex.printStackTrace()
+	}
 		then:
 		responseStatus == CommonVariable.STATUS_200
 		cleanup:

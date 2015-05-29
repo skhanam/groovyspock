@@ -185,6 +185,7 @@ class JobTest extends AbstractHomeowner{
 			"description"  CommonVariable.DEFAULT_DESCRIPTION + adddescription
 			"hourRate" CommonVariable.DEFAULT_HOURRATE
 			"jobContactDetails" {
+				"homeownerName" "hotest"
 				"email" "test@gid.com"
 				"mobilePhone" CommonVariable.DEFAULT_MOBILE_PREFIX  + RANDOM_MOBILE
 				"line1" CommonVariable.DEFAULT_LINE1
