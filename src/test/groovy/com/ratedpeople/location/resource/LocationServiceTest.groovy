@@ -3,21 +3,31 @@
  */
 package com.ratedpeople.location.resource
 
+import spock.lang.Ignore;
+import spock.lang.IgnoreRest;
+import junit.textui.TestRunner;
+
 import com.ratedpeople.user.resource.AbstractUserToken;
+
 import groovyx.net.http.ContentType
 import groovyx.net.http.Method
+
 import com.ratedpeople.support.CommonVariable
 import com.ratedpeople.support.DatabaseHelper
+
 import groovy.json.JsonBuilder
 
 /**
  * @author shabana.khanam
  *
  */
+
+@Ignore
 class LocationServiceTest extends AbstractUserToken{
 	
 	private static final String POSTCODE_PREFIX = CommonVariable.LOCATION_SERVICE_PREFIX + "v1.0/postcode/"
 	
+					@Ignore
 					def "Get Postcode Information"()
 					{
 						given :
@@ -58,7 +68,7 @@ class LocationServiceTest extends AbstractUserToken{
 					
 					
 					
-					
+					@Ignore
 					def "Update Area Postcode"(){
 						given :
 							String responseCode = null

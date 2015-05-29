@@ -56,8 +56,8 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 			}
 		then:
 			responseStatus == CommonVariable.STATUS_201
-//		cleanup:
-//			DatabaseHelper.executeQuery("delete from payment.credit_card where token = '${ccToken}'")
+		cleanup:
+			DatabaseHelper.executeQuery("delete from payment.credit_card where token = '${ccToken}'")
 	}
 
 
