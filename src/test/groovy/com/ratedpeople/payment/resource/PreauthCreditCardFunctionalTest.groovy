@@ -7,8 +7,10 @@ import groovy.json.*
 import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
+
 import com.ratedpeople.support.CommonVariable
 import com.ratedpeople.support.DatabaseHelper
+import com.ratedpeople.user.resource.AbstractHomeowner;
 import com.ratedpeople.user.resource.AbstractUserToken
 
 
@@ -17,6 +19,8 @@ import com.ratedpeople.user.resource.AbstractUserToken
  *
  */
 class PreauthCreditCardFunctionalTest extends AbstractUserToken{
+
+
 
 	private static final long RANDOM_JOB_ID = Math.round(Math.random()*1000);
 	
@@ -42,6 +46,7 @@ class PreauthCreditCardFunctionalTest extends AbstractUserToken{
 			HTTP_BUILDER.request(Method.POST, ContentType.JSON){
 				uri.path = CommonVariable.PAYMENT_SERVICE_PREFIX + "v1.0/users/"+USER_ID_HO+"/preauth"
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_HO
+
 				body = json.toString()
 				requestContentType = ContentType.JSON
 	
@@ -74,5 +79,6 @@ class PreauthCreditCardFunctionalTest extends AbstractUserToken{
 			responseStatus == CommonVariable.STATUS_201
 		cleanup:
 			DatabaseHelper.executeQuery("delete from payment.preauth_transaction where from_user_id = '${USER_ID_HO}'")
+
 	}
 }

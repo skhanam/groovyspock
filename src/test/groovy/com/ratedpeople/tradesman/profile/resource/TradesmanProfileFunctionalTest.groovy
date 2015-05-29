@@ -265,22 +265,19 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 					responseCode = resp.statusLine.statusCode
 					println "Got response: ${resp.statusLine}"
 					println "Content-Type: ${resp.headers.'Content-Type'}"
-	
 					reader.each{
-						println "Response data: " + "$it"
-	
-						String user = "$it"
-						if (user.startsWith("userId")){
+					println "Response data: " + "$it"
+					String user = "$it"
+					if (user.startsWith("userId")){
 							user = user.replace("userId=", "")
 							println "User values : " +user
 						}
 					}
 				}
-				
 				response.failure = { resp, reader ->
-					println "Request failed with status ${resp.status}"
-					reader.each{ println "Error values : "+"$it" }
-					responseStatus = resp.statusLine.statusCode
+				println "Request failed with status ${resp.status}"
+				reader.each{ println "Error values : "+"$it" }
+				responseStatus = resp.statusLine.statusCode
 				}
 			}
 			
