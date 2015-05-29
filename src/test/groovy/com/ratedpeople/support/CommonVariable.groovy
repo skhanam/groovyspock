@@ -18,6 +18,7 @@ public abstract class CommonVariable {
 	public static final String HOPROFILE_SERVICE_PREFIX = "/api/hoprofile/"
 	public static final String JOB_SERVICE_PREFIX = "/api/chores/"
 	public static final String TMPROFILE_SERVICE_PREFIX = "/api/tmprofile/"
+	public static final String LOCATION_SERVICE_PREFIX = "/api/location/"
 	
 	public static final String DEFAULT_MOBILE_PREFIX = "07"
 	
@@ -51,7 +52,7 @@ public abstract class CommonVariable {
 	public static final String DEFAULT_LINE2 = "some address line2"
 	public static final String DEFAULT_CITY = "London"
 	public static final String DEFAULT_COUNTRY = "united kingdom"
-	public static final String DEFAULT_POSTCODE = "rp99rp"
+	public static final String DEFAULT_POSTCODE = "BN11ZA"
 	
 	/* Homeowner Details Section */
 	public static final String DEFAULT_HO_FIRSTNAME = "hoprofile"
