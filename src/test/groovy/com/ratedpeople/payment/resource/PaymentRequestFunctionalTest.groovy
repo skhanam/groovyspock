@@ -9,6 +9,7 @@ import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
 import com.ratedpeople.support.CommonVariable
 import com.ratedpeople.user.resource.AbstractUserToken
+import com.ratedpeople.support.DatabaseHelper
 
 
 /**
@@ -23,29 +24,22 @@ class PaymentRequestFunctionalTest extends AbstractUserToken{
 	 */
 	
 	private static final long RANDOM_JOB_ID = Math.round(Math.random()*1000);
-/*
+
 	def "test request payment "(){	
 		given:
 			String responseStatus = null
 			def json = new JsonBuilder()
 			json {
-				"fromUserId" USER_ID_HO
-				"toUserId" USER_ID_TM
-				"jobId" RANDOM_JOB_ID
-				"token" CommonVariable.DEFAULT_CC_TOKEN
-				"currency" CommonVariable.DEFAULT_CURRENCY
-				"skrillTransaction" ""
-				"amount" CommonVariable.DEFAULT_AMOUNT
-				"fromUserEmail" CommonVariable.DEFAULT_HO_USERNAME
-				"ip" CommonVariable.DEFAULT_IP
+				"ipAddress" CommonVariable.DEFAULT_IP
 			
 			}
 			
 			println "Json is " +  json.toString()
 		when:
-			HTTP_BUILDER.request(Method.POST, ContentType.JSON){
-				uri.path = CommonVariable.PAYMENT_SERVICE_PREFIX + "v1.0/users/${USER_ID_TM}/jobs/${RANDOM_JOB_ID}"
-				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
+		try{
+			HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
+				uri.path = CommonVariable.PAYMENT_SERVICE_PREFIX + "v1.0/users/${USER_ID_HO}/jobs/"+8
+				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_HO
 				body = json.toString()
 				requestContentType = ContentType.JSON
 				
@@ -67,16 +61,23 @@ class PaymentRequestFunctionalTest extends AbstractUserToken{
 						println value
 					}
 				}
-				
 				response.failure = { resp, reader ->
 					println "Request failed with status ${resp.status}"
 					reader.each{ println "Error values : "+"$it" }
 					responseStatus = resp.statusLine.statusCode
 				}
 			}
+			}catch(java.net.ConnectException ex){
+				ex.printStackTrace()
+		}
 		then:
-			responseStatus == CommonVariable.STATUS_201
+			responseStatus == CommonVariable.STATUS_200
+		cleanup:
+		
+			 DatabaseHelper.executeQuery("UPDATE payment.payment_transaction SET skrill_transaction='', status='PENDING' WHERE job_id=8")
+			 DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id ='8' WHERE id = 8")
+		
 	}
-	*/
+
 }
 

@@ -73,7 +73,6 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 	
 			reader.each{
 				println "Response data: " + "$it"
-	
 				String data = "$it"
 				if (data.startsWith("token")){
 					ccToken = data.replace("token=", "")
@@ -91,8 +90,7 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 				headers.'Authorization' = "Bearer " + ACCESS_TOKEN_DYNAMIC_HO
 				requestContentType = ContentType.JSON
 				headers.Accept = ContentType.JSON
-	
-				println "Get credit card Uri: ${uri}"
+				println "Get credit card Uri: "+ '${uri}'
 			}
 	
 			resp = map['response']
