@@ -27,7 +27,8 @@ import groovy.json.JsonBuilder
 //@Ignore
 class LocationServiceTest extends Specification {
 	
-	private static final String POSTCODE_PREFIX = CommonVariable.LOCATION_SERVICE_PREFIX + "v1.0/postcode/"
+	private static final String POSTCODE_PREFIX = CommonVariable.LOCATION_SERVICE_PREFIX + "v1.0/postcodes/"
+	
 	public static final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(CommonVariable.SERVER_URL)
 	
 					def setupSpec()
@@ -50,12 +51,15 @@ class LocationServiceTest extends Specification {
 						println "********************************"
 						println "Test running ..  " +"Get Postcode Information"
 						when:
+						try{
 							   HTTP_BUILDER.request(Method.GET,ContentType.JSON){
 								headers.Accept = 'application/json'
+								
 								uri.path = POSTCODE_PREFIX+CommonVariable.DEFAULT_POSTCODE
 								println "Uri is " + uri
 								response.success = { resp, reader ->
 									println "Success"
+									println "Got response: ${resp.statusLine}"
 									responseCode = resp.statusLine.statusCode
 									println "Got response: ${resp.statusLine}"
 									println "Content-Type: ${resp.headers.'Content-Type'}"
@@ -69,8 +73,10 @@ class LocationServiceTest extends Specification {
 								responseCode = resp.statusLine.statusCode
 								}
 							}
-							
-						then:
+					}catch (java.net.ConnectException ex){
+							ex.printStackTrace()
+						}	
+					then:
 							responseCode == CommonVariable.STATUS_200
 					
 					}
@@ -84,6 +90,7 @@ class LocationServiceTest extends Specification {
 						println "********************************"
 						println "Test running ..  " +"Get Address Information"
 						when:
+						try{
 							   HTTP_BUILDER.request(Method.GET,ContentType.JSON){
 								headers.Accept = 'application/json'
 								uri.path = POSTCODE_PREFIX+CommonVariable.DEFAULT_POSTCODE+"/addresses"
@@ -101,10 +108,12 @@ class LocationServiceTest extends Specification {
 								response.failure = { resp, reader ->
 								println "Request failed with status ${resp.status}"
 								reader.each{ println "Error values : "+"$it" }
-								responseStatus = resp.statusLine.statusCode
+								responseCode = resp.statusLine.statusCode
 								}
 							}
-							
+						}catch (java.net.ConnectException ex){
+							ex.printStackTrace()
+						}	
 						then:
 							responseCode == CommonVariable.STATUS_200
 					
@@ -112,7 +121,7 @@ class LocationServiceTest extends Specification {
 					
 					
 					
-//					@Ignore
+					@Ignore
 					def "Update Area Postcode"(){
 						given :
 							String responseCode = null
@@ -127,6 +136,8 @@ class LocationServiceTest extends Specification {
 							println "********************************"
 							println "Test running ..  Update Homeowner Profile"
 						when:
+						try
+						{
 							HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
 								uri.path = POSTCODE_PREFIX+CommonVariable.DEFAULT_POSTCODE
 								println "uri.path   :"+uri.path
@@ -147,6 +158,9 @@ class LocationServiceTest extends Specification {
 									println " stacktrace : "+reader.each{"$it"}
 								}
 							}
+					}catch (java.net.ConnectException ex){
+					ex.printStackTrace()
+				}
 						then:
 							responseCode == CommonVariable.STATUS_200
 					}
