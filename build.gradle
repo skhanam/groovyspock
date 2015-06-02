@@ -2,6 +2,9 @@
 apply plugin: 'eclipse'
 apply plugin: 'groovy'
 
+
+//loadConfiguration()
+
 repositories {
 	mavenLocal()
 	jcenter()
@@ -25,5 +28,36 @@ dependencies {
 
 test {
 	testLogging.showStandardStreams = true
+//	systemProperty  "SERVER_URL", "$env"
+//	allJvmArgs = [ "-DSERVER_URL=$env" ]
   }
 
+task printProps << {
+	println "serverName: $config.serverName"
+} 
+
+//
+//def loadConfiguration() {
+//    def environment = hasProperty('env') ? env : 'minerva'
+//	println "env :"+environment
+//	ext.environment = environment
+//	println "ext.env :"+ext.environment
+//    setProperty 'environment', environment
+//    println "Environment is set to $environment"
+//    def configFile = file('config.groovy')
+//	println "Here is the Config file :"+configFile
+//    config = new ConfigSlurper("environment").parse(configFile.toURL())
+//	println "Here is the Config Value :"+config
+//    ext.config = config
+//}
+
+
+//task configuration << {
+//
+//systemProperty  "SERVER_URL", "$env"
+//
+//println System.getenv('SERVER_URL')
+////def envi = hasProperty('env') ? env : 'davide'
+//println "Environment is :  $env"
+//
+//}

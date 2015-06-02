@@ -52,7 +52,7 @@ public abstract class CommonVariable {
 	public static final String DEFAULT_LINE2 = "some address line2"
 	public static final String DEFAULT_CITY = "London"
 	public static final String DEFAULT_COUNTRY = "united kingdom"
-	public static final String DEFAULT_POSTCODE = "BN11ZA"
+	public static final String DEFAULT_POSTCODE = "SE18NW"
 	
 	/* Homeowner Details Section */
 	public static final String DEFAULT_HO_FIRSTNAME = "hoprofile"
