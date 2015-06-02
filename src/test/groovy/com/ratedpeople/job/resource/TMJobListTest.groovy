@@ -126,7 +126,7 @@ class TMJobListTest extends AbstractUserToken {
 	def "Tradesman Start Job"(){
 		given:
 		String responseStatus = null
-		def json = getWorkingLatitude("2")
+		def json = getWorkingLatitude("3")
 		when:
 		try{
 		HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
