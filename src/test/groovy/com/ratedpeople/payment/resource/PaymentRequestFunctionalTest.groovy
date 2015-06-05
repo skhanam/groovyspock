@@ -35,6 +35,8 @@ class PaymentRequestFunctionalTest extends AbstractUserToken{
 			}
 			
 			println "Json is " +  json.toString()
+//			def getSkrillID = DatabaseHelper.executeQuery("select skrill_transaction from  payment.payment_transaction WHERE job_id=8")
+//			println "Skrill transaction Id : " + getSkrillID
 		when:
 		try{
 			HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
@@ -73,8 +75,9 @@ class PaymentRequestFunctionalTest extends AbstractUserToken{
 		then:
 			responseStatus == CommonVariable.STATUS_200
 		cleanup:
-		
 			 DatabaseHelper.executeQuery("UPDATE payment.payment_transaction SET skrill_transaction='', status='PENDING' WHERE job_id=8")
+			 def getSkrillID = DatabaseHelper.executeQuery("select skrill_transaction from  payment.payment_transaction WHERE job_id=8")
+			 println "Skrill transaction Id : " + getSkrillID
 			 DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id ='8' WHERE id = 8")
 		
 	}

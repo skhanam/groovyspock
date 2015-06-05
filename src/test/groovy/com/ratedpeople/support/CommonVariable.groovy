@@ -53,6 +53,7 @@ public abstract class CommonVariable {
 	public static final String DEFAULT_CITY = "London"
 	public static final String DEFAULT_COUNTRY = "united kingdom"
 	public static final String DEFAULT_POSTCODE = "SE18NW"
+	public static final String OUT_OF_AREA_POSTCODE ="M21WL"
 	
 	/* Homeowner Details Section */
 	public static final String DEFAULT_HO_FIRSTNAME = "hoprofile"
