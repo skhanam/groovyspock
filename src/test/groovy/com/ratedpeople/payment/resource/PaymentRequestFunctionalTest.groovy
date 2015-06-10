@@ -35,8 +35,12 @@ class PaymentRequestFunctionalTest extends AbstractUserToken{
 			}
 			
 			println "Json is " +  json.toString()
-//			def getSkrillID = DatabaseHelper.executeQuery("select skrill_transaction from  payment.payment_transaction WHERE job_id=8")
-//			println "Skrill transaction Id : " + getSkrillID
+			def getSkrillID1 = DatabaseHelper.executeQuery("select skrill_transaction from  payment.payment_transaction WHERE job_id=8")
+			println "Skrill transaction Id : " + getSkrillID1
+			if(getSkrillID1.equals(true)){
+				DatabaseHelper.executeQuery("UPDATE payment.payment_transaction SET skrill_transaction='', status='PENDING' WHERE job_id=8")
+			}
+
 		when:
 		try{
 			HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
@@ -50,12 +54,9 @@ class PaymentRequestFunctionalTest extends AbstractUserToken{
 					println "Success"
 					println "Got response: ${resp.statusLine}"
 					println "Content-Type: ${resp.headers.'Content-Type'}"
-					
 					responseStatus = resp.statusLine.statusCode
-					
 					reader.each{
 						println "Token values : "+"$it"
-						
 						String token = "$it"
 						String key = token.substring(0, token.indexOf("="))
 						String value = token.substring(token.indexOf("=") + 1, token.length())
