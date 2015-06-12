@@ -29,6 +29,7 @@ class TMJobListTest extends AbstractUserToken {
 	String responseStatus = null
 	println "********************************"
 	println "Test running ..  " +"Get Tradesman Job List"
+	DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id = 5 WHERE id = 5")
 	when:
 	try{
 	HTTP_BUILDER.request(Method.GET, ContentType.JSON){
@@ -78,9 +79,105 @@ class TMJobListTest extends AbstractUserToken {
 	
 	
 	
-	def "Tradesman Accept Job"(){
+	def "Get Unique Job Address HomeOwner"(){
 		given:
 		String responseStatus = null
+		println "********************************"
+		println "Test running ..  " +"Get Unique Job Address HomeOwner"
+		when:
+		try{
+		HTTP_BUILDER.request(Method.GET, ContentType.JSON){
+			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_HO
+			uri.path =  JOB_URI_PREFIX +"2/contactdetails"
+			println "uri job is : "+uri.path
+			requestContentType = ContentType.JSON
+			
+			println "Uri : " + uri
+			response.success = { resp, reader ->
+				println "Success"
+				println "Got response: ${resp.statusLine}"
+				println "Content-Type: ${resp.headers.'Content-Type'}"
+				
+				responseStatus = resp.statusLine.statusCode
+				
+				reader.each{
+					println "Token values : "+"$it"
+					
+					String token = "$it"
+					String key = token.substring(0, token.indexOf("="))
+					String value = token.substring(token.indexOf("=") + 1, token.length())
+					println key
+					println value
+				}
+			}
+			
+			response.failure = { resp, reader ->
+				println "Request failed with status ${resp.status}"
+				println " stacktrace : "+reader.each{"$it"}
+				responseStatus = resp.statusLine.statusCode
+			}
+		}
+		
+		} catch(java.net.ConnectException ex){
+			ex.printStackTrace()
+		}
+		then:
+		responseStatus == CommonVariable.STATUS_200
+}
+	
+	
+	
+	def "Homeowner Withdraw Job"(){
+		given:
+		String responseStatus = null
+		def getJobStatus = DatabaseHelper.executeQuery("select job_status_id from job.job WHERE id = 1")
+		println "Get the Job status :"+getJobStatus 
+		if(getJobStatus.equals(true)){
+			DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id = 1 WHERE id = 1")
+		}
+		when:
+		try{
+		HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
+			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_HO
+			uri.path =  JOB_URI_PREFIX +USER_ID_HO+"/hojobs/"+1+"/withdraw"
+			println "uri job is : "+uri.path
+			requestContentType = ContentType.JSON
+			println "Uri : " + uri
+			response.success = { resp, reader ->
+				println "Success"
+				println "Got response: ${resp.statusLine}"
+				println "Content-Type: ${resp.headers.'Content-Type'}"
+				responseStatus = resp.statusLine.statusCode
+				reader.each{
+					println "Token values : "+"$it"
+					
+					String token = "$it"
+					String key = token.substring(0, token.indexOf("="))
+					String value = token.substring(token.indexOf("=") + 1, token.length())
+					println key
+					println value
+				}
+			}
+			
+			response.failure = { resp, reader ->
+				println "Request failed with status ${resp.status}"
+				println " stacktrace : "+reader.each{"$it"}
+				responseStatus = resp.statusLine.statusCode
+			}
+		}}catch(java.net.ConnectException ex){
+		ex.printStackTrace()
+		}
+		then:
+		responseStatus == CommonVariable.STATUS_200
+		cleanup:
+		DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id = 1 WHERE id = 10")
+		}
+	
+	
+	
+	def "Tradesman Accept Job"(){
+		given:
+		String responseSta1tus = null
 
 		when:
 		try{
@@ -329,14 +426,14 @@ class TMJobListTest extends AbstractUserToken {
 			}
 		} }catch(java.net.ConnectException ex){
 		ex.printStackTrace()
-	}
+		}
 		then:
 		responseStatus == CommonVariable.STATUS_200
 		cleanup:
 		DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id = 2 WHERE id = 2")
 		DatabaseHelper.executeQuery("DELETE from job.job_rejected where job_id = 2")
 	
-		}
+	}
 
 	
 	def "Get Single Job List Tradesman"(){
