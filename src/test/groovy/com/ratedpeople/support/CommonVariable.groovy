@@ -116,7 +116,9 @@ public abstract class CommonVariable {
 	private static final String DEFAULT_RADIUS = "1"
 	
 	
-
+	/* Company details */
+	
+	private static final String DEFAULT_COMPANY_NAME = "GID Company"
 	
 	
 }
