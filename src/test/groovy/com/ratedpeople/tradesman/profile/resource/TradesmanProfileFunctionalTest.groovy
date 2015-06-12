@@ -84,6 +84,9 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 							{"number" CommonVariable.DEFAULT_MOBILE_PREFIX  + RANDOM_MOBILE
 							 "phoneType" "OFFICE_PHONE"}
 						])
+				"company"{
+							"name" CommonVariable.DEFAULT_COMPANY_NAME
+						 }
 		
 			}
 			
