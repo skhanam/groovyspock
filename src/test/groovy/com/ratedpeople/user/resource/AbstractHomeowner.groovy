@@ -53,8 +53,7 @@ class AbstractHomeowner  extends Specification{
 		authToken()
 	}
 
-
-
+	
 	private static def createJsonUser(){
 		def json = new JsonBuilder()
 		DYNAMIC_USER = CommonVariable.HO_USER_PREFIX + System.currentTimeMillis() + "@gid.com"
