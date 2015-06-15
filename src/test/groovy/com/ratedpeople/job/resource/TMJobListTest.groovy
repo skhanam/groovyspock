@@ -219,48 +219,7 @@ class TMJobListTest extends AbstractUserToken {
 		DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id = 2 WHERE id = 2")
 		}
 	
-	def "Unique Homeowner Accept Job No Merchant Created"(){
-		given:
-				String responseStatus = null
-				println "Unique Homeowner Withdraw Job No Merchant Created"
-				def response = postajob(createJsonPostaJob(""));
-				def  resp = response['response']
-				def reader = response['reader']
-				responseStatus = resp.status
-				println "response code :${resp.status}"
-				reader.each{
-					println "Response data: " + "$it"
-					String data = "$it"
-				}
-				def getJobId = DatabaseHelper.select("select id from job.job where homeowner_user_id = '${USER_ID_DYNAMIC_HO}' limit 1 ")
-				println "id of Job is :"+getJobId
-				if (getJobId.startsWith("[{id")){
-					getJobId = getJobId.replace("[{id=", "").replace("}]","")
-					println "JobId is : " +getJobId
-				}
-		when:
-		try{
-				def map = HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
-						headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_HO
-						uri.path =  JOB_URI_PREFIX + USER_ID_DYNAMIC_HO + "/hojobs/"+getJobId+"/withdraw"
-						requestContentType = ContentType.JSON
-						println "uri job is : "+uri.path
-				}
-				resp = map['response']
-				reader = map['reader']
-				responseStatus = resp.status
-				println "response code :${resp.status}"
-				reader.each{
-					println "Response data:for getting a  List of Jobs for HO " + "$it"
-					String data = "$it"
-				}
-			}catch(java.net.ConnectException ex){
-				ex.printStackTrace()
-			}
-		then:
-			responseStatus == CommonVariable.STATUS_200
-
-		}
+	
 	
 	def "Tradesman Start Job"(){
 		given:
