@@ -181,9 +181,15 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 			println "Json is " +  json.toString()
 			println "********************************"
 			println "Test running ..  Update Tradesman Trade"
+		
+			def  getId = DatabaseHelper.select("select id from tmprofile.tm_profile_trade where updated_by =  '${USER_ID_DYNAMIC_TM}'")
+			if (getId.startsWith("[{id=")){
+				getId = getId.replace("[{id=", "").replace("}]","")
+				println "Profile trade id : " +getId
+			}
 		when:
 			HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
-				uri.path = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"+USER_ID_DYNAMIC_TM+"/trades"
+				uri.path = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"+USER_ID_DYNAMIC_TM+"/trades/"+getId
 				println "uri.path   :"+uri.path
 				println "Access Token TM : "+ ACCESS_TOKEN_DYNAMIC_TM
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
@@ -210,7 +216,38 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 			responseCode == CommonVariable.STATUS_200
 	}
 	
+	def "Get  Tradesman Trade"(){
+		given :
+			String responseCode = null
+			println "********************************"
+			println "Test running ..  Get Tradesman Trade"
+		when:
+			HTTP_BUILDER.request(Method.GET,ContentType.JSON){
+				uri.path = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"+USER_ID_DYNAMIC_TM+"/trades"
+				println "uri.path   :"+uri.path
+				println "Access Token TM : "+ ACCESS_TOKEN_DYNAMIC_TM
+				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
+				requestContentType = ContentType.JSON
+				println "Uri is " + uri
+				
+				response.success = { resp, reader ->
+					println "Success"
+					println "Got response: ${resp.statusLine}"
+					println "Content-Type: ${resp.headers.'Content-Type'}"
+					responseCode = resp.statusLine.statusCode
+					reader.each{
+						"Results  : "+ "$it"
+					}
+				}
 	
+				response.failure = { resp, reader ->
+					responseCode = resp.statusLine.statusCode
+					println " stacktrace : "+reader.each{"$it"}
+				}
+			}
+		then:
+			responseCode == CommonVariable.STATUS_200
+	}
 	
 	def "Add TM Address"() {
 		given:
@@ -291,12 +328,6 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 	}
 
 
-	
-	
-	
-	
-	
-	
 	
 	def "Get TM address"(){
 		given:
