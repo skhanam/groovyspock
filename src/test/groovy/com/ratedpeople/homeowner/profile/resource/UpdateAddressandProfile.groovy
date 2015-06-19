@@ -15,7 +15,7 @@ import com.ratedpeople.user.resource.AbstractUserToken
  */
 class UpdateAddressandProfile extends AbstractUserToken{
 
-	private final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(CommonVariable.SERVER_URL)
+//	private final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(CommonVariable.SERVER_URL)
 	protected static long RANDOM_MOBILE = Math.round(Math.random()*10000);
 	
 	def "Update Homeowner Profile"(){	
@@ -38,7 +38,7 @@ class UpdateAddressandProfile extends AbstractUserToken{
 			println "Test running ..  Update Homeowner Profile"
 		when:
 			HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
-				uri.path = CommonVariable.HOPROFILE_SERVICE_PREFIX + "v1.0/users/" + USER_ID_HO + "/profiles"
+				uri.path = CommonVariable.HOPROFILE_SERVICE_PREFIX + "v1.0/users/" +USER_ID_HO +"/profiles"
 				println "uri.path   :"+uri.path
 				println "Access Token HO : "+ ACCESS_TOKEN_HO
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_HO

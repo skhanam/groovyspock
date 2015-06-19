@@ -70,7 +70,6 @@ class AbstractUserToken extends Specification {
 			
 						String tokentemp = "$it"
 						if (tokentemp.startsWith("access_token")){
-							
 							println "userName"+userName[i]
 							println " :" + userName.equals(CommonVariable.DEFAULT_TM_USERNAME)
 							token = tokentemp.substring(tokentemp.indexOf("=") + 1, tokentemp.length())
@@ -119,8 +118,8 @@ class AbstractUserToken extends Specification {
 						println "Response data: " + "$it"
 			
 						String user = "$it"
-						if (user.startsWith("userId")){
-							user = user.replace("userId=", "")
+						if (user.startsWith("user_id")){
+							user = user.replace("user_id=", "")
 							println "User values : " +user
 							if(userName[i].equals(CommonVariable.DEFAULT_TM_USERNAME)){
 								USER_ID_TM = user
@@ -143,8 +142,11 @@ class AbstractUserToken extends Specification {
 			}
 
 			assert responseCode == CommonVariable.STATUS_200
+			println "ACCESS_TOKEN_TM  :"+ ACCESS_TOKEN_TM
 			assert ACCESS_TOKEN_TM != null
+			println "REFRESH_TOKEN_TM  :"+REFRESH_TOKEN_TM
 			assert REFRESH_TOKEN_TM != null
+			println "USER_ID_TM  :"+USER_ID_TM
 			assert USER_ID_TM != null
 		}	
 	}
