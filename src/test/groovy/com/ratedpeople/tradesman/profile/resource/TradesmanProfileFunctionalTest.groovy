@@ -130,7 +130,7 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 			String responseCode = null
 			def json = new JsonBuilder()
 			json{
-				"tradeName" "gardening"
+				"tradeId" "2"
 				"rate" CommonVariable.DEFAULT_HOURRATE
 			}
 			
@@ -139,7 +139,7 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 			println "Test running ..  Add Tradesman Profile"
 		when:
 			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
-				uri.path = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"+USER_ID_DYNAMIC_TM+"/trades"
+				uri.path = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"+USER_ID_DYNAMIC_TM+"/profiletrades"
 				println "uri.path   :"+uri.path
 				println "Access Token TM : "+ ACCESS_TOKEN_DYNAMIC_TM
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
@@ -174,7 +174,7 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 			String responseCode = null
 			def json = new JsonBuilder()
 			json{
-				"tradeName" "gardening"
+				"tradeId" "3"
 				"rate" CommonVariable.DEFAULT_HOURRATE
 			}
 			
@@ -189,7 +189,7 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 			}
 		when:
 			HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
-				uri.path = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"+USER_ID_DYNAMIC_TM+"/trades/"+getId
+				uri.path = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"+USER_ID_DYNAMIC_TM+"/profiletrades/"+getId
 				println "uri.path   :"+uri.path
 				println "Access Token TM : "+ ACCESS_TOKEN_DYNAMIC_TM
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
@@ -223,7 +223,7 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 			println "Test running ..  Get Tradesman Trade"
 		when:
 			HTTP_BUILDER.request(Method.GET,ContentType.JSON){
-				uri.path = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"+USER_ID_DYNAMIC_TM+"/trades"
+				uri.path = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"+USER_ID_DYNAMIC_TM+"/profiletrades"
 				println "uri.path   :"+uri.path
 				println "Access Token TM : "+ ACCESS_TOKEN_DYNAMIC_TM
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
@@ -248,6 +248,49 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 		then:
 			responseCode == CommonVariable.STATUS_200
 	}
+	
+	
+	def "Delete  Tradesman Trade"(){
+		given :
+			String responseCode = null
+			println "********************************"
+			println "Test running ..  Delete Tradesman Trade"
+		
+			def  getId = DatabaseHelper.select("select id from tmprofile.tm_profile_trade where updated_by =  '${USER_ID_DYNAMIC_TM}'")
+			if (getId.startsWith("[{id=")){
+				getId = getId.replace("[{id=", "").replace("}]","")
+				println "Profile trade id : " +getId
+			}
+		when:
+			HTTP_BUILDER.request(Method.DELETE,ContentType.JSON){
+				uri.path = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"+USER_ID_DYNAMIC_TM+"/profiletrades/"+getId
+				println "uri.path   :"+uri.path
+				println "Access Token TM : "+ ACCESS_TOKEN_DYNAMIC_TM
+				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_TM
+//				body = json.toString()
+				requestContentType = ContentType.JSON
+				println "Uri is " + uri
+				
+				response.success = { resp, reader ->
+					println "Success"
+					println "Got response: ${resp.statusLine}"
+					println "Content-Type: ${resp.headers.'Content-Type'}"
+					responseCode = resp.statusLine.statusCode
+					reader.each{
+						"Results  : "+ "$it"
+					}
+				}
+	
+				response.failure = { resp, reader ->
+					responseCode = resp.statusLine.statusCode
+					println " stacktrace : "+reader.each{"$it"}
+				}
+			}
+		then:
+			responseCode == CommonVariable.STATUS_200
+	}
+	
+	
 	
 	def "Add TM Address"() {
 		given:
