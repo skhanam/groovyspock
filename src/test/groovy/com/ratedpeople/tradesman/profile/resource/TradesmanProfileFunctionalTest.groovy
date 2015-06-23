@@ -78,12 +78,12 @@ class TradesmanProfileFunctionalTest extends AbstractTradesman {
 				"lastName" CommonVariable.DEFAULT_TM_LASTNAME
 				"email" DYNAMIC_USER
 				"description" "This is a desc of more for the tm it needs to have more than 60 chars"
-				"listPhone" ([ 
-							{"number" CommonVariable.DEFAULT_MOBILE_PREFIX  + RANDOM_MOBILE
-							"phoneType" "MOBILE_PHONE"},
-							{"number" CommonVariable.DEFAULT_MOBILE_PREFIX  + RANDOM_MOBILE
-							 "phoneType" "OFFICE_PHONE"}
-						])
+//				"listPhone" ([ 
+//							{"number" CommonVariable.DEFAULT_MOBILE_PREFIX  + RANDOM_MOBILE
+//							"phoneType" "MOBILE_PHONE"},
+//							{"number" CommonVariable.DEFAULT_MOBILE_PREFIX  + RANDOM_MOBILE
+//							 "phoneType" "OFFICE_PHONE"}
+//						])
 				"company"{
 							"name" CommonVariable.DEFAULT_COMPANY_NAME
 						 }
