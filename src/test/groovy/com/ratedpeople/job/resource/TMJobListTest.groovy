@@ -491,6 +491,7 @@ class TMJobListTest extends AbstractUserToken {
 			"jobId" '7'
 			"hoursWorked" '1.5'
 		}
+		DatabaseHelper.executeQuery("DELETE from  payment.payment_transaction where job_id = 7")
 		when:try{
 		HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
 			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
