@@ -21,6 +21,7 @@ public abstract class CommonVariable {
 	public static final String LOCATION_SERVICE_PREFIX = "/api/location/"
 	
 	public static final String DEFAULT_MOBILE_PREFIX = "07"
+	public static final String DEFAULT_LANDLINE_PREFIX = "02"
 	
 	/* Common URL section*/
 	public static final String DEFAULT_GET_TOKEN_URI = CommonVariable.AUTHORIZATION_SERVER_PREFIX + "oauth/token"

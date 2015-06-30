@@ -26,6 +26,8 @@ class AbstractUserToken extends Specification {
 	protected static String ACCESS_TOKEN_ADMIN
 	protected static String REFRESH_TOKEN_ADMIN
 	protected static String USER_ID_ADMIN
+	protected static long RANDOM_MOBILE = Math.round(Math.random()*100000000)+100000000;
+	
 	
 	def "setupSpec"(){
 	
