@@ -35,7 +35,7 @@ class TMProfileAvailabilityFunctionalTest extends AbstractUserToken{
 				String responseCode = null
 				def json = new JsonBuilder()
 				json {
-					"reacheableFlag" "true"
+					"reacheable" "true"
 					}
 				println "Json is " +  json.toString()
 		when:
