@@ -127,26 +127,5 @@ class TMProfileFunctionalTest extends AbstractUserToken{
 	
 	
 	
-	private def getAddress(String additionalInfo){
-		def json = new JsonBuilder()
-		json {
-			"postcode" CommonVariable.DEFAULT_POSTCODE
-			"line1" CommonVariable.DEFAULT_LINE1+additionalInfo
-			"line2" CommonVariable.DEFAULT_LINE2+additionalInfo
-			"city"  CommonVariable.DEFAULT_CITY
-			"country" CommonVariable.DEFAULT_COUNTRY
-		}
-		return json;
-	}
-	
-	private def getWorkingarea(int additionalInfo){
-		def json = new JsonBuilder()
-		json {
-			"longitude" CommonVariable.DEFAULT_LONGITUDE
-			"latitude" CommonVariable.DEFAULT_LATITUDE
-			"radius" CommonVariable.DEFAULT_RADIUS+additionalInfo
-		}
-		return json;
-	}
 	
 }
