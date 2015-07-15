@@ -230,7 +230,7 @@ class JobTest extends AbstractHomeowner{
 			"tradesmanUserId" CommonVariable.DEFAULT_TM_ID
 			"title"	CommonVariable.DEFAULT_TITLE
 			"description"  CommonVariable.DEFAULT_DESCRIPTION + adddescription
-			"hourRate" CommonVariable.DEFAULT_HOURRATE
+			"hoRate" CommonVariable.DEFAULT_HOURRATE
 			"jobContactDetails" {
 				"homeownerName" "hotest"
 				"email" "test@gid.com"
