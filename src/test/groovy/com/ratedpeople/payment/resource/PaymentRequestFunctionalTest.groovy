@@ -81,7 +81,7 @@ class PaymentRequestFunctionalTest extends AbstractUserToken{
 			 def getSkrillID = DatabaseHelper.executeQuery("select skrill_transaction from  payment.payment_transaction WHERE job_id=8")
 			 println "Skrill transaction Id : " + getSkrillID
 			 DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id ='8' WHERE id = 8")
-		
+			Thread.sleep(2000);
 	}
 	
 	
