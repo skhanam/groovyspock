@@ -8,6 +8,7 @@ import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
 import spock.lang.Specification
+
 import com.ratedpeople.support.CommonVariable
 /**
  * @author shabana.khanam
@@ -131,8 +132,97 @@ class AbstractHomeowner  extends Specification{
 		}
 	}
 
+	public static def postajob(def uriprefix,def json){
+		def map = HTTP_BUILDER.request(Method.POST, ContentType.JSON)
+		{
+			uri.path =  uriprefix + USER_ID_DYNAMIC_HO + "/jobs"
+			println "uri job is : "+uri.path
+			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_HO
+			body = json.toString()
+			requestContentType = ContentType.JSON
+		}
+		println "return map : "+map
+		return map;
+			
+	}
+	
+	
+	public static def createJsonPostaJob(String adddescription){
+		def json = new JsonBuilder()
+		json {
+			"tradeId" CommonVariable.DEFAULT_TRADE_ID
+			"homeownerUserId" USER_ID_DYNAMIC_HO
+			"tradesmanUserId" CommonVariable.DEFAULT_TM_ID
+			"title"	CommonVariable.DEFAULT_TITLE
+			"description"  CommonVariable.DEFAULT_DESCRIPTION + adddescription
+			"hoRate" CommonVariable.DEFAULT_HOURRATE
+			"jobContactDetails" {
+				"homeownerName" "hotest"
+				"email" "test@gid.com"
+				"mobilePhone" CommonVariable.DEFAULT_MOBILE_PREFIX  + RANDOM_MOBILE
+				"line1" CommonVariable.DEFAULT_LINE1
+				"city" CommonVariable.DEFAULT_CITY
+				"postcode" CommonVariable.DEFAULT_POSTCODE
+				"longitude" CommonVariable.DEFAULT_LONGITUDE
+				"latitude" CommonVariable.DEFAULT_LATITUDE
+				
+			}
+		}
+
+		println "Json is   : ${json.toString()}"
+		return json;
+	}
+
+	
+	public def createJsonCreditCard(){
+		def json = new JsonBuilder()
+		json {
+			"number" CommonVariable.DEFAULT_CC_NUMBER
+			"userId" USER_ID_DYNAMIC_HO
+			"cvv" CommonVariable.DEFAULT_CC_CVV
+			"expiryYear" CommonVariable.DEFAULT_CC_EXPIRY_YEAR
+			"expiryMonth" CommonVariable.DEFAULT_CC_EXPIRY_MONTH
+			"nameOnCard" CommonVariable.DEFAULT_CC_NAME
+			"type" CommonVariable.DEFAULT_CC_TYPE
+		}
+
+		println "Json is  CC :${json.toString()}"
+		return json;
+	}
+	
+	
+	public def postCreditCard(def uricc,def json){
+		println "Access token for HO in CC :"+ACCESS_TOKEN_DYNAMIC_HO
+		def map = HTTP_BUILDER.request(Method.POST) {
+			uri.path = uricc + USER_ID_DYNAMIC_HO +"/cards"
+			headers.'Authorization' = "Bearer " + ACCESS_TOKEN_DYNAMIC_HO
+			body = json.toString()
+			requestContentType = ContentType.JSON
+			headers.Accept = ContentType.JSON
+
+			println "Post credit card Uri : " + uri
+		}
+		println "Map is : "+map
+		return map;
+	}
 
 
+	public def getCreditCard(def uricc){
+		def map = HTTP_BUILDER.request(Method.GET) {
+			uri.path = uricc + USER_ID_DYNAMIC_HO +"/cards"
+			headers.'Authorization' = "Bearer " + ACCESS_TOKEN_DYNAMIC_HO
+			requestContentType = ContentType.JSON
+			headers.Accept = ContentType.JSON
+
+			println "Get credit card Uri : " + uri
+		}
+
+		return map;
+	}
+	
+	
+	
+	
 	private static def getUserId() {
 		HTTP_BUILDER.request(Method.GET){
 			headers.Accept = 'application/json'

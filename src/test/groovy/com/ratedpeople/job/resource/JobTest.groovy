@@ -38,7 +38,7 @@ class JobTest extends AbstractHomeowner{
 		String  responseStatus
 		
 	when :
-		def response = postajob(createJsonPostaJob(""));
+		def response = postajob(JOB_URI_PREFIX,createJsonPostaJob(""));
 		def  resp = response['response']
 		def reader = response['reader']
 		responseStatus = resp.status
@@ -62,7 +62,7 @@ class JobTest extends AbstractHomeowner{
 		String  responseStatus
 		
 	when :
-		def response = postajob(createJsonPostaJob(" Abuse"));
+		def response = postajob(JOB_URI_PREFIX,createJsonPostaJob(" Abuse"));
 		def  resp = response['response']
 		def reader = response['reader']
 		responseStatus = resp.status
@@ -81,7 +81,7 @@ class JobTest extends AbstractHomeowner{
 	def "Get Job List for HomeOwner"() {
 		given:
 		String responseStatus = null
-		def response = postajob(createJsonPostaJob("Get List"));
+		def response = postajob(JOB_URI_PREFIX,createJsonPostaJob("Get List"));
 		def  resp = response['response']
 		def reader = response['reader']
 		responseStatus = resp.status
@@ -122,7 +122,7 @@ class JobTest extends AbstractHomeowner{
 	def "Get Single Job Homeowner"(){
 	given:
 		String responseStatus = null
-		def response = postajob(createJsonPostaJob(""));
+		def response = postajob(JOB_URI_PREFIX,createJsonPostaJob(""));
 		def  resp = response['response']
 		def reader = response['reader']
 		responseStatus = resp.status
@@ -165,7 +165,7 @@ class JobTest extends AbstractHomeowner{
 		given:
 				String responseStatus = null
 				println "Unique Homeowner Withdraw Job No Merchant Created"
-				def response = postajob(createJsonPostaJob(""));
+				def response = postajob(JOB_URI_PREFIX,createJsonPostaJob(""));
 				def  resp = response['response']
 				def reader = response['reader']
 				responseStatus = resp.status
@@ -205,47 +205,7 @@ class JobTest extends AbstractHomeowner{
 		}
 	
 	
-	
-	
-	private def postajob(def json){
-		def map = HTTP_BUILDER.request(Method.POST, ContentType.JSON)
-		{
-			uri.path =  JOB_URI_PREFIX + USER_ID_DYNAMIC_HO + "/jobs"
-			println "uri job is : "+uri.path
-			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_HO
-			body = json.toString()
-			requestContentType = ContentType.JSON
-		}
-		println "return map : "+map
-		return map;
-			
-	}
-	
-	
-	private def createJsonPostaJob(String adddescription){
-		def json = new JsonBuilder()
-		json {
-			"tradeId" CommonVariable.DEFAULT_TRADE_ID
-			"homeownerUserId" USER_ID_DYNAMIC_HO
-			"tradesmanUserId" CommonVariable.DEFAULT_TM_ID
-			"title"	CommonVariable.DEFAULT_TITLE
-			"description"  CommonVariable.DEFAULT_DESCRIPTION + adddescription
-			"hoRate" CommonVariable.DEFAULT_HOURRATE
-			"jobContactDetails" {
-				"homeownerName" "hotest"
-				"email" "test@gid.com"
-				"mobilePhone" CommonVariable.DEFAULT_MOBILE_PREFIX  + RANDOM_MOBILE
-				"line1" CommonVariable.DEFAULT_LINE1
-				"city" CommonVariable.DEFAULT_CITY
-				"postcode" CommonVariable.DEFAULT_POSTCODE
-				"longitude" CommonVariable.DEFAULT_LONGITUDE
-				"latitude" CommonVariable.DEFAULT_LATITUDE
-				
-			}
-		}
 
-		println "Json is   : ${json.toString()}"
-		return json;
-	}
+	
 	
 }

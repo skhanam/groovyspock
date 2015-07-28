@@ -35,8 +35,9 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 			String responseStatus
 			String ccToken
 		when:
-			def response = postCreditCard(createJsonCreditCard());
-	
+			def response = postCreditCard(CREDIT_CARD_RESOURCE_URI,createJsonCreditCard());
+	//CREDIT_CARD_RESOURCE_URI,def uricc,
+			println "RESPONSE : "+response
 			def resp = response['response']
 			def reader = response['reader']
 	
@@ -65,9 +66,9 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 		println "Test 2 :  testGetCardDetails"
 
 		given:
-			def response = postCreditCard(createJsonCreditCard());
+			def response = postCreditCard(CREDIT_CARD_RESOURCE_URI,createJsonCreditCard());
 			String ccToken
-			response = getCreditCard()
+			response = getCreditCard(CREDIT_CARD_RESOURCE_URI)
 			def resp = response['response']
 			def reader = response['reader']
 	
@@ -136,7 +137,7 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 	
 			println "Json is " +  json.toString()
 		when:
-			def response = postCreditCard(json)
+			def response = postCreditCard(CREDIT_CARD_RESOURCE_URI,json)
 			def resp = response['response']
 			def reader = response['reader']
 	
@@ -173,8 +174,8 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 		given:
 			String ccToken
 			String errorMessage
-	
-			def response = postCreditCard(createJsonCreditCard())
+			DatabaseHelper.executeQuery("delete from payment.credit_card where token = '${ccToken}'")
+			def response = postCreditCard(CREDIT_CARD_RESOURCE_URI,createJsonCreditCard())
 			def resp = response['response']
 			def reader = response['reader']
 	
@@ -192,7 +193,7 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 	
 			String responseStatus
 		when:
-			response = postCreditCard(createJsonCreditCard())
+			response = postCreditCard(CREDIT_CARD_RESOURCE_URI,createJsonCreditCard())
 	
 			resp = response['response']
 			reader = response['reader']
@@ -207,48 +208,7 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 			DatabaseHelper.executeQuery("delete from payment.credit_card where token = '${ccToken}'")
 	}
 
-	private def createJsonCreditCard(){
-		def json = new JsonBuilder()
-		json {
-			"number" CommonVariable.DEFAULT_CC_NUMBER
-			"userId" USER_ID_DYNAMIC_HO
-			"cvv" CommonVariable.DEFAULT_CC_CVV
-			"expiryYear" CommonVariable.DEFAULT_CC_EXPIRY_YEAR
-			"expiryMonth" CommonVariable.DEFAULT_CC_EXPIRY_MONTH
-			"nameOnCard" CommonVariable.DEFAULT_CC_NAME 
-			"type" CommonVariable.DEFAULT_CC_TYPE
-		}
 
-		println "Json is  CC :${json.toString()}"
-		return json;
-	}
-
-	private def postCreditCard(def json){
-		println "Access token for HO in CC :"+ACCESS_TOKEN_DYNAMIC_HO
-		def map = HTTP_BUILDER.request(Method.POST) {
-			uri.path = CREDIT_CARD_RESOURCE_URI + USER_ID_DYNAMIC_HO +"/cards"
-			headers.'Authorization' = "Bearer " + ACCESS_TOKEN_DYNAMIC_HO
-			body = json.toString()
-			requestContentType = ContentType.JSON
-			headers.Accept = ContentType.JSON
-
-			println "Post credit card Uri : " + uri
-		}
-		println "Map is : "+map
-		return map;
-	}
-
-
-	private def getCreditCard(){
-		def map = HTTP_BUILDER.request(Method.GET) {
-			uri.path = CREDIT_CARD_RESOURCE_URI + USER_ID_DYNAMIC_HO +"/cards"
-			headers.'Authorization' = "Bearer " + ACCESS_TOKEN_DYNAMIC_HO
-			requestContentType = ContentType.JSON
-			headers.Accept = ContentType.JSON
-
-			println "Get credit card Uri : " + uri
-		}
-
-		return map;
-	}
+	
+	
 }

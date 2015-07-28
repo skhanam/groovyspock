@@ -3,49 +3,50 @@
  */
 package com.ratedpeople.payment.resource
 
-import groovy.json.*
-import groovyx.net.http.ContentType
+/**
+ * @author shabana.khanam
+ *
+ */
+/**
+ * 
+ */
+import com.ratedpeople.user.resource.AbstractTradesman;
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
 import com.ratedpeople.support.CommonVariable
 import com.ratedpeople.user.resource.AbstractUserToken
 import com.ratedpeople.support.DatabaseHelper
+import groovy.json.*
+import groovyx.net.http.ContentType
 
 
-/**
- * @author shabana.khanam
- *
- */
-class PaymentRequestFunctionalTest extends AbstractUserToken{
-
-	/*
-	 *  Negative scenarios are not written as there are no validations in place 
-	 *  will update once this is being put in place
-	 */
+class SuspendPaymentFunctionalTest extends AbstractTradesman{
 	
-	private static final long RANDOM_JOB_ID = Math.round(Math.random()*1000);
-
-	def "test request payment "(){	
+	
+	
+	def "test suspend payment "(){
 		given:
 			String responseStatus = null
 			def json = new JsonBuilder()
 			json {
-				"ipAddress" CommonVariable.DEFAULT_IP
-			
+						"paymentTransactionId" "1"
+						"jobId" "8"
+						"homeownerUserId" 2
+						"comment" "This is a payment that needs to be stopped"
 			}
 			
 			println "Json is " +  json.toString()
-			def getSkrillID1 = DatabaseHelper.executeQuery("select skrill_transaction from  payment.payment_transaction WHERE job_id=8")
-			println "Skrill transaction Id : " + getSkrillID1
-			if(getSkrillID1.equals(true)){
-				DatabaseHelper.executeQuery("UPDATE payment.payment_transaction SET skrill_transaction='', status='PENDING' WHERE job_id=8")
-			}
+//			def getSkrillID1 = DatabaseHelper.executeQuery("select skrill_transaction from  payment.payment_transaction WHERE job_id=8")
+//			println "Skrill transaction Id : " + getSkrillID1
+//			if(getSkrillID1.equals(true)){
+//				DatabaseHelper.executeQuery("UPDATE payment.payment_transaction SET skrill_transaction='', status='PENDING' WHERE job_id=8")
+//			}
 
 		when:
 		try{
 			HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
-				uri.path = CommonVariable.PAYMENT_SERVICE_PREFIX + "v1.0/users/${USER_ID_HO}/jobs/"+8
-				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_HO
+				uri.path = CommonVariable.PAYMENT_SERVICE_PREFIX + "v1.0/users/2/jobs/8/payments/1/dispute"
+				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_ADMIN
 				body = json.toString()
 				requestContentType = ContentType.JSON
 				
@@ -76,14 +77,14 @@ class PaymentRequestFunctionalTest extends AbstractUserToken{
 		then:
 			responseStatus == CommonVariable.STATUS_200
 		cleanup:
-			Thread.sleep(3000) 
+			Thread.sleep(3000)
 			DatabaseHelper.executeQuery("UPDATE payment.payment_transaction SET skrill_transaction='', status='PENDING' WHERE job_id=8")
 			 def getSkrillID = DatabaseHelper.executeQuery("select skrill_transaction from  payment.payment_transaction WHERE job_id=8")
 			 println "Skrill transaction Id : " + getSkrillID
 			 DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id ='8' WHERE id = 8")
+			 DatabaseHelper.executeQuery("Delete from payment.payment_dispute_comment where payment_transaction_id = 1");
 		
 	}
-	
-	
+
 }
 

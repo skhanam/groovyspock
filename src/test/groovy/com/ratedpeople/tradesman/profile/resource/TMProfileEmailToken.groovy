@@ -5,8 +5,8 @@ package com.ratedpeople.tradesman.profile.resource
 
 import com.ratedpeople.user.resource.AbstractTradesman;
 import com.ratedpeople.user.resource.AbstractUserToken;
-import com.ratedpeople.support.CommonVariable
-import com.ratedpeople.support.DatabaseHelper
+import com.ratedpeople.support.CommonVariable;
+import com.ratedpeople.support.DatabaseHelper;
 
 import groovy.json.JsonBuilder
 import groovyx.net.http.ContentType
