@@ -35,32 +35,7 @@ class TMProfileImageFunctionalTest extends AbstractUserToken{
 			println "********************************"
 			println "Test Running .... Post a Image TM"
 		when:
-
-			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
-				req ->
-				uri.path = PROFILE_PREFIX + USER_ID_TM + "/images"
-				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-				requestContentType = 'multipart/form-data'
-				MultipartEntityBuilder entity = new MultipartEntityBuilder()
-				def file = new File('src/test/resources/imageTest1.jpg');
-				entity.addPart("file",new ByteArrayBody(file.getBytes(), 'src/test/resources/imageTest1.jpg'))
-				req.entity = entity.build();
-				println "Uri is " + uri
-				response.success =
-				{ resp, reader ->
-					println "Success"
-					println "Got response: ${resp.statusLine}"
-					println "Content-Type: ${resp.headers.'Content-Type'}"
-					responseCode = resp.statusLine.statusCode
-					reader.each{ "Results  : "+ "$it" }
-				}
-				response.failure =
-				{ resp, reader ->
-					println " stacktrace : "+reader.each{"$it"}
-					println 'Not found'
-					responseCode = resp.statusLine.statusCode
-				}
-			}
+			responseCode = postImage()
 		then:
 			responseCode == CommonVariable.STATUS_201
 	}
@@ -72,35 +47,11 @@ class TMProfileImageFunctionalTest extends AbstractUserToken{
 			String responseCode = null
 			println "********************************"
 			println "Test Running .... Post TM Image profile before getting a image"
-			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
-				req ->
-				uri.path = PROFILE_PREFIX + USER_ID_TM + "/images"
-				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-				requestContentType = 'multipart/form-data'
-				MultipartEntityBuilder entity = new MultipartEntityBuilder()
-				def file = new File('src/test/resources/imageTest1.jpg');
-				entity.addPart("file",new ByteArrayBody(file.getBytes(), 'src/test/resources/imageTest1.jpg'))
-				req.entity = entity.build();
-				println "Uri is " + uri
-				response.success =
-				{ resp, reader ->
-					println "Success"
-					println "Got response: ${resp.statusLine}"
-					println "Content-Type: ${resp.headers.'Content-Type'}"
-					responseCode = resp.statusLine.statusCode
-					reader.each{ "Results  : "+ "$it" }
-				}
-				response.failure =
-				{ resp, reader ->
-					println " stacktrace : "+reader.each{"$it"}
-					println 'Not found'
-					responseCode = resp.statusLine.statusCode
-				}
-			}
+			responseCode = postImage()
 			Thread.sleep(3000);
 		when:
-		println "********************************"
-		println "Test Running .... Get Image to TM Profile"
+			println "********************************"
+			println "Test Running .... Get Image to TM Profile"
 			HTTP_BUILDER.request(Method.GET,ContentType.JSON){
 				uri.path = PROFILE_PREFIX + USER_ID_TM + "/images"
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
@@ -123,5 +74,34 @@ class TMProfileImageFunctionalTest extends AbstractUserToken{
 			responseCode == CommonVariable.STATUS_200
 	}
 	
-	
+	private def postImage(){
+		HTTP_BUILDER.request(Method.POST,ContentType.JSON){ req ->
+			uri.path = PROFILE_PREFIX + USER_ID_TM + "/images"
+			uri.query = [
+				imageType:CommonVariable.IMAGE_TYPE_PROFILE
+			]
+			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
+			requestContentType = 'multipart/form-data'
+			MultipartEntityBuilder entity = new MultipartEntityBuilder()
+			
+			def file = new File('src/test/resources/imageTest1.jpg');
+			entity.addPart("file",new ByteArrayBody(file.getBytes(), 'src/test/resources/imageTest1.jpg'))
+			req.entity = entity.build();
+			println "Uri is " + uri
+			
+			response.success = { resp, reader ->
+				println "Success"
+				println "Got response: ${resp.statusLine}"
+				println "Content-Type: ${resp.headers.'Content-Type'}"
+				return resp.statusLine.statusCode
+				reader.each{ "Results  : "+ "$it" }
+			}
+			
+			response.failure = { resp, reader ->
+				println " stacktrace : "+reader.each{"$it"}
+				println 'Not found'
+				return resp.statusLine.statusCode
+			}
+		}
+	}
 }

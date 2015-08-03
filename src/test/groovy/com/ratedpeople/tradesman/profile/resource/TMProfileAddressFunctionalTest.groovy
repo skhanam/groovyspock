@@ -37,52 +37,19 @@ class TMProfileAddressFunctionalTest extends AbstractUserToken{
 			println "Json is " +  json.toString()
 			println "********************************"
 			println "Test Running .... Add TM Address"
-			def  getId = DatabaseHelper.select("select id from tmprofile.address where tm_profile_id=1 ")
-			if(getId != null){
-				println "Profile Address id : " +getId
-				if (getId.startsWith("[{id=")){
-					getId = getId.replace("[{id=", "").replace("}]","")
-				println "Profile Address id : " +getId
-				DatabaseHelper.executeQuery("delete from tmprofile.address where tm_profile_id =  1")}
-			}
-			
 		when:
-			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
-				uri.path = PROFILE_PREFIX + USER_ID_TM + "/addresses"
-				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-				body = json.toString()
-				requestContentType = ContentType.JSON
-				println "Uri is " + uri
-	
-				response.success = { resp, reader ->
-					println "Success"
-					println "Got response: ${resp.statusLine}"
-					println "Content-Type: ${resp.headers.'Content-Type'}"
-					responseCode = resp.statusLine.statusCode
-					reader.each{ "Results  : "+ "$it" }
-				}
-	
-				response.failure = { resp, reader ->
-					println " stacktrace : "+reader.each{"$it"}
-					println 'Not found'
-					responseCode = resp.statusLine.statusCode
-				}
-			}
+			responseCode = postAddress(json)
 		then:
 			responseCode == CommonVariable.STATUS_201
-//		cleanup:
-//		DatabaseHelper.executeQuery("delete from tmprofile.address where tm_profile_id =  1")
+		cleanup:
+			DatabaseHelper.executeQuery("delete from tmprofile.address where tm_profile_id = 1 and address_type = '${CommonVariable.ADDRESS_TYPE_BUSINESS}'")
 	}
-	
-	
-	
-	
-	
+		
 	def "Get Matching tradesman"(){
 		given:
-		String responseCode = null
-		println "********************************"
-		println "Test running ..  " +"Get Match tradesman"
+			String responseCode = null
+			println "********************************"
+			println "Test running ..  " +"Get Match tradesman"
 		when:
 			   HTTP_BUILDER.request(Method.GET,ContentType.JSON){
 				headers.Accept = 'application/json'
@@ -118,15 +85,13 @@ class TMProfileAddressFunctionalTest extends AbstractUserToken{
 		then:
 			responseCode == CommonVariable.STATUS_200
 	}
-
-
 	
 	def "Get TM address"(){
 		given:
-		def json = getAddress("")
-		String responseCode = null
-		println "********************************"
-		println "Test running ..  " +"Get HO address"
+			def json = getAddress("")
+			String responseCode = null
+			println "********************************"
+			println "Test running ..  " +"Get HO address"
 		when:
 			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
 				uri.path = PROFILE_PREFIX + USER_ID_TM + "/addresses"
@@ -194,34 +159,16 @@ class TMProfileAddressFunctionalTest extends AbstractUserToken{
 			println "Json is " +  json.toString()
 			println "********************************"
 			println "Test Running .... Add TM Address"
-			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
-				uri.path = PROFILE_PREFIX + USER_ID_TM + "/addresses"
-				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-				body = json.toString()
-				requestContentType = ContentType.JSON
-				println "Uri is " + uri
-	
-				response.success = { resp, reader ->
-					println "Success"
-					println "Got response: ${resp.statusLine}"
-					println "Content-Type: ${resp.headers.'Content-Type'}"
-					responseCode = resp.statusLine.statusCode
-					reader.each{ "Results  : "+ "$it" }
-				}
-	
-				response.failure = { resp, reader ->
-					println " stacktrace : "+reader.each{"$it"}
-					println 'Not found'
-					responseCode = resp.statusLine.statusCode
-				}
-			}
-			def  getaddressID = DatabaseHelper.select("select id from tmprofile.address where updated_by =  '${USER_ID_TM}'")
+			postAddress(json)
+			
+			def  getaddressID = DatabaseHelper.select("select id from tmprofile.address where address_type = '${CommonVariable.ADDRESS_TYPE_BUSINESS}'")
 			if (getaddressID.startsWith("[{id=")){
 				getaddressID = getaddressID.replace("[{id=", "").replace("}]","")
 				println "Address id : " +getaddressID
 			}
 			println "********************************"
 			println "Test Running .... Update TM Address"
+			json.getContent().put("addressId", getaddressID)
 		when:
 			HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
 				uri.path = PROFILE_PREFIX + USER_ID_TM + "/addresses/"+getaddressID
@@ -244,17 +191,38 @@ class TMProfileAddressFunctionalTest extends AbstractUserToken{
 			}
 		then:
 			responseCode == CommonVariable.STATUS_200
-//		cleanup:
-//		DatabaseHelper.executeQuery("delete from tmprofile.address where tm_profile_id =  1")
-		
+		cleanup:
+			DatabaseHelper.executeQuery("delete from tmprofile.address where tm_profile_id = 1 and address_type = '${CommonVariable.ADDRESS_TYPE_BUSINESS}'")
 	}
 	
-	
-	
+	private def postAddress(JsonBuilder json){
+		HTTP_BUILDER.request(Method.POST,ContentType.JSON){
+			uri.path = PROFILE_PREFIX + USER_ID_TM + "/addresses"
+			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
+			body = json.toString()
+			requestContentType = ContentType.JSON
+			println "Uri is " + uri
+
+			response.success = { resp, reader ->
+				println "Success"
+				println "Got response: ${resp.statusLine}"
+				println "Content-Type: ${resp.headers.'Content-Type'}"
+				reader.each{ "Results  : "+ "$it" }
+				return resp.statusLine.statusCode
+			}
+
+			response.failure = { resp, reader ->
+				println " stacktrace : "+reader.each{"$it"}
+				println 'Not found'
+				return resp.statusLine.statusCode
+			}
+		}
+	}
 	
 	private def getAddress(String additionalInfo){
 		def json = new JsonBuilder()
 		json {
+			"addressType" CommonVariable.ADDRESS_TYPE_BUSINESS
 			"postcode" CommonVariable.DEFAULT_POSTCODE
 			"line1" CommonVariable.DEFAULT_LINE1+additionalInfo
 			"line2" CommonVariable.DEFAULT_LINE2+additionalInfo

@@ -56,6 +56,8 @@ public abstract class CommonVariable {
 	public static final String DEFAULT_POSTCODE = "SE18NW"
 	public static final String OUT_OF_AREA_POSTCODE ="M21WL"
 	
+	public static final String ADDRESS_TYPE_BUSINESS = "BUSINESS"
+	
 	/* Homeowner Details Section */
 	public static final String DEFAULT_HO_FIRSTNAME = "hoprofile"
 	public static final String DEFAULT_HO_LASTNAME = "aws"
@@ -121,5 +123,7 @@ public abstract class CommonVariable {
 	
 	private static final String DEFAULT_COMPANY_NAME = "GID Company"
 	
+	/* Image Section */
+	private static final String IMAGE_TYPE_PROFILE = "PROFILE"
 	
 }
