@@ -151,6 +151,57 @@ class AbstractUserToken extends Specification {
 			println "USER_ID_TM  :"+USER_ID_TM
 			assert USER_ID_TM != null
 		}	
+		getAdmin()
+	}
+	
+	
+	
+	private static def getAdmin(){
+		String token = null
+		HTTP_BUILDER.request(Method.POST){
+			headers.Accept = 'application/json'
+			headers.'Authorization' = "Basic "+ CommonVariable.DEFAULT_CLIENT_CREDENTIAL.bytes.encodeBase64().toString()
+			uri.path = CommonVariable.DEFAULT_GET_TOKEN_URI
+			uri.query = [
+				grant_type: CommonVariable.DEFAULT_PASSWORD,
+				username: CommonVariable.DEFAULT_ADMIN_USERNAME,
+				password:CommonVariable.DEFAULT_PASSWORD ,
+				scope: 'all'
+			]
+			println "Uri is " + uri
+			response.success =
+			{ resp, reader ->
+				println "Success"
+				println "Got response: ${resp.statusLine}"
+				println "Content-Type: ${resp.headers.'Content-Type'}"
+				reader.each
+				{
+					println "Response data: "+"$it"
+		
+					String tokentemp = "$it"
+					if (tokentemp.startsWith("access_token"))
+					{
+						token = tokentemp.substring(tokentemp.indexOf("=") + 1, tokentemp.length())
+							ACCESS_TOKEN_ADMIN = tokentemp.substring(tokentemp.indexOf("=") + 1, tokentemp.length())
+							println "Access Token Admin : " + ACCESS_TOKEN_ADMIN
+						}
+					if (tokentemp.startsWith("refresh_token"))
+					{
+						REFRESH_TOKEN_ADMIN = tokentemp.substring(tokentemp.indexOf("=") + 1, tokentemp.length())
+							println "Refresh Token Admin : " + REFRESH_TOKEN_ADMIN
+					}
+				}
+			}
+			
+			
+			response.failure = { resp, reader->
+				println "Request failed with status ${resp.status}"
+				println resp.toString()
+				println resp.statusLine.statusCode
+				println " stacktrace : "+reader.each{"$it"}
+			}
+		}
+		
 	}
 }
 

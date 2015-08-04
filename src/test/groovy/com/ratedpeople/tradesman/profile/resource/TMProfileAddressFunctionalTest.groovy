@@ -6,7 +6,7 @@
 package com.ratedpeople.tradesman.profile.resource
 
 
-import com.ratedpeople.user.resource.AbstractUserToken;
+
 import com.ratedpeople.user.resource.AbstractUserToken;
 import com.ratedpeople.support.CommonVariable
 import com.ratedpeople.support.DatabaseHelper
@@ -29,6 +29,7 @@ class TMProfileAddressFunctionalTest extends AbstractUserToken{
 	
 	private static final String MATCH_PREFIX = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/match"
 
+	private static final String ALLPROFILE_PREFIX = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/allprofiles"
 	
 	def "Add TM Address"() {
 		given:
@@ -44,6 +45,53 @@ class TMProfileAddressFunctionalTest extends AbstractUserToken{
 		cleanup:
 			DatabaseHelper.executeQuery("delete from tmprofile.address where tm_profile_id = 1 and address_type = '${CommonVariable.ADDRESS_TYPE_BUSINESS}'")
 	}
+	
+	
+	def "Get List Matching tradesman"(){
+		given:
+			String responseCode = null
+			println "********************************"
+			println "Test running ..  " +"Get List Matching tradesman"
+		 
+		when:
+			   HTTP_BUILDER.request(Method.GET,ContentType.JSON){
+				headers.Accept = 'application/json'
+				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_ADMIN
+				uri.path = ALLPROFILE_PREFIX
+				uri.query = [
+					freeText: "test",
+					page: 0,
+					limit:2
+					]
+				println "Uri is " + uri
+	
+				response.success = { resp, reader ->
+					println "Success"
+					responseCode = resp.statusLine.statusCode
+					println "Got response: ${resp.statusLine}"
+					println "Content-Type: ${resp.headers.'Content-Type'}"
+					reader.each{
+					println "Response data: " + "$it"
+					String user = "$it"
+					if (user.startsWith("userId")){
+							user = user.replace("userId=", "")
+							println "User values : " +user
+						}
+					}
+				}
+				response.failure = { resp, reader ->
+				println "Request failed with status ${resp.status}"
+				reader.each{ println "Error values : "+"$it" }
+				responseCode = resp.statusLine.statusCode
+				}
+			}
+			
+		then:
+			responseCode == CommonVariable.STATUS_200
+	}
+	
+	
+	
 		
 	def "Get Matching tradesman"(){
 		given:
