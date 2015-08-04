@@ -57,6 +57,7 @@ public abstract class CommonVariable {
 	public static final String OUT_OF_AREA_POSTCODE ="M21WL"
 	
 	public static final String ADDRESS_TYPE_BUSINESS = "BUSINESS"
+	public static final String ADDRESS_TYPE_HOME = "HOME"
 	
 	/* Homeowner Details Section */
 	public static final String DEFAULT_HO_FIRSTNAME = "hoprofile"

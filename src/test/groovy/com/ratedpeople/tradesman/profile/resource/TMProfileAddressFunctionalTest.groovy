@@ -38,6 +38,14 @@ class TMProfileAddressFunctionalTest extends AbstractUserToken{
 			println "Json is " +  json.toString()
 			println "********************************"
 			println "Test Running .... Add TM Address"
+			def  getaddressID = DatabaseHelper.select("select id from tmprofile.address where tm_profile_id = 1")
+			if (getaddressID.startsWith("[{id=")){
+				getaddressID = getaddressID.replace("[{id=", "").replace("}]","")
+				println "Address id : " +getaddressID
+			}
+			if(getaddressID != null){
+				DatabaseHelper.executeQuery("delete from tmprofile.address where tm_profile_id = 1 ")
+			}
 		when:
 			responseCode = postAddress(json)
 		then:
@@ -139,7 +147,7 @@ class TMProfileAddressFunctionalTest extends AbstractUserToken{
 			def json = getAddress("")
 			String responseCode = null
 			println "********************************"
-			println "Test running ..  " +"Get HO address"
+			println "Test running ..  " +"Get TM address"
 		when:
 			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
 				uri.path = PROFILE_PREFIX + USER_ID_TM + "/addresses"
@@ -210,6 +218,7 @@ class TMProfileAddressFunctionalTest extends AbstractUserToken{
 			postAddress(json)
 			
 			def  getaddressID = DatabaseHelper.select("select id from tmprofile.address where address_type = '${CommonVariable.ADDRESS_TYPE_BUSINESS}'")
+//			def  getaddressID = DatabaseHelper.select("select id from tmprofile.address where address_type = 'HOME'")
 			if (getaddressID.startsWith("[{id=")){
 				getaddressID = getaddressID.replace("[{id=", "").replace("}]","")
 				println "Address id : " +getaddressID
@@ -241,6 +250,7 @@ class TMProfileAddressFunctionalTest extends AbstractUserToken{
 			responseCode == CommonVariable.STATUS_200
 		cleanup:
 			DatabaseHelper.executeQuery("delete from tmprofile.address where tm_profile_id = 1 and address_type = '${CommonVariable.ADDRESS_TYPE_BUSINESS}'")
+//		DatabaseHelper.executeQuery("delete from tmprofile.address where tm_profile_id = 1 and address_type = 'HOME'")
 	}
 	
 	private def postAddress(JsonBuilder json){
