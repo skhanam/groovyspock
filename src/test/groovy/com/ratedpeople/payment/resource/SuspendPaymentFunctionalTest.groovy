@@ -85,6 +85,47 @@ class SuspendPaymentFunctionalTest extends AbstractTradesman{
 			 DatabaseHelper.executeQuery("Delete from payment.payment_dispute_comment where payment_transaction_id = 1");
 		
 	}
+	
+	
+	
+	def "test get  payment details from job "(){
+		given:
+			String responseStatus = null
+		when:
+		try{
+			HTTP_BUILDER.request(Method.GET, ContentType.JSON){
+				uri.path = CommonVariable.PAYMENT_SERVICE_PREFIX + "v1.0/users/2/jobs/8/payments"
+				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_ADMIN
+				requestContentType = ContentType.JSON
+				println "Uri : " + uri
+				response.success = { resp, reader ->
+					println "Success"
+					println "Got response: ${resp.statusLine}"
+					println "Content-Type: ${resp.headers.'Content-Type'}"
+					responseStatus = resp.statusLine.statusCode
+					reader.each{
+						println "Token values : "+"$it"
+						String token = "$it"
+						String key = token.substring(0, token.indexOf("="))
+						String value = token.substring(token.indexOf("=") + 1, token.length())
+						println key
+						println value
+					}
+				}
+				response.failure = { resp, reader ->
+					println "Request failed with status ${resp.status}"
+					reader.each{ println "Error values : "+"$it" }
+					responseStatus = resp.statusLine.statusCode
+				}
+			}
+			}catch(java.net.ConnectException ex){
+				ex.printStackTrace()
+		}
+		then:
+			responseStatus == CommonVariable.STATUS_200
+		
+	}
+	
 
 }
 
