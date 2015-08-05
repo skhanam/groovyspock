@@ -70,7 +70,7 @@ class HomeownerProfileFunctionalTest  extends AbstractHomeowner{
 			println "Test Running .... Add HO Address"
 		when:
 			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
-				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_HO + "/address"
+				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_HO + "/addresses"
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_HO
 				body = json.toString()
 				requestContentType = ContentType.JSON
@@ -106,7 +106,7 @@ class HomeownerProfileFunctionalTest  extends AbstractHomeowner{
 			println "Test Running .... Update Ho Address"
 		when:
 			HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
-				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_HO + "/address"
+				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_HO + "/addresses"
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_HO
 				body = json.toString()
 				requestContentType = ContentType.JSON
@@ -136,7 +136,7 @@ class HomeownerProfileFunctionalTest  extends AbstractHomeowner{
 		println "Test running ..  " +"Get HO address"
 		when:
 			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
-				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_HO + "/address"
+				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_HO + "/addresses"
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_DYNAMIC_HO
 				body = json.toString()
 				requestContentType = ContentType.JSON
@@ -263,6 +263,7 @@ class HomeownerProfileFunctionalTest  extends AbstractHomeowner{
 			"line2" CommonVariable.DEFAULT_LINE2+additionInfo
 			"city"  CommonVariable.DEFAULT_CITY
 			"country" CommonVariable.DEFAULT_COUNTRY
+			"addressType"CommonVariable.ADDRESS_TYPE_HOME
 		}
 		return json;
 	}
