@@ -43,7 +43,6 @@ class TMProfileWorkingAreaFunctionalTest extends AbstractUserToken{
 				if (getId.startsWith("[{id=")){
 					getId = getId.replace("[{id=", "").replace("}]","")
 				println "Profile Address id : " +getId
-				DatabaseHelper.executeQuery("update tmprofile.tm_profile set working_area_id = null  where user_id =  1")
 				DatabaseHelper.executeQuery("delete from tmprofile.working_area where updated_by =  1")
 				}
 			}
