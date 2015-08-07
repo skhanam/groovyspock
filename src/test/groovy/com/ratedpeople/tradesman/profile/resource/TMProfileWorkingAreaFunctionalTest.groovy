@@ -49,7 +49,7 @@ class TMProfileWorkingAreaFunctionalTest extends AbstractUserToken{
 			
 		when:
 			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
-				uri.path = PROFILE_PREFIX + USER_ID_TM + "/workingarea"
+				uri.path = PROFILE_PREFIX + USER_ID_TM + "/workingareas"
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
 				body = json.toString()
 				requestContentType = ContentType.JSON
@@ -81,7 +81,7 @@ class TMProfileWorkingAreaFunctionalTest extends AbstractUserToken{
 			println "********************************"
 			println "Test Running .... Add TM Workingarea"
 			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
-				uri.path = PROFILE_PREFIX + USER_ID_TM + "/workingarea"
+				uri.path = PROFILE_PREFIX + USER_ID_TM + "/workingareas"
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
 				body = json.toString()
 				requestContentType = ContentType.JSON
@@ -115,7 +115,7 @@ class TMProfileWorkingAreaFunctionalTest extends AbstractUserToken{
 			println "********************************"
 			println "Test Running .... Update TM Workingarea"
 			HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
-				uri.path = PROFILE_PREFIX + USER_ID_TM + "/workingarea/"+getworkingID
+				uri.path = PROFILE_PREFIX + USER_ID_TM + "/workingareas/"+getworkingID
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
 				body = jsonOne.toString()
 				requestContentType = ContentType.JSON
@@ -145,7 +145,7 @@ class TMProfileWorkingAreaFunctionalTest extends AbstractUserToken{
 			println "********************************"
 			println "Test Running .... Add TM Workingarea"
 			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
-				uri.path = PROFILE_PREFIX + USER_ID_TM + "/workingarea"
+				uri.path = PROFILE_PREFIX + USER_ID_TM + "/workingareas"
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
 				body = json.toString()
 				requestContentType = ContentType.JSON
@@ -167,7 +167,7 @@ class TMProfileWorkingAreaFunctionalTest extends AbstractUserToken{
 		println "********************************"
 		println "Test Running .... Get TM Workingarea"
 			HTTP_BUILDER.request(Method.GET,ContentType.JSON){
-				uri.path = PROFILE_PREFIX + USER_ID_TM + "/workingarea"
+				uri.path = PROFILE_PREFIX + USER_ID_TM + "/workingareas"
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
 				requestContentType = ContentType.JSON
 				println "Uri is " + uri

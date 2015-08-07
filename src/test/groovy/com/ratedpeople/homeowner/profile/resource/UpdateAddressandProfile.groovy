@@ -28,7 +28,7 @@ class UpdateAddressandProfile extends AbstractUserToken{
 				"lastName" CommonVariable.DEFAULT_HO_LASTNAME
 				"email" CommonVariable.DEFAULT_HO_USERNAME
 				"phone" {
-					"mobilePhone" CommonVariable.DEFAULT_MOBILE_PREFIX  + (829300000+RANDOM_MOBILE)
+					"number" CommonVariable.DEFAULT_MOBILE_PREFIX  + (829300000+RANDOM_MOBILE)
 				} 
 		
 			}	
