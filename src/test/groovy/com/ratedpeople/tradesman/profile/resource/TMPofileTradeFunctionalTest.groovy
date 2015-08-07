@@ -191,6 +191,45 @@ class TMPofileTradeFunctionalTest  extends AbstractUserToken{
 	}
 	
 	
+	
+	def "Get  Tradesman user Id"(){
+		given :
+			String responseCode = null
+			println "********************************"
+			println "Test running ..  Get Tradesman Trade"
+		when:
+			HTTP_BUILDER.request(Method.GET,ContentType.JSON){
+				uri.path = CommonVariable.USER_SERVICE_PREFIX + "v1.0/users/"+USER_ID_TM
+				println "uri.path   :"+uri.path
+				println "Access Token TM : "+ ACCESS_TOKEN_TM
+				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
+				requestContentType = ContentType.JSON
+				println "Uri is " + uri
+				
+				response.success = { resp, reader ->
+					println "Success"
+					println "Got response: ${resp.statusLine}"
+					println "Content-Type: ${resp.headers.'Content-Type'}"
+					responseCode = resp.statusLine.statusCode
+					reader.each{
+						"Results  : "+ "$it"
+					}
+				}
+	
+				response.failure = { resp, reader ->
+					responseCode = resp.statusLine.statusCode
+					println " stacktrace : "+reader.each{"$it"}
+				}
+			}
+		then:
+			responseCode == CommonVariable.STATUS_200
+	}
+	
+	
+	
+	
+	
+	
 	def "Delete  Tradesman Trade"(){
 		given :
 			String responseCode = null
