@@ -160,7 +160,7 @@ class HomeownerProfileFunctionalTest  extends AbstractHomeowner{
 			HTTP_BUILDER.request(Method.GET){
 				headers.Accept = 'application/json'
 				headers.'Authorization' = "Bearer " + ACCESS_TOKEN_DYNAMIC_HO
-				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_HO + "/address"
+				uri.path = PROFILE_PREFIX + USER_ID_DYNAMIC_HO + "/addresses"
 	
 				println "Uri is " + uri
 	
