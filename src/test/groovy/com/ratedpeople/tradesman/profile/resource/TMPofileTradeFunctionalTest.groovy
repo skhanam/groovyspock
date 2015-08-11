@@ -196,7 +196,7 @@ class TMPofileTradeFunctionalTest  extends AbstractUserToken{
 		given :
 			String responseCode = null
 			println "********************************"
-			println "Test running ..  Get Tradesman Trade"
+			println "Test running ..  Get Tradesman Id"
 		when:
 			HTTP_BUILDER.request(Method.GET,ContentType.JSON){
 				uri.path = CommonVariable.USER_SERVICE_PREFIX + "v1.0/users/"+USER_ID_TM
