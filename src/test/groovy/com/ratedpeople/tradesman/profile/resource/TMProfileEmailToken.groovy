@@ -23,9 +23,10 @@ import org.apache.http.entity.mime.content.FileBody
  */
 class TMProfileEmailToken extends AbstractUserToken{
 
-	private static final String PROFILE_PREFIX = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"
+	private static final String PROFILE_PREFIX = CommonVariable.USER_SERVICE_PREFIX + "v1.0/users/"
 	
 	private static final String MATCH_PREFIX = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/match"
+	
 	def "Regenerate Email validation Token"(){
 		given:
 				String responseCode = null
@@ -34,7 +35,7 @@ class TMProfileEmailToken extends AbstractUserToken{
 			println "********************************"
 			println "Test Running .... Regenerate Email validation Token"
 				HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
-					uri.path = PROFILE_PREFIX +USER_ID_TM  + "/email/resettoken"
+					uri.path = PROFILE_PREFIX +USER_ID_TM  + "/email/token"
 					headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
 					requestContentType = ContentType.JSON
 					println "Uri is " + uri
