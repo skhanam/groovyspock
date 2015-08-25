@@ -60,7 +60,7 @@ class TMProfileEmailToken extends AbstractUserToken{
 def "Validate Email with Token"(){
 	given:
 			String responseCode = null
-			def getToken = DatabaseHelper.select("select token from tmprofile.email_validation_token where user_id = '${USER_ID_TM}'")
+			def getToken = DatabaseHelper.select("select token from uaa.email_validation_token where user_id = '${USER_ID_TM}'")
 			println "Token for email  is :"+getToken
 			if (getToken.startsWith("[{token")){
 				getToken = getToken.replace("[{token=", "").replace("}]","")
@@ -68,13 +68,19 @@ def "Validate Email with Token"(){
 			}
 			
 	when:
+		def json = new JsonBuilder()
+		json {
+			"userId" USER_ID_TM
+			"email" CommonVariable.DEFAULT_TM_USERNAME
+			"token" getToken
+		}
 		println "********************************"
 		println "Test Running ....  Validate Email with Token"
 			HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
 				uri.path = PROFILE_PREFIX +USER_ID_TM  + "/email/verify"
-				uri.query = [
-					token:getToken
-					]
+				body = json.toString()
+				requestContentType = ContentType.JSON
+				
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
 				requestContentType = ContentType.JSON
 				println "Uri is " + uri
