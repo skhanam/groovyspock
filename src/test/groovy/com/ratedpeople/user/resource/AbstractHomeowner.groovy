@@ -63,7 +63,7 @@ class AbstractHomeowner  extends Specification{
 			"password" CommonVariable.DEFAULT_PASSWORD
 			"firstName" CommonVariable.DEFAULT_HO_FIRSTNAME
 			"lastName"  CommonVariable.DEFAULT_HO_LASTNAME
-			"phoneNumber" CommonVariable.DEFAULT_MOBILE_PREFIX + RANDOM_MOBILE
+			//"phoneNumber" CommonVariable.DEFAULT_MOBILE_PREFIX + RANDOM_MOBILE
 		}
 
 		println "Json is ${json.toString()}"

@@ -6,8 +6,10 @@ package com.ratedpeople.user.resource
 import groovy.json.*
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
+
 import com.ratedpeople.support.CommonVariable
 import com.ratedpeople.support.DatabaseHelper
+import groovyx.net.http.ContentType
 /**
  * @author shabana.khanam
  *
@@ -69,7 +71,7 @@ class ResetPasswordFunctionalTest extends AbstractHomeowner {
 			when:
 				HTTP_BUILDER.request(Method.POST){
 					headers.Accept = 'application/json'
-					uri.path = CommonVariable.USER_SERVICE_PREFIX + "v1.0/users/" + USER_ID_DYNAMIC_HO + "/resetpassword"
+					uri.path = CommonVariable.USER_SERVICE_PREFIX + "v1.0/users/" + USER_ID_DYNAMIC_HO + "/password/token"
 					
 					println "Uri : " + uri
 					
@@ -103,13 +105,20 @@ class ResetPasswordFunctionalTest extends AbstractHomeowner {
 				println "********************************"
 				println "Test Running ........  Verify Reset password"
 			
+				
+				def json = new JsonBuilder()
+				json {
+					"userId" USER_ID_DYNAMIC_HO
+					"password" CommonVariable.DEFAULT_PASSWORD
+					"token" ACCESS_TOKEN
+				}
+				
 				HTTP_BUILDER.request(Method.PUT){
 					headers.Accept = 'application/json'
-					uri.path = CommonVariable.USER_SERVICE_PREFIX + "v1.0/users/" + USER_ID_DYNAMIC_HO + "/resetpassword"
-					uri.query = [
-						token : ACCESS_TOKEN,
-						password : CommonVariable.DEFAULT_PASSWORD
-					]
+					uri.path = CommonVariable.USER_SERVICE_PREFIX + "v1.0/users/" + USER_ID_DYNAMIC_HO + "/password/reset"
+					body = json.toString()
+					requestContentType = ContentType.JSON
+					
 					
 					println "Uri : " + uri
 					

@@ -65,7 +65,7 @@ class AbstractTradesman extends Specification{
 			"password" CommonVariable.DEFAULT_PASSWORD
 			"firstName" "tmprofile"
 			"lastName"  "Aws"
-			"phoneNumber" CommonVariable.DEFAULT_MOBILE_PREFIX + RANDOM_MOBILE
+			
 		}
 		
 		println "Json is ${json.toString()}"
