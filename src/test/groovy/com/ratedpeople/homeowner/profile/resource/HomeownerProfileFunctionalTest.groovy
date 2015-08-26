@@ -20,8 +20,13 @@ class HomeownerProfileFunctionalTest  extends AbstractHomeowner{
 	private final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(CommonVariable.SERVER_URL)
 	private static final PROFILE_PREFIX = CommonVariable.HOPROFILE_SERVICE_PREFIX + "v1.0/users/"
 	
+	def "setupSpec"(){
+		Thread.sleep(3000);
+	}
+	
 	def "Matching Free Text"(){
 		given:
+			
 			String responseCode = null
 			println "********************************"
 			println "Test Running ... Matching Free Text "
