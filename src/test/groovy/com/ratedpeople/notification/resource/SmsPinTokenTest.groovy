@@ -28,7 +28,7 @@ class SmsPinTokenTest extends AbstractUserToken{
 			String responseStatus = null
 		when:
 			HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
-				uri.path = CommonVariable.HOPROFILE_SERVICE_PREFIX + "v1.0/users/" + USER_ID_HO + "/generatepin"
+				uri.path = CommonVariable.HOPROFILE_SERVICE_PREFIX + "v1.0/users/" + USER_ID_HO + "/phones/2/resetpin"
 				println "uri path : "+uri.path
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_HO
 				requestContentType = ContentType.JSON
@@ -81,11 +81,14 @@ class SmsPinTokenTest extends AbstractUserToken{
 				println e.getMessage()
 			}
 			def json = new JsonBuilder()
-			json{ "pinToken" getpinToken }
+			json{ "pinToken" getpinToken
+				"phoneId" 2
+				
+			}
 			println "Json is    : "+json.toString()
 		when:
 			HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
-				uri.path = CommonVariable.HOPROFILE_SERVICE_PREFIX + "v1.0/users/" + USER_ID_HO + "/validatepin"
+				uri.path = CommonVariable.HOPROFILE_SERVICE_PREFIX + "v1.0/users/" + USER_ID_HO + "/phones/2/verify"
 				println "uri path : "+uri.path
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_HO
 				body = json.toString()
