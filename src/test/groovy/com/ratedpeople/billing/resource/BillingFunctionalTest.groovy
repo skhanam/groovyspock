@@ -64,7 +64,11 @@ class BillingFunctionalTest extends AbstractUserToken{
 
 		}
 	
-
+/*
+ * 
+ * Not sure why i am unable to commit to branch
+ * 
+ */
 
 	def "Get details about billing "(){
 		given:
