@@ -69,10 +69,12 @@ class BillingFunctionalTest extends AbstractUserToken{
 	def "Get details about billing "(){
 		given:
 				String responseStatus = null
+				
 					
 		when:
 			HTTP_BUILDER.request(Method.GET, ContentType.JSON){
 				uri.path = BILLING_URI_PREFIX +  "1/billingdetails/4"
+				
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_ADMIN
 				requestContentType = ContentType.JSON
 				
