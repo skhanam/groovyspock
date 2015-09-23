@@ -15,6 +15,7 @@ public abstract class CommonVariable {
 	public static final String AUTHORIZATION_SERVER_PREFIX = "/api/uaa/"
 	public static final String PAYMENT_SERVICE_PREFIX = "/api/payment/"
 	public static final String BILLING_SERVICE_PREFIX = "/api/billing/"
+	public static final String RATING_SERVICE_PREFIX = "/api/rating/"
 	public static final String HOPROFILE_SERVICE_PREFIX = "/api/hoprofile/"
 	public static final String JOB_SERVICE_PREFIX = "/api/chores/"
 	public static final String TMPROFILE_SERVICE_PREFIX = "/api/tmprofile/"
