@@ -64,12 +64,6 @@ class BillingFunctionalTest extends AbstractUserToken{
 
 		}
 	
-/*
- * 
- * Not sure why i am unable to commit to branch
- * 
- */
-
 	def "Get details about billing "(){
 		given:
 				String responseStatus = null
@@ -77,7 +71,7 @@ class BillingFunctionalTest extends AbstractUserToken{
 					
 		when:
 			HTTP_BUILDER.request(Method.GET, ContentType.JSON){
-				uri.path = BILLING_URI_PREFIX +  "1/billingdetails/4"
+				uri.path = BILLING_URI_PREFIX +  "1/billingdetails/2"
 				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_ADMIN
 				requestContentType = ContentType.JSON
 				
