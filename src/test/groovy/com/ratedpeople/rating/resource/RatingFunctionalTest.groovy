@@ -26,6 +26,15 @@ class RatingFunctionalTest extends  AbstractUserToken{
 	
 	def "Rating HO "(){
 		given :
+		def  getratingVal = DatabaseHelper.select("select rating from rating.rating where job_id=7")
+		if (getratingVal.startsWith("[{rating")){
+			getratingVal = getratingVal.replace("[{rating=", "").replace("}]","")
+			println "rating  value : " +getratingVal
+		if(getratingVal != null ){
+		DatabaseHelper.executeQuery("UPDATE rating.rating SET rating = null  WHERE job_id = 7")
+		println "You are cleaning up rating for job Id 7"
+			}
+		}
 			String responseCode = null
 			def json = new JsonBuilder()
 			json{
