@@ -64,7 +64,46 @@ class BillingFunctionalTest extends AbstractUserToken{
 
 		}
 	
+	def "Get details about billing "(){
+		given:
+				String responseStatus = null
+				
+					
+		when:
+			HTTP_BUILDER.request(Method.GET, ContentType.JSON){
+				uri.path = BILLING_URI_PREFIX +  "1/billingdetails/2"
+				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_ADMIN
+				requestContentType = ContentType.JSON
+				
+				println "Uri : " + uri
+				response.success = { resp, reader ->
+					println "Success"
+					println "Got response: ${resp.statusLine}"
+					println "Content-Type: ${resp.headers.'Content-Type'}"
+					
+					responseStatus = resp.statusLine.statusCode
+					
+					reader.each{
+						println "Token values : "+"$it"
+						
+						String token = "$it"
+						String key = token.substring(0, token.indexOf("="))
+						String value = token.substring(token.indexOf("=") + 1, token.length())
+						println key
+						println value
+					}
+				}
+				
+				response.failure = { resp, reader ->
+						println "Request failed with status ${resp.status}"
+						println " stacktrace : "+reader.each{"$it"}
+						responseStatus = resp.statusLine.statusCode
+					}
+			}
+		then:
+			responseStatus == CommonVariable.STATUS_200
 
-
+		}
+	
 
 }
