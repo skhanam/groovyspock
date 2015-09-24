@@ -73,7 +73,7 @@ class AbstractHomeowner  extends Specification{
 
 	private static def createUser(def json) {
 		def map = HTTP_BUILDER.request(Method.POST,ContentType.JSON) {
-			uri.path = HOMEOWNER_URI_PREFIX + "/register"
+			uri.path = HOMEOWNER_URI_PREFIX + "register"
 			body = json.toString()
 			requestContentType = ContentType.JSON
 			headers.Accept = ContentType.JSON
