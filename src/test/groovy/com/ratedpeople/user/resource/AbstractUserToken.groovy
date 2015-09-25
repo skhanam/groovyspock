@@ -120,8 +120,8 @@ class AbstractUserToken extends Specification {
 						println "Response data: " + "$it"
 			
 						String user = "$it"
-						if (user.startsWith("user_id")){
-							user = user.replace("user_id=", "")
+						if (user.startsWith("userId")){
+							user = user.replace("userId=", "")
 							println "User values : " +user
 							if(userName[i].equals(CommonVariable.DEFAULT_TM_USERNAME)){
 								USER_ID_TM = user

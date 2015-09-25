@@ -119,9 +119,9 @@ class AbstractTradesman extends Specification{
 						REFRESH_TOKEN_DYNAMIC_TM = tokentemp.substring(tokentemp.indexOf("=") + 1, tokentemp.length())
 							println "Refresh Token Dynamic TM : " + REFRESH_TOKEN_DYNAMIC_TM
 					}
-					if (tokentemp.startsWith("user_id"))
+					if (tokentemp.startsWith("userId"))
 					{
-						tokentemp = tokentemp.replace("user_id=", "")
+						tokentemp = tokentemp.replace("userId=", "")
 						println "User values : " +tokentemp
 						USER_ID_DYNAMIC_TM = tokentemp
 						println "Dynamic Id second iteration  : "+ USER_ID_DYNAMIC_TM
