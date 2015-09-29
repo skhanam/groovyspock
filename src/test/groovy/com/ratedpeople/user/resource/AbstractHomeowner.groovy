@@ -8,6 +8,7 @@ import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
 import spock.lang.Specification
+import com.ratedpeople.support.DatabaseHelper
 
 import com.ratedpeople.support.CommonVariable
 /**
@@ -147,6 +148,9 @@ class AbstractHomeowner  extends Specification{
 	}
 	
 	
+	
+	
+	
 	public static def createJsonPostaJob(String adddescription){
 		def json = new JsonBuilder()
 		json {
@@ -174,10 +178,10 @@ class AbstractHomeowner  extends Specification{
 	}
 
 	
-	public def createJsonCreditCard(){
+	public def createJsonCreditCard(String creditCard){
 		def json = new JsonBuilder()
 		json {
-			"number" CommonVariable.DEFAULT_CC_NUMBER
+			"number" creditCard
 			"userId" USER_ID_DYNAMIC_HO
 			"cvv" CommonVariable.DEFAULT_CC_CVV
 			"expiryYear" CommonVariable.DEFAULT_CC_EXPIRY_YEAR
@@ -220,8 +224,51 @@ class AbstractHomeowner  extends Specification{
 		return map;
 	}
 	
+	public def getCCToken(){
+		def getCCToken = DatabaseHelper.select("select token from payment.credit_card where user_id =  '${USER_ID_DYNAMIC_HO}'")
+		println "getCCToken before .... "+getCCToken
+		if (getCCToken.startsWith("[{token")){
+			getCCToken = getCCToken.replace("[{token=", "").replace("}]","")
+			println " getCC Token is : "+getCCToken
+		}
+		return getCCToken
+	}
+	
+	public def preauthJsonCreditCard(def ccToken){
+		def json = new JsonBuilder()
+		json {
+			"fromUserId" USER_ID_DYNAMIC_HO
+			"toUserId" AbstractUserToken.USER_ID_TM
+			"jobId" 
+			"ccToken" ccToken
+			"currency" CommonVariable.DEFAULT_CURRENCY
+			"skrillTransaction" ""
+			"amount" CommonVariable.DEFAULT_AMOUNT
+			"fromUserEmail" CommonVariable.DEFAULT_HO_USERNAME
+			"ip" CommonVariable.DEFAULT_IP
+		}
+		
+		println "json preauthJsonCC .... +${json.toString()}"
+		return json;
+	
+	}
 	
 	
+	public def postpreauthCreditCard(def preauthuricc,def json){
+		println "Access token for HO in CC :"+ACCESS_TOKEN_DYNAMIC_HO
+		def map = HTTP_BUILDER.request(Method.POST) {
+			uri.path = preauthuricc + USER_ID_DYNAMIC_HO +"/preauth"
+			headers.'Authorization' = "Bearer " + ACCESS_TOKEN_DYNAMIC_HO
+			body = json.toString()
+			println "JSon to String post credit card " + body 
+			requestContentType = ContentType.JSON
+			headers.Accept = ContentType.JSON
+
+			println "Preauth credit card Uri : " + uri
+		}
+		println "Map is : "+map
+		return map;
+	}
 	
 	private static def getUserId() {
 		HTTP_BUILDER.request(Method.GET){

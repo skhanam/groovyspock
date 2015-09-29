@@ -21,6 +21,9 @@ class JobFlowIntegrationTest extends AbstractHomeowner{
 	private static String getpinToken
 	private static String phoneid
 	private static final String JOB_URI_PREFIX = CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/"
+	private final String CREDIT_CARD_RESOURCE_URI = CommonVariable.PAYMENT_SERVICE_PREFIX + "v1.0/users/"
+	private final String PREAUTH_CC_URI = CommonVariable.PAYMENT_SERVICE_PREFIX + "v1.0/users/"
+	private static final long RANDOM_CC_NUMBER = Math.round(Math.random()*100);
 	
 	def "JobFlow Integration"(){
 		given :
@@ -62,7 +65,12 @@ class JobFlowIntegrationTest extends AbstractHomeowner{
 			Thread.sleep(3000);
 			getToken();
 			postajob(JOB_URI_PREFIX,createJsonPostaJob(""));
-		
+			println "Unique credit card "+ CommonVariable.UNIQUE_CC_NUMBER+RANDOM_CC_NUMBER
+			postCreditCard(CREDIT_CARD_RESOURCE_URI,createJsonCreditCard(CommonVariable.UNIQUE_CC_NUMBER+RANDOM_CC_NUMBER))
+			def token = getCCToken().toString();
+			println "Finalised tOken value is : "+token
+			postpreauthCreditCard(PREAUTH_CC_URI,preauthJsonCreditCard(token))
+			
 	}
 	
 	
@@ -77,6 +85,10 @@ class JobFlowIntegrationTest extends AbstractHomeowner{
 			println "pin token is : " +getpinToken
 		}
 	}
+	
+	
+	
+	
 	
 	private def postPhone(String userId1){
 		
@@ -120,5 +132,18 @@ class JobFlowIntegrationTest extends AbstractHomeowner{
 	}
 	
 	
-		
+//	private def preauthCreditCard(){
+//		json {
+//			"fromUserId" USER_ID_HO
+//			"toUserId" USER_ID_TM
+//			"jobId" RANDOM_JOB_ID
+//			"ccToken" CommonVariable.DEFAULT_CC_TOKEN
+//			"currency" CommonVariable.DEFAULT_CURRENCY
+//			"skrillTransaction" ""
+//			"amount" CommonVariable.DEFAULT_AMOUNT
+//			"fromUserEmail" CommonVariable.DEFAULT_HO_USERNAME
+//			"ip" CommonVariable.DEFAULT_IP
+//		}
+//		println "json preauthCC .... "+json.toString();
+//	}	
 }

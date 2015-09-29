@@ -82,6 +82,7 @@ public abstract class CommonVariable {
 	public static final String DEFAULT_CC_EXPIRY_YEAR = "2016"
 	public static final String DEFAULT_CC_TYPE = "visa"
 	public static final String DEFAULT_CC_USER_ID = "34"
+	public static final String UNIQUE_CC_NUMBER = "4000000000000"
 	
 	/* Credit Card Validation Error Messages*/
 	public static final String CC_VALIDATION = "credit card has invalid characters - credit card number is compulsory - credit card has wrong size -   "

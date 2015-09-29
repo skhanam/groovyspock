@@ -35,7 +35,7 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 			String responseStatus
 			String ccToken
 		when:
-			def response = postCreditCard(CREDIT_CARD_RESOURCE_URI,createJsonCreditCard());
+			def response = postCreditCard(CREDIT_CARD_RESOURCE_URI,createJsonCreditCard(CommonVariable.DEFAULT_CC_NUMBER));
 	//CREDIT_CARD_RESOURCE_URI,def uricc,
 			println "RESPONSE : "+response
 			def resp = response['response']
@@ -66,7 +66,7 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 		println "Test 2 :  testGetCardDetails"
 
 		given:
-			def response = postCreditCard(CREDIT_CARD_RESOURCE_URI,createJsonCreditCard());
+			def response = postCreditCard(CREDIT_CARD_RESOURCE_URI,createJsonCreditCard(CommonVariable.DEFAULT_CC_NUMBER));
 			String ccToken
 			response = getCreditCard(CREDIT_CARD_RESOURCE_URI)
 			def resp = response['response']
@@ -175,7 +175,7 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 			String ccToken
 			String errorMessage
 			DatabaseHelper.executeQuery("delete from payment.credit_card where token = '${ccToken}'")
-			def response = postCreditCard(CREDIT_CARD_RESOURCE_URI,createJsonCreditCard())
+			def response = postCreditCard(CREDIT_CARD_RESOURCE_URI,createJsonCreditCard(CommonVariable.DEFAULT_CC_NUMBER))
 			def resp = response['response']
 			def reader = response['reader']
 	
@@ -193,7 +193,7 @@ class CreditCardFunctionalTest extends AbstractHomeowner {
 	
 			String responseStatus
 		when:
-			response = postCreditCard(CREDIT_CARD_RESOURCE_URI,createJsonCreditCard())
+			response = postCreditCard(CREDIT_CARD_RESOURCE_URI,createJsonCreditCard(CommonVariable.DEFAULT_CC_NUMBER))
 	
 			resp = response['response']
 			reader = response['reader']
