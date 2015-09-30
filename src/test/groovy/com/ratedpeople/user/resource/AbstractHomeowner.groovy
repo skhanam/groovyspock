@@ -74,7 +74,7 @@ class AbstractHomeowner  extends Specification{
 
 	private static def createUser(def json) {
 		def map = HTTP_BUILDER.request(Method.POST,ContentType.JSON) {
-			uri.path = HOMEOWNER_URI_PREFIX + "/register"
+			uri.path = HOMEOWNER_URI_PREFIX + "register"
 			body = json.toString()
 			requestContentType = ContentType.JSON
 			headers.Accept = ContentType.JSON
@@ -117,8 +117,8 @@ class AbstractHomeowner  extends Specification{
 						REFRESH_TOKEN_DYNAMIC_HO = tokentemp.substring(tokentemp.indexOf("=") + 1, tokentemp.length())
 						println "Refresh Token Dynamic HO : " + REFRESH_TOKEN_DYNAMIC_HO
 					}
-					if (tokentemp.startsWith("user_id")) {
-						tokentemp = tokentemp.replace("user_id=", "")
+					if (tokentemp.startsWith("userId")) {
+						tokentemp = tokentemp.replace("userId=", "")
 						println "User values : " +tokentemp
 						USER_ID_DYNAMIC_HO = tokentemp
 						println "Dynamic Id second iteration  : "+ USER_ID_DYNAMIC_HO
