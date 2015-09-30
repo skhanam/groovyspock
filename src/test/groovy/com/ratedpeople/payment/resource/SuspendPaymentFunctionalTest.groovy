@@ -2,6 +2,8 @@
  * 
  */
 package com.ratedpeople.payment.resource
+import groovy.json.JsonBuilder
+import spock.lang.Specification;
 
 /**
  * @author shabana.khanam
@@ -10,17 +12,9 @@ package com.ratedpeople.payment.resource
 /**
  * 
  */
-import com.ratedpeople.user.resource.AbstractTradesman;
-import groovyx.net.http.HTTPBuilder
-import groovyx.net.http.Method
-import com.ratedpeople.support.CommonVariable
-import com.ratedpeople.user.resource.AbstractUserToken
-import com.ratedpeople.support.DatabaseHelper
-import groovy.json.*
-import groovyx.net.http.ContentType
 
 
-class SuspendPaymentFunctionalTest extends AbstractTradesman{
+class SuspendPaymentFunctionalTest extends Specification{
 	
 	
 	

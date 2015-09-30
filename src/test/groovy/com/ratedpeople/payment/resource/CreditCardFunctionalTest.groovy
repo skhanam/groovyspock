@@ -6,15 +6,16 @@ package com.ratedpeople.payment.resource
 import groovy.json.*
 import groovyx.net.http.ContentType
 import groovyx.net.http.Method
+
+import com.ratedpeople.service.HomeownerService;
 import com.ratedpeople.support.CommonVariable
 import com.ratedpeople.support.DatabaseHelper
-import com.ratedpeople.user.resource.AbstractHomeowner
 /**
  * @author shabana.khanam
  *
  */
 
-class CreditCardFunctionalTest extends AbstractHomeowner {
+class CreditCardFunctionalTest extends HomeownerService {
 
 	private final String CREDIT_CARD_RESOURCE_URI = CommonVariable.PAYMENT_SERVICE_PREFIX + "v1.0/users/"
 

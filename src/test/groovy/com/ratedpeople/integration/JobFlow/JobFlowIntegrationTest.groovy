@@ -4,9 +4,9 @@
 package com.ratedpeople.integration.JobFlow
 
 import com.ratedpeople.homeowner.profile.resource.HomeownerProfileFunctionalTest;
+import com.ratedpeople.service.HomeownerService;
 import com.ratedpeople.support.CommonVariable
 import com.ratedpeople.support.DatabaseHelper
-import com.ratedpeople.user.resource.AbstractHomeowner;
 
 import groovy.json.JsonBuilder
 import groovyx.net.http.ContentType
@@ -16,7 +16,7 @@ import groovyx.net.http.Method
  * @author shabana.khanam
  *
  */
-class JobFlowIntegrationTest extends AbstractHomeowner{
+class JobFlowIntegrationTest extends HomeownerService{
 
 	private static String getpinToken
 	private static String phoneid

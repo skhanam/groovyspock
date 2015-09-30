@@ -3,11 +3,11 @@
  */
 package com.ratedpeople.rating.resource
 
-import com.ratedpeople.user.resource.AbstractHomeowner;
 import com.ratedpeople.user.resource.AbstractUserToken;
 
 import groovy.json.JsonBuilder;
 
+import com.ratedpeople.service.HomeownerService;
 import com.ratedpeople.support.CommonVariable;
 
 import groovyx.net.http.ContentType

@@ -7,15 +7,17 @@ import groovy.json.*
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
 
+import com.ratedpeople.service.HomeownerService;
 import com.ratedpeople.support.CommonVariable
 import com.ratedpeople.support.DatabaseHelper
+
 import groovyx.net.http.ContentType
 /**
  * @author shabana.khanam
  *
  */
 
-class ResetPasswordFunctionalTest extends AbstractHomeowner {
+class ResetPasswordFunctionalTest extends HomeownerService {
 	
 	private static final String REGISTER_USER_HO_URI = CommonVariable.USER_SERVICE_PREFIX + "v1.0/homeowners/register"
 	private static final String REGISTER_USER_TM_URI = CommonVariable.USER_SERVICE_PREFIX + "v1.0/tradesmen/register"
