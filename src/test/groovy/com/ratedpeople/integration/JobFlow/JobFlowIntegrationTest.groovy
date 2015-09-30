@@ -67,7 +67,9 @@ class JobFlowIntegrationTest extends AbstractHomeowner{
 			postajob(JOB_URI_PREFIX,createJsonPostaJob(""));
 			println "Unique credit card "+ CommonVariable.UNIQUE_CC_NUMBER+RANDOM_CC_NUMBER
 			postCreditCard(CREDIT_CARD_RESOURCE_URI,createJsonCreditCard(CommonVariable.UNIQUE_CC_NUMBER+RANDOM_CC_NUMBER))
+			
 			def token = getCCToken().toString();
+			
 			println "Finalised tOken value is : "+token
 			postpreauthCreditCard(PREAUTH_CC_URI,preauthJsonCreditCard(token))
 			
