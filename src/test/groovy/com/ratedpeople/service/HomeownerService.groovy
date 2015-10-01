@@ -51,7 +51,7 @@ class HomeownerService{
 		return user;
 	}
 
-	public UserInfo createAdminUser(){
+	public UserInfo getAdminUser(){
 
 		UserInfo user = new UserInfo();
 		getAdminToken()
@@ -61,10 +61,16 @@ class HomeownerService{
 		return user;
 	}
 
+	public UserInfo getHoUser(){
 
-
-
-
+		UserInfo user = new UserInfo();
+		authTokenHo()
+		user.setId("2")
+		user.setToken(ACCESS_TOKEN_DYNAMIC_HO)
+		user.setUsername(CommonVariable.DEFAULT_HO_USERNAME);
+		return user;
+		
+	}
 
 	private def createDynamicUser(){
 		DYNAMIC_USER = CommonVariable.HO_USER_PREFIX + System.currentTimeMillis() + EMAIL_POSTFIX
@@ -94,6 +100,24 @@ class HomeownerService{
 		def query = [
 			grant_type: CommonVariable.DEFAULT_PASSWORD,
 			username: DYNAMIC_USER,
+			password: CommonVariable.DEFAULT_PASSWORD ,
+			scope: 'all'
+		]
+		ResultInfo result = http.callGetToken(CommonVariable.DEFAULT_GET_TOKEN_URI,query,null)
+		if(result.getResponseCode()==CommonVariable.STATUS_200){
+			ACCESS_TOKEN_DYNAMIC_HO = MatcherStringUtility.getMatch("access_token=(.*)expires", result.getBody())
+			println "Access Token: " + ACCESS_TOKEN_DYNAMIC_HO
+		}else{
+			throw new Exception("AuthToken failed " +result.getResponseCode())
+		}
+	}
+	
+	private def authTokenHo(){
+		String token = null
+		HttpConnectionService http = new HttpConnectionService()
+		def query = [
+			grant_type: CommonVariable.DEFAULT_PASSWORD,
+			username: CommonVariable.DEFAULT_HO_USERNAME,
 			password: CommonVariable.DEFAULT_PASSWORD ,
 			scope: 'all'
 		]

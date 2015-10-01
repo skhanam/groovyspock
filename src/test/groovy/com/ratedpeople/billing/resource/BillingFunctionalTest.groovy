@@ -5,6 +5,10 @@ package com.ratedpeople.billing.resourceimport groovyx.net.http.ContentType
 import groovyx.net.http.Method
 import spock.lang.Specification
 
+import com.ratedpeople.service.BillingService
+import com.ratedpeople.service.TradesmanService
+import com.ratedpeople.service.utility.ResultInfo
+import com.ratedpeople.service.utility.UserInfo
 import com.ratedpeople.support.CommonVariable
 
 
@@ -17,84 +21,27 @@ import com.ratedpeople.support.CommonVariable
 
 class BillingFunctionalTest extends Specification{
 
-	private static final String BILLING_URI_PREFIX = CommonVariable.BILLING_SERVICE_PREFIX + "v1.0/users/"
+
+
+	private BillingService billingService = new BillingService();
+	private TradesmanService tradesmanService = new TradesmanService();
 
 	def "Get list billing "(){
 		given:
-		String responseStatus = null
-
+		UserInfo user = tradesmanService.createTradesmanUser()
 		when:
-		HTTP_BUILDER.request(Method.GET, ContentType.JSON){
-			uri.path = BILLING_URI_PREFIX +  "1/billingdetails"
-			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_ADMIN
-			requestContentType = ContentType.JSON
-
-			println "Uri : " + uri
-			response.success = { resp, reader ->
-				println "Success"
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-
-				responseStatus = resp.statusLine.statusCode
-
-				reader.each{
-					println "Token values : "+"$it"
-
-					String token = "$it"
-					String key = token.substring(0, token.indexOf("="))
-					String value = token.substring(token.indexOf("=") + 1, token.length())
-					println key
-					println value
-				}
-			}
-
-			response.failure = { resp, reader ->
-				println "Request failed with status ${resp.status}"
-				println " stacktrace : "+reader.each{"$it"}
-				responseStatus = resp.statusLine.statusCode
-			}
-		}
+		ResultInfo result = billingService.getAllBillingsForTm(user)
 		then:
-		responseStatus == CommonVariable.STATUS_200
+		result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
 
 	def "Get details about billing "(){
 		given:
-		String responseStatus = null
 
-
+		UserInfo user = tradesmanService.createTradesmanUser()
 		when:
-		HTTP_BUILDER.request(Method.GET, ContentType.JSON){
-			uri.path = BILLING_URI_PREFIX +  "1/billingdetails/2"
-			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_ADMIN
-			requestContentType = ContentType.JSON
-
-			println "Uri : " + uri
-			response.success = { resp, reader ->
-				println "Success"
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-
-				responseStatus = resp.statusLine.statusCode
-
-				reader.each{
-					println "Token values : "+"$it"
-
-					String token = "$it"
-					String key = token.substring(0, token.indexOf("="))
-					String value = token.substring(token.indexOf("=") + 1, token.length())
-					println key
-					println value
-				}
-			}
-
-			response.failure = { resp, reader ->
-				println "Request failed with status ${resp.status}"
-				println " stacktrace : "+reader.each{"$it"}
-				responseStatus = resp.statusLine.statusCode
-			}
-		}
+		ResultInfo result = billingService.getSingleBillingDetailsForTm(user,"2")
 		then:
-		responseStatus == CommonVariable.STATUS_200
+		result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
 }

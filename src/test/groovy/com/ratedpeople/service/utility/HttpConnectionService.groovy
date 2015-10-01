@@ -159,6 +159,38 @@ class HttpConnectionService {
 		}
 		return info
 	}
+	
+	
+	private def callGetMethod(String url,def query){
+		ResultInfo info = new ResultInfo()
+
+		HTTP_BUILDER.request(Method.GET,ContentType.JSON){
+			uri.path = url
+			uri.query = query
+			println "Uri is " + uri
+
+			response.success = { resp, reader ->
+				println "Success"
+				reader.each{
+					//"Results  : "+ "$it"
+					String temp = "$it"
+					//println temp
+					info.setBody(info.getBody()+","+temp)
+				}
+				info.responseCode = resp.statusLine
+			}
+			response.failure = { resp, reader ->
+				println "Fail"
+				reader.each{
+					//"Results  : "+ "$it"
+					String temp = "$it"
+					info.setError(info.getError()+temp)
+				}
+				info.responseCode = resp.statusLine
+			}
+		}
+		return info
+	}
 
 	private def callPutMethodWithAuthorization(String url,String token, def queryText,def bodyText){
 		
@@ -198,6 +230,40 @@ class HttpConnectionService {
 		return info
 	}
 	
-	
+	private def callPutMethod(String url, def queryText,def bodyText){
+		
+		ResultInfo info = new ResultInfo()
+
+		HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
+			uri.path = url
+			if(queryText!=null){
+				uri.query = queryText
+			}
+			if(bodyText!=null){
+				body = bodyText.toString()
+			}
+			println "Uri is " + uri
+			response.success = { resp, reader ->
+				println "Success"
+				reader.each{
+					//"Results  : "+ "$it"
+					String temp = "$it"
+					//println temp
+					info.setBody(info.getBody()+","+temp)
+				}
+				info.responseCode = resp.statusLine
+			}
+			response.failure = { resp, reader ->
+				println "Fail"
+				reader.each{
+					//"Results  : "+ "$it"
+					String temp = "$it"
+					info.setError(info.getError()+temp)
+				}
+				info.responseCode = resp.statusLine
+			}
+		}
+		return info
+	}
 	
 }

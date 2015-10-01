@@ -7,6 +7,11 @@ import groovy.json.JsonBuilder
 import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
+
+import com.ratedpeople.service.HOProfileService
+import com.ratedpeople.service.HomeownerService
+import com.ratedpeople.service.utility.ResultInfo
+import com.ratedpeople.service.utility.UserInfo
 import com.ratedpeople.support.CommonVariable
 import com.ratedpeople.support.DatabaseHelper
 import com.ratedpeople.user.resource.AbstractUserToken
@@ -15,46 +20,31 @@ import com.ratedpeople.user.resource.AbstractUserToken
  *
  */
 class SmsPinTokenTest extends AbstractUserToken{
-	
-    private static String getpinToken
-	
+
+	private static String getpinToken
+
+	private HomeownerService homeownerService = new HomeownerService();
+	private HOProfileService hoProfileService = new HOProfileService();
+
+
+
 	def testRegeneratePINToken(){
 		println "****************************************************"
 		println "SmsPinToken"
 		println "Test Running ............. :  testRegeneratePINToken"
-		
 		given:
-			cleanDB()
-			String responseStatus = null
+		UserInfo user = homeownerService.getHoUser()
+		cleanDB(user)
+
 		when:
-			HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
-				uri.path = CommonVariable.HOPROFILE_SERVICE_PREFIX + "v1.0/users/" + USER_ID_HO + "/phones/2/resetpin"
-				println "uri path : "+uri.path
-				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_HO
-				requestContentType = ContentType.JSON
-				println "Uri is " + uri
-	
-				response.success = { resp, reader ->
-					println "Success"
-					println "Got response: ${resp.statusLine}"
-					println "Content-Type: ${resp.headers.'Content-Type'}"
-					responseStatus = resp.statusLine.statusCode
-					reader.each{ "Results  : "+ "$it" }
-				}
-	
-				response.failure = { resp, reader ->
-					println "Request failed with status ${resp.status}"
-					reader.each{ println "Error values : "+"$it" }
-					responseStatus = resp.statusLine.statusCode
-				}
-			}
+		ResultInfo result = hoProfileService.resetPin(user, "2")
 		then:
-			responseStatus == CommonVariable.STATUS_200
+		result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
 
-	private cleanDB() {
-		def getphoneId = DatabaseHelper.select("select phone_id from hoprofile.ho_profile where user_id =  '${USER_ID_HO}'")
-		getpinToken = DatabaseHelper.select("select pin_token from hoprofile.phone where id IN ( select phone_id from hoprofile.ho_profile where user_id = '${USER_ID_HO}')")
+	private cleanDB(UserInfo user) {
+		def getphoneId = DatabaseHelper.select("select phone_id from hoprofile.ho_profile where user_id =  '${user.getId()}'")
+		getpinToken = DatabaseHelper.select("select pin_token from hoprofile.phone where id IN ( select phone_id from hoprofile.ho_profile where user_id = '${user.getId()}')")
 		if (getpinToken.startsWith("[{pin_token")){
 			getpinToken = getpinToken.replace("[{pin_token=", "").replace("}]","")
 			println "pin token is : " +getpinToken
@@ -67,50 +57,30 @@ class SmsPinTokenTest extends AbstractUserToken{
 		println "****************************************************"
 		println "SmsPinToken"
 		println "Test Running ............. :  testValidate pin"
-
+		UserInfo user = homeownerService.getHoUser()
 		given:
-			String responseStatus = null
-			try{
-				def getphoneId = DatabaseHelper.select("select phone_id from hoprofile.ho_profile where user_id =  '${USER_ID_HO}'")
-				getpinToken = DatabaseHelper.select("select pin_token from hoprofile.phone where id IN ( select phone_id from hoprofile.ho_profile where user_id = '${USER_ID_HO}')")
-				if (getpinToken.startsWith("[{pin_token")){
-					getpinToken = getpinToken.replace("[{pin_token=", "").replace("}]","")
-					println "pin token is : " +getpinToken
-				}
-			}catch(Exception e){
-				println e.getMessage()
+		String responseStatus = null
+		try{
+			def getphoneId = DatabaseHelper.select("select phone_id from hoprofile.ho_profile where user_id =  '${user.getId()}'")
+			getpinToken = DatabaseHelper.select("select pin_token from hoprofile.phone where id IN ( select phone_id from hoprofile.ho_profile where user_id = '${user.getId()}')")
+			if (getpinToken.startsWith("[{pin_token")){
+				getpinToken = getpinToken.replace("[{pin_token=", "").replace("}]","")
+				println "pin token is : " +getpinToken
 			}
-			def json = new JsonBuilder()
-			json{ "pinToken" getpinToken
-				"phoneId" 2
-				
-			}
-			println "Json is    : "+json.toString()
+		}catch(Exception e){
+			println e.getMessage()
+		}
+		def json = new JsonBuilder()
+		json{
+			"pinToken" getpinToken
+			"phoneId" 2
+		}
+		println "Json is    : "+json.toString()
 		when:
-			HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
-				uri.path = CommonVariable.HOPROFILE_SERVICE_PREFIX + "v1.0/users/" + USER_ID_HO + "/phones/2/verify"
-				println "uri path : "+uri.path
-				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_HO
-				body = json.toString()
-				requestContentType = ContentType.JSON
-				println "Uri is " + uri
-				response.success = { resp, reader ->
-					println "Success"
-					println "Got response: ${resp.statusLine}"
-					responseStatus = resp.statusLine.statusCode
-					println "Content-Type: ${resp.headers.'Content-Type'}"
-					reader.each{ "Results  : "+ "$it" }
-				}
-	
-				response.failure = { resp, reader ->
-					println "Request failed with status ${resp.status}"
-					reader.each{ println "Error values : "+"$it" }
-					responseStatus = resp.statusLine.statusCode
-				}
-			}
+		ResultInfo result = hoProfileService.verifyPin(user, "2",json)
 		then:
-			responseStatus ==  CommonVariable.STATUS_200
-			cleanup:
-			DatabaseHelper.executeQuery("update hoprofile.phone set pin_generated_times= '0' where pin_token = '${getpinToken}'")
+		result.getResponseCode().contains(CommonVariable.STATUS_200)
+		cleanup:
+		DatabaseHelper.executeQuery("update hoprofile.phone set pin_generated_times= '0' where pin_token = '${getpinToken}'")
 	}
 }

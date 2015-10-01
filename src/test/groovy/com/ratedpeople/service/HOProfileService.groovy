@@ -37,7 +37,7 @@ class HOProfileService{
 
 
 
-	private def getAllProfiles(UserInfo userInfo){
+	public def getAllProfiles(UserInfo userInfo){
 
 		String url = CommonVariable.HOPROFILE_SERVICE_PREFIX + "v1.0/allprofiles"
 		def query = [
@@ -48,62 +48,52 @@ class HOProfileService{
 		ResultInfo result = http.callGetMethodWithAuthorization(url, userInfo.getToken(),query)
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
 			println "Ok"
-		}else{
-			throw new Exception("Failed " +result.getResponseCode())
 		}
 		return result;
 	}
 
-	private def createAddress(def address,UserInfo userInfo){
+	public def createAddress(def address,UserInfo userInfo){
 
 		String url = PROFILE_PREFIX + userInfo.getId() + "/addresses"
 		ResultInfo result = http.callPostMethodWithAuthentication(url, userInfo.getToken(), address)
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_201)){
 			println "Created"
-		}else{
-			throw new Exception("Failed " +result.getResponseCode())
 		}
 		return result;
 	}
 
-	private def updateAddress(def address,UserInfo userInfo){
+	public def updateAddress(def address,UserInfo userInfo){
 
 		String url = PROFILE_PREFIX + userInfo.getId() + "/addresses"
 		ResultInfo result = http.callPutMethodWithAuthorization(url, userInfo.getToken(),null, address)
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
 			println "Updated"
-		}else{
-			throw new Exception("Failed " +result.getResponseCode())
 		}
 		return result;
 	}
 
-	private def updateProfile(def profile,UserInfo userInfo){
+	public def updateProfile(def profile,UserInfo userInfo){
 
 		String url = CommonVariable.HOPROFILE_SERVICE_PREFIX + "v1.0/users/" +userInfo.getId() +"/profiles"
 		ResultInfo result = http.callPutMethodWithAuthorization(url, userInfo.getToken(),null, profile)
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
 			println "Updated"
-		}else{
-			throw new Exception("Failed " +result.getResponseCode())
 		}
 		return result;
 	}
 
 
-	private def getAddress(UserInfo userInfo){
+	public def getAddress(UserInfo userInfo){
 
 		String url = PROFILE_PREFIX + userInfo.getId() + "/addresses"
 		ResultInfo result = http.callGetMethodWithAuthorization(url, userInfo.getToken(), null)
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
 			println "Ok"
-		}else{
-			throw new Exception("Failed " +result.getResponseCode())
 		}
 		return result;
 	}
 
-	private def getHomeownerProfile(UserInfo userInfo){
+	public def getHomeownerProfile(UserInfo userInfo){
 
 		String url = PROFILE_PREFIX + userInfo.getId() + "/profiles"
 		ResultInfo result = http.callGetMethodWithAuthorization(url, userInfo.getToken(), null)
@@ -115,6 +105,24 @@ class HOProfileService{
 		return result;
 	}
 
+	public def resetPin(UserInfo userInfo,String phoneId){
 
+		String url = CommonVariable.HOPROFILE_SERVICE_PREFIX + "v1.0/users/" +userInfo.getId() +"/phones/"+phoneId+"/resetpin"
+		ResultInfo result = http.callPutMethodWithAuthorization(url, userInfo.getToken(),null, null)
+		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
+			println "Updated"
+		}
+		return result;
+	}
+
+	public def verifyPin(UserInfo userInfo,String phoneId,def phone){
+
+		String url = CommonVariable.HOPROFILE_SERVICE_PREFIX + "v1.0/users/" +userInfo.getId() +"/phones/"+phoneId+"/verify"
+		ResultInfo result = http.callPutMethodWithAuthorization(url, userInfo.getToken(),null, phone)
+		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
+			println "Updated"
+		}
+		return result;
+	}
 
 }
