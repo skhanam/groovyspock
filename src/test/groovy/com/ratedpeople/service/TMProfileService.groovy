@@ -17,7 +17,7 @@ final class TMProfileService{
 	private static HttpConnectionService http = new HttpConnectionService()
 
 	public ResultInfo getAllProfiles(UserInfo userInfo){
-		String url = PROFILE_PREFIX + "v1.0/allprofiles"
+		String url = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/allprofiles"
 		def query = [
 			freeText: CommonVariable.DEFAULT_TM_FIRSTNAME,
 			offset:0
@@ -164,28 +164,7 @@ final class TMProfileService{
 		return result;
 	}
 
-	public ResultInfo updateEmailToken(UserInfo userInfo){
-		String url = PROFILE_PREFIX + userInfo.getId() + "/email/token"
-		
-		ResultInfo result = http.callPutMethodWithAuthentication(url, userInfo.getToken(),null, null)
-		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
-			println "Updated"
-		}
-		
-		return result;
-	}
-
-	public ResultInfo validateEmailToken(UserInfo userInfo,def body){
-		String url = PROFILE_PREFIX + userInfo.getId() + "/email/verify"
-		
-		ResultInfo result = http.callPutMethodWithAuthentication(url, userInfo.getToken(),null, body)
-		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
-			println "Updated"
-		}
-		
-		return result;
-	}
-
+	
 	public ResultInfo postImage(UserInfo userInfo,def query){
 		String url = PROFILE_PREFIX + userInfo.getId() + "/images"
 		
@@ -263,8 +242,8 @@ final class TMProfileService{
 		return result;
 	}
 
-	public ResultInfo getWorkingarea(UserInfo userInfo,String workingareaId){
-		String url = PROFILE_PREFIX + userInfo.getId() + "/workingareas/"+workingareaId
+	public ResultInfo getWorkingarea(UserInfo userInfo ){
+		String url = PROFILE_PREFIX + userInfo.getId() + "/workingareas/"
 		
 		ResultInfo result = http.callGetMethodWithAuthentication(url, userInfo.getToken(), null)
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){

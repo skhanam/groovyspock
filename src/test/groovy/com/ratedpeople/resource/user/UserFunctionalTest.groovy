@@ -63,4 +63,38 @@ class UserFunctionalTest extends Specification {
 	
 	
 	 }
+	 
+	 
+	 def "Regenerate Email validation Token"(){
+		 given:
+			 UserInfo user =  homeownerService.createAndActivateDynamicUser()
+			 println "********************************"
+			 println "Test Running .... Regenerate Email validation Token"
+		 when:
+			 ResultInfo result = homeownerService.updateEmailToken(user)
+		 then:
+			 result.getResponseCode().contains(CommonVariable.STATUS_200)
+	 }
+ 
+	 def "Validate Email with Token"(){
+		 given:
+			 UserInfo user =  homeownerService.createAndActivateDynamicUser()
+			 println "********************************"
+			 println "Test Running ....  Validate Email with Token"
+			 homeownerService.updateEmailToken(user)
+			 String queryReuslt = DatabaseHelper.select("select token from uaa.email_validation_token where user_id = '${user.getId()}'")
+			 String tokenEmail = MatcherStringUtility.getMatch("token=(.*)}",queryReuslt)
+	 
+			 println "Token for email  is :"+tokenEmail
+		 when:
+			 def json = new JsonBuilder()
+			 json {
+				 "userId" user.getId()
+				 "email" user.getUsername()
+				 "token" tokenEmail
+			 }
+			 ResultInfo result = homeownerService.validateEmailToken(user,json)
+		 then:
+			 result.getResponseCode().contains(CommonVariable.STATUS_200)
+	 }
 }

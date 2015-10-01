@@ -205,5 +205,29 @@ class HomeownerService{
 	}
 	
 	
+	public ResultInfo updateEmailToken(UserInfo userInfo){
+		String url = USER_URI_PREFIX + userInfo.getId() + "/email/token"
+		
+		ResultInfo result = http.callPutMethodWithAuthentication(url, userInfo.getToken(),null, null)
+		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
+			println "Updated"
+		}
+		
+		return result;
+	}
+
+	public ResultInfo validateEmailToken(UserInfo userInfo,def body){
+		String url = USER_URI_PREFIX + userInfo.getId() + "/email/verify"
+		
+		ResultInfo result = http.callPutMethodWithAuthentication(url, userInfo.getToken(),null, body)
+		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
+			println "Updated"
+		}
+		
+		return result;
+	}
+
+	
+	
 	
 }
