@@ -5,7 +5,6 @@ package com.ratedpeople.resource.hoprofile
 
 import groovy.json.JsonBuilder
 import spock.lang.Specification
-
 import com.ratedpeople.service.HOProfileService
 import com.ratedpeople.service.HomeownerService
 import com.ratedpeople.service.utility.ResultInfo
@@ -16,19 +15,27 @@ import com.ratedpeople.support.CommonVariable
  *
  */
 class UpdateAddressandProfile extends Specification{
-
-
+	
 	protected static long RANDOM_MOBILE = Math.round(Math.random()*10000);
 
 	private HomeownerService homeownerService = new HomeownerService();
 	private HOProfileService hoProfileService = new HOProfileService();
 
-
 	def "Update Homeowner Profile"(){
 		given :
-		UserInfo user = homeownerService.createAndActivateDynamicUser();
+			UserInfo user = homeownerService.createAndActivateDynamicUser();
+			def json = createProfile(user)
 
-		String responseCode = null
+			println "Json is " +  json.toString()
+			println "********************************"
+			println "Test running ..  Update Homeowner Profile"
+		when:
+			ResultInfo result = hoProfileService.updateProfile(json,user)
+		then:
+			result.getResponseCode().contains(CommonVariable.STATUS_200)
+	}
+	
+	private def createProfile(final UserInfo user){
 		def json = new JsonBuilder()
 		json{
 			"userId" user.getId()
@@ -38,13 +45,7 @@ class UpdateAddressandProfile extends Specification{
 				"number" CommonVariable.DEFAULT_MOBILE_PREFIX  + (829300000+RANDOM_MOBILE)
 			}
 		}
-
-		println "Json is " +  json.toString()
-		println "********************************"
-		println "Test running ..  Update Homeowner Profile"
-		when:
-		ResultInfo result = hoProfileService.updateProfile(json,user)
-		then:
-		result.getResponseCode().contains(CommonVariable.STATUS_200)
+		
+		return json
 	}
 }

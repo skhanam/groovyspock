@@ -25,38 +25,36 @@ class TMProfileEmailToken extends Specification{
 	private TradesmanService tradesmanService = new TradesmanService();
 	private TMProfileService tmProfileService = new TMProfileService()
 
-
 	def "Regenerate Email validation Token"(){
 		given:
-		UserInfo user =  tradesmanService.createAndActivateDynamicUser()
-		println "********************************"
-		println "Test Running .... Regenerate Email validation Token"
+			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			println "********************************"
+			println "Test Running .... Regenerate Email validation Token"
 		when:
-		ResultInfo result = tmProfileService.updateEmailToken(user)
+			ResultInfo result = tmProfileService.updateEmailToken(user)
 		then:
-		result.getResponseCode().contains(CommonVariable.STATUS_200)
+			result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
-
 
 	def "Validate Email with Token"(){
 		given:
-		UserInfo user =  tradesmanService.createAndActivateDynamicUser()
-		println "********************************"
-		println "Test Running ....  Validate Email with Token"
-		tmProfileService.updateEmailToken(user)
-		String queryReuslt = DatabaseHelper.select("select token from uaa.email_validation_token where user_id = '${user.getId()}'")
-		String token = MatcherStringUtility.getMatch("token=(.*)}",queryReuslt)
-
-		println "Token for email  is :"+token
+			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			println "********************************"
+			println "Test Running ....  Validate Email with Token"
+			tmProfileService.updateEmailToken(user)
+			String queryReuslt = DatabaseHelper.select("select token from uaa.email_validation_token where user_id = '${user.getId()}'")
+			String token = MatcherStringUtility.getMatch("token=(.*)}",queryReuslt)
+	
+			println "Token for email  is :"+token
 		when:
-		def json = new JsonBuilder()
-		json {
-			"userId" user.getId()
-			"email" user.getUsername()
-			"token" token
-		}
-		ResultInfo result = tmProfileService.validateEmailToken(user,json)
+			def json = new JsonBuilder()
+			json {
+				"userId" user.getId()
+				"email" user.getUsername()
+				"token" token
+			}
+			ResultInfo result = tmProfileService.validateEmailToken(user,json)
 		then:
-		result.getResponseCode().contains(CommonVariable.STATUS_200)
+			result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
 }

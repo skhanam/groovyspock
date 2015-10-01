@@ -30,36 +30,33 @@ class TMProfileImageFunctionalTest extends Specification{
 	private TradesmanService tradesmanService = new TradesmanService();
 	private TMProfileService tmProfileService = new TMProfileService()
 
-
 	def "Post a Image for Tradesman"(){
 		given:
-		UserInfo user =  tradesmanService.createAndActivateDynamicUser()
-		def query = [
-			imageType:CommonVariable.IMAGE_TYPE_PROFILE
-		]
-		println "********************************"
-		println "Test Running .... Post a Image TM"
+			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			def query = [
+				imageType:CommonVariable.IMAGE_TYPE_PROFILE
+			]
+			println "********************************"
+			println "Test Running .... Post a Image TM"
 		when:
-		ResultInfo result = tmProfileService.postImage(user,query)
+			ResultInfo result = tmProfileService.postImage(user,query)
 		then:
-		result.getResponseCode().contains(CommonVariable.STATUS_201)
+			result.getResponseCode().contains(CommonVariable.STATUS_201)
 	}
-
 
 	def "Get a Image from Tradesman profile"(){
 		given:
-
-		UserInfo user =  tradesmanService.createAndActivateDynamicUser()
-		def query = [
-			imageType:CommonVariable.IMAGE_TYPE_PROFILE
-		]
-		tmProfileService.postImage(user,query)
-		Thread.sleep(3000);
-		println "********************************"
-		println "Test Running .... Get Image to TM Profile"
+			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			def query = [
+				imageType:CommonVariable.IMAGE_TYPE_PROFILE
+			]
+			tmProfileService.postImage(user,query)
+			Thread.sleep(3000);
+			println "********************************"
+			println "Test Running .... Get Image to TM Profile"
 		when:
-		ResultInfo result = tmProfileService.getImage(user)
+			ResultInfo result = tmProfileService.getImage(user)
 		then:
-		result.getResponseCode().contains(CommonVariable.STATUS_200)
+			result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
 }

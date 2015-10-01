@@ -2,10 +2,7 @@
  * 
  */
 package com.ratedpeople.resource.tmprofileimport groovy.json.JsonBuilder
-import groovyx.net.http.ContentType
-import groovyx.net.http.Method
 import spock.lang.Specification
-
 import com.ratedpeople.service.TMProfileService
 import com.ratedpeople.service.TradesmanService
 import com.ratedpeople.service.utility.MatcherStringUtility
@@ -30,91 +27,76 @@ class TMPofileTradeFunctionalTest  extends Specification{
 
 	def "Add  Tradesman Profile Trade"() {
 		given :
-		UserInfo user =  tradesmanService.createAndActivateDynamicUser()
-		def json = getTrade(1,10.00)
-		println "Json is " +  json.toString()
-		println "********************************"
-		println "Test running ..  Add Tradesman Profile"
+			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			def json = getTrade(1,10.00)
+			println "Json is " +  json.toString()
+			println "********************************"
+			println "Test running ..  Add Tradesman Profile"
 		when:
-		ResultInfo result = tmProfileService.addTrade(user, json)
+			ResultInfo result = tmProfileService.addTrade(user, json)
 		then:
-		result.getResponseCode().contains(CommonVariable.STATUS_201)
+			result.getResponseCode().contains(CommonVariable.STATUS_201)
 	}
-
-
-
 
 	def "Update  Tradesman Trade"(){
 		given :
-		UserInfo user =  tradesmanService.createAndActivateDynamicUser()
-		def json = getTrade(1,10.00)
-		tmProfileService.addTrade(user, json)
-		println "Json is " +  json.toString()
-		println "********************************"
-		println "Test running ..  Update Tradesman Trade"
+			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			def json = getTrade(1,10.00)
+			tmProfileService.addTrade(user, json)
+			
+			println "Json is " +  json.toString()
+			println "********************************"
+			println "Test running ..  Update Tradesman Trade"
 
-		String queryReuslt = DatabaseHelper.select("select id from tmprofile.tm_profile_trade where updated_by= '${user.getId()}'  limit 1")
-		String tradeProfileId =MatcherStringUtility.getMatch("id=(.*)}",queryReuslt)
-		def json1 = getTrade(1,15.00)
+			String queryReuslt = DatabaseHelper.select("select id from tmprofile.tm_profile_trade where updated_by= '${user.getId()}'  limit 1")
+			String tradeProfileId =MatcherStringUtility.getMatch("id=(.*)}",queryReuslt)
+			def json1 = getTrade(1,15.00)
 		when:
-		ResultInfo result = tmProfileService.updateTrade(user,tradeProfileId,json1)
+			ResultInfo result = tmProfileService.updateTrade(user,tradeProfileId,json1)
 		then:
-		result.getResponseCode().contains(CommonVariable.STATUS_200)
+			result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
-
-
-
 
 	def "Get  Tradesman Trade"(){
 		given :
-		UserInfo user =  tradesmanService.createAndActivateDynamicUser()
-		def json = getTrade(1,10.00)
-		tmProfileService.addTrade(user, json)
-		println "********************************"
-		println "Test running ..  Get Tradesman Trade"
+			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			def json = getTrade(1,10.00)
+			tmProfileService.addTrade(user, json)
+			println "********************************"
+			println "Test running ..  Get Tradesman Trade"
 		when:
-		ResultInfo result = tmProfileService.getTrade(user)
+			ResultInfo result = tmProfileService.getTrade(user)
 		then:
-		result.getResponseCode().contains(CommonVariable.STATUS_200)
+			result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
-
-
-
+	
 	def "Get  Tradesman info Id"(){
 		given :
-		
-		UserInfo user =  tradesmanService.createTradesmanUser()
-		println "********************************"
-		println "Test running ..  Get Tradesman Id"
+			UserInfo user =  tradesmanService.createTradesmanUser()
+			println "********************************"
+			println "Test running ..  Get Tradesman Id"
 		when:
-		ResultInfo result = tmProfileService.getTmInfo(user)
+			ResultInfo result = tmProfileService.getTmInfo(user)
 		then:
-		result.getResponseCode().contains(CommonVariable.STATUS_200)
+			result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
-
-
-
-
-
-
+	
 	def "Delete  Tradesman Trade"(){
 		given :
-		UserInfo user =  tradesmanService.createAndActivateDynamicUser()
-		def json = getTrade(1,10.00)
-		tmProfileService.addTrade(user, json)
-		println "********************************"
-		println "Test running ..  Delete Tradesman Trade"
-		String queryReuslt = DatabaseHelper.select("select id from tmprofile.tm_profile_trade where updated_by= '${user.getId()}'  limit 1")
-		String tradeProfileId =MatcherStringUtility.getMatch("id=(.*)}",queryReuslt)
-		
+			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			def json = getTrade(1,10.00)
+			tmProfileService.addTrade(user, json)
+			
+			println "********************************"
+			println "Test running ..  Delete Tradesman Trade"
+			
+			String queryReuslt = DatabaseHelper.select("select id from tmprofile.tm_profile_trade where updated_by= '${user.getId()}'  limit 1")
+			String tradeProfileId =MatcherStringUtility.getMatch("id=(.*)}",queryReuslt)
 		when:
-		ResultInfo result = tmProfileService.deleteTrade(user,tradeProfileId)
+			ResultInfo result = tmProfileService.deleteTrade(user,tradeProfileId)
 		then:
-		result.getResponseCode().contains(CommonVariable.STATUS_200)
-
-		
+			result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
-
 
 	private def getTrade(int trade,float defaultrate){
 		def json = new JsonBuilder()

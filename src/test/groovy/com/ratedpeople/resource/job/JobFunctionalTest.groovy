@@ -4,7 +4,6 @@
 package com.ratedpeople.resource.job
 import groovy.json.JsonBuilder
 import spock.lang.Specification
-
 import com.ratedpeople.service.HomeownerService
 import com.ratedpeople.service.JobService
 import com.ratedpeople.service.utility.ResultInfo
@@ -24,7 +23,7 @@ class JobFunctionalTest extends Specification{
 	private JobService jobService = new JobService();
 	private HomeownerService homeownerService = new HomeownerService();
 	
-	public def createJsonPostaJob(UserInfo user,String adddescription){
+	private def createJsonPostaJob(final UserInfo user, final String addDescription){
 		
 		def json = new JsonBuilder()
 		json {
@@ -32,7 +31,7 @@ class JobFunctionalTest extends Specification{
 			"homeownerUserId" user.getId()
 			"tradesmanUserId" CommonVariable.DEFAULT_TM_ID
 			"title"	CommonVariable.DEFAULT_TITLE
-			"description"  CommonVariable.DEFAULT_DESCRIPTION + adddescription
+			"description"  CommonVariable.DEFAULT_DESCRIPTION + addDescription
 			"hoRate" CommonVariable.DEFAULT_HOURRATE
 			"jobContactDetails" {
 				"homeownerName" "hotest"
@@ -50,82 +49,69 @@ class JobFunctionalTest extends Specification{
 		return json;
 	}
 
-
 	def "post a job Test"(){
 		given:
-		UserInfo user = homeownerService.createAndActivateDynamicUser();
-		def jobJson = createJsonPostaJob(user,"")
+			UserInfo user = homeownerService.createAndActivateDynamicUser();
+			def jobJson = createJsonPostaJob(user,"")
 		when:
-		ResultInfo result = jobService.createJob(jobJson,user)
+			ResultInfo result = jobService.createJob(jobJson,user)
 		then:
-		result.getResponseCode().contains(CommonVariable.STATUS_201)
+			result.getResponseCode().contains(CommonVariable.STATUS_201)
 	}
-
 
 	def "post a job with foul language"(){
 		given:
-		UserInfo user = homeownerService.createAndActivateDynamicUser();
-		def jobJson = createJsonPostaJob(user," Abuse")
-
+			UserInfo user = homeownerService.createAndActivateDynamicUser();
+			def jobJson = createJsonPostaJob(user," Abuse")
 		when:
-		ResultInfo result = jobService.createJob(jobJson,user)
+			ResultInfo result = jobService.createJob(jobJson,user)
 		then:
-		result.getResponseCode().contains(CommonVariable.STATUS_400)
-
+			result.getResponseCode().contains(CommonVariable.STATUS_400)
 	}
-
-
 
 	def "Get Job List for HomeOwner"() {
 		given:
-		UserInfo user = homeownerService.createAndActivateDynamicUser();
-		def jobJson = createJsonPostaJob(user,"")
-		jobService.createJob(jobJson,user)
+			UserInfo user = homeownerService.createAndActivateDynamicUser();
+			def jobJson = createJsonPostaJob(user,"")
+			jobService.createJob(jobJson,user)
 		when:
-		ResultInfo result = jobService.getAllJobsForHo(user)
+			ResultInfo result = jobService.getAllJobsForHo(user)
 		then:
-		result.getResponseCode().contains(CommonVariable.STATUS_200)
-		println result.getBody()
-	
+			result.getResponseCode().contains(CommonVariable.STATUS_200)
+			println result.getBody()
 	}
-
-
 
 	def "Get Single Job Homeowner"(){
 		given:
-		UserInfo user = homeownerService.createAndActivateDynamicUser();
-		def jobJson = createJsonPostaJob(user,"")
-		jobService.createJob(jobJson,user)
-		def jobId = DatabaseHelper.select("select id from job.job where homeowner_user_id = '${user.getId()}' limit 1 ")
-		println "id of Job is :"+jobId
-		if (jobId.startsWith("[{id")){
-			jobId = jobId.replace("[{id=", "").replace("}]","")
-			println "JobId is : " +jobId
-		}
+			UserInfo user = homeownerService.createAndActivateDynamicUser();
+			def jobJson = createJsonPostaJob(user,"")
+			jobService.createJob(jobJson,user)
+			def jobId = DatabaseHelper.select("select id from job.job where homeowner_user_id = '${user.getId()}' limit 1 ")
+			println "id of Job is :"+jobId
+			if (jobId.startsWith("[{id")){
+				jobId = jobId.replace("[{id=", "").replace("}]","")
+				println "JobId is : " +jobId
+			}
 		when:
-		ResultInfo result = jobService.getJobForHo(user,jobId)
+			ResultInfo result = jobService.getJobForHo(user,jobId)
 		then:
-		result.getResponseCode().contains(CommonVariable.STATUS_200)
-
-		
+			result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
-
-
 
 	def "Unique Homeowner Withdraw Job No Merchant Created"(){
 		given:
-		UserInfo user = homeownerService.createAndActivateDynamicUser();
-		def jobJson = createJsonPostaJob(user,"")
-		jobService.createJob(jobJson,user)
-		def jobId = DatabaseHelper.select("select id from job.job where homeowner_user_id = '${user.getId()}' limit 1 ")
-		println "id of Job is :"+jobId
-		if (jobId.startsWith("[{id")){
-			jobId = jobId.replace("[{id=", "").replace("}]","")
-			println "JobId is : " +jobId
-		}
+			UserInfo user = homeownerService.createAndActivateDynamicUser();
+			def jobJson = createJsonPostaJob(user,"")
+			jobService.createJob(jobJson,user)
+			def jobId = DatabaseHelper.select("select id from job.job where homeowner_user_id = '${user.getId()}' limit 1 ")
+			println "id of Job is :"+jobId
+			if (jobId.startsWith("[{id")){
+				jobId = jobId.replace("[{id=", "").replace("}]","")
+				println "JobId is : " +jobId
+			}
 		when:
-		ResultInfo result = jobService.withdrawJob(user,jobId)
+			ResultInfo result = jobService.withdrawJob(user,jobId)
 		then:
-		result.getResponseCode().contains(CommonVariable.STATUS_200)
+			result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
 }

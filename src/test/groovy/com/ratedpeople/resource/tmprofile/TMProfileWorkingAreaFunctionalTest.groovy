@@ -6,10 +6,7 @@
 package com.ratedpeople.resource.tmprofile
 
 import groovy.json.JsonBuilder
-import groovyx.net.http.ContentType
-import groovyx.net.http.Method
 import spock.lang.Specification
-
 import com.ratedpeople.service.TMProfileService
 import com.ratedpeople.service.TradesmanService
 import com.ratedpeople.service.utility.MatcherStringUtility
@@ -27,69 +24,64 @@ class TMProfileWorkingAreaFunctionalTest extends Specification{
 	private TradesmanService tradesmanService = new TradesmanService();
 	private TMProfileService tmProfileService = new TMProfileService()
 
-
 	def "Post a Tradesman Workingarea"(){
 		given :
-		UserInfo user =  tradesmanService.createAndActivateDynamicUser()
-		def json = getWorkingarea(0)
-		println "Json is " +  json.toString()
-		println "********************************"
-		println "Test Running .... Post TM Workingarea"
-
+			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			def json = getWorkingarea(0)
+			println "Json is " +  json.toString()
+			println "********************************"
+			println "Test Running .... Post TM Workingarea"
 		when:
-		ResultInfo result = tmProfileService.createWorkingArea(user, json)
+			ResultInfo result = tmProfileService.createWorkingArea(user, json)
 		then:
-		result.getResponseCode().contains(CommonVariable.STATUS_201)
-
-
-		
+			result.getResponseCode().contains(CommonVariable.STATUS_201)
 	}
-
-
 
 	def "Update a Tradesman Workingarea"(){
 		given :
-		UserInfo user =  tradesmanService.createAndActivateDynamicUser()
-		def json = getWorkingarea(0)
-		println "Json is " +  json.toString()
-		println "********************************"
-		println "Test Running .... Update TM Workingarea"
-		tmProfileService.createWorkingArea(user, json)
+			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			def json = getWorkingarea(0)
+			println "Json is " +  json.toString()
+			println "********************************"
+			println "Test Running .... Update TM Workingarea"
+			tmProfileService.createWorkingArea(user, json)
 		when:
-		def  queryReuslt = DatabaseHelper.select("select id from tmprofile.working_area where updated_by =  '${user.getId()}'")
-		String workingID = MatcherStringUtility.getMatch("id=(.*)}",queryReuslt)
-		def jsonOne = new JsonBuilder()
-		jsonOne {
-			"id" workingID
-			"longitude" CommonVariable.DEFAULT_LONGITUDE
-			"latitude" CommonVariable.DEFAULT_LATITUDE
-			"radius" CommonVariable.DEFAULT_RADIUS
-		}
+
+			def jsonOne = new JsonBuilder()
+			jsonOne {
+				"id" workingID
+				"longitude" CommonVariable.DEFAULT_LONGITUDE
+				"latitude" CommonVariable.DEFAULT_LATITUDE
+				"radius" CommonVariable.DEFAULT_RADIUS
+			}
 		
-		ResultInfo result = tmProfileService.updateWorkingarea(user, workingID,json)
+			ResultInfo result = tmProfileService.updateWorkingarea(user, workingID,json)
 		then:
-		result.getResponseCode().contains(CommonVariable.STATUS_200)
-		
+			result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
 
 	def "Get a Tradesman Workingarea"(){
 		given :
-		UserInfo user =  tradesmanService.createAndActivateDynamicUser()
-		def json = getWorkingarea(0)
-		println "Json is " +  json.toString()
-		println "********************************"
-		println "Test Running .... Update TM Workingarea"
-		tmProfileService.createWorkingArea(user, json)
+			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			def json = getWorkingarea(0)
+			println "Json is " +  json.toString()
+			println "********************************"
+			println "Test Running .... Update TM Workingarea"
+			tmProfileService.createWorkingArea(user, json)
 		when:
-		def  queryReuslt = DatabaseHelper.select("select id from tmprofile.working_area where updated_by =  '${user.getId()}'")
-		String workingID = MatcherStringUtility.getMatch("id=(.*)}",queryReuslt)
-		ResultInfo result = tmProfileService.getWorkingarea(user, workingID)
+			def  queryReuslt = DatabaseHelper.select("select id from tmprofile.working_area where updated_by =  '${user.getId()}'")
+			String workingID = MatcherStringUtility.getMatch("id=(.*)}",queryReuslt)
+			ResultInfo result = tmProfileService.getWorkingarea(user, workingID)
 		then:
-		result.getResponseCode().contains(CommonVariable.STATUS_200)
+			result.getResponseCode().contains(CommonVariable.STATUS_200)
+	}
+	
+	private def getWorkingAreaId(final UserInfo user){
+		def  queryReuslt = DatabaseHelper.select("select id from tmprofile.working_area where updated_by =  '${user.getId()}'")
+		return MatcherStringUtility.getMatch("id=(.*)}",queryReuslt)
 	}
 
-
-	private def getWorkingarea(int additionalInfo){
+	private def getWorkingarea(final int additionalInfo){
 		def json = new JsonBuilder()
 		json {
 			"longitude" CommonVariable.DEFAULT_LONGITUDE

@@ -28,30 +28,29 @@ class TMProfileAvailabilityFunctionalTest extends Specification{
 
 	def "Update a Tradesman Availability"(){
 		given:
-		UserInfo user =  tradesmanService.createAndActivateDynamicUser()
-		def json = new JsonBuilder()
-		json { "reacheable" "true" }
-		println "********************************"
-		println "Test Running .... Update Tradesman Availability"
-		println "Json is " +  json.toString()
+			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			def json = new JsonBuilder()
+			json { "reacheable" "true" }
+			println "********************************"
+			println "Test Running .... Update Tradesman Availability"
+			println "Json is " +  json.toString()
 		when:
-		ResultInfo result = tmProfileService.updateAvailability(user,json)
+			ResultInfo result = tmProfileService.updateAvailability(user,json)
 		then:
-		result.getResponseCode().contains(CommonVariable.STATUS_200)
+			result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
-
 
 	def "Get a Tradesman Availability"(){
 		given:
-		UserInfo user =  tradesmanService.createAndActivateDynamicUser()
-		println "********************************"
-		println "Test Running .... Get Tradesman Availability"
-		def json = new JsonBuilder()
-		json { "reacheable" "true" }
-		tmProfileService.updateAvailability(user,json)
+			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			println "********************************"
+			println "Test Running .... Get Tradesman Availability"
+			def json = new JsonBuilder()
+			json { "reacheable" "true" }
+			tmProfileService.updateAvailability(user,json)
 		when:
-		ResultInfo result = tmProfileService.getAvailability(user)
+			ResultInfo result = tmProfileService.getAvailability(user)
 		then:
-		result.getResponseCode().contains(CommonVariable.STATUS_200)
+			result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
 }

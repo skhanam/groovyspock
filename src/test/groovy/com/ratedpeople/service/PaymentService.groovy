@@ -23,7 +23,7 @@ final class PaymentService{
 		return result;
 	}
 
-	public def getCreditCard(UserInfo userInfo ){
+	public ResultInfo getCreditCard(UserInfo userInfo ){
 		String url = PAYMENT_RESOURCE_URI + userInfo.getId() +"/cards"
 
 		ResultInfo result = http.callGetMethodWithAuthentication(url, userInfo.getToken(),null)
@@ -36,7 +36,7 @@ final class PaymentService{
 		return result;
 	}
 
-	public def updateBankDetails(def bank,UserInfo userInfo){
+	public ResultInfo updateBankDetails(def bank,UserInfo userInfo){
 		String url = PAYMENT_RESOURCE_URI + userInfo.getId() + "/bankdetails"
 
 		ResultInfo result = http.callPutMethodWithAuthentication(url, userInfo.getToken(),null, bank)
@@ -47,7 +47,7 @@ final class PaymentService{
 		return result;
 	}
 
-	public def preauth(UserInfo userInfo,def card){
+	public ResultInfo preauth(UserInfo userInfo,def card){
 		String url = PAYMENT_RESOURCE_URI + userInfo.getId() + "/preauth"
 
 		ResultInfo result = http.callPostMethodWithAuthentication(url, userInfo.getToken(), card)

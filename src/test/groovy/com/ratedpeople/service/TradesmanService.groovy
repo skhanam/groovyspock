@@ -60,7 +60,7 @@ final class TradesmanService{
 		return user;
 	}
 
-	private def createDynamicUser(){
+	private ResultInfo createDynamicUser(){
 		DYNAMIC_USER = CommonVariable.TM_USER_PREFIX + System.currentTimeMillis() + EMAIL_POSTFIX
 
 		def json = new JsonBuilder()
@@ -70,8 +70,8 @@ final class TradesmanService{
 			"firstName" "tmprofile"
 			"lastName"  "Aws"
 		}
-		println "Json is ${json.toString()}"
 
+		println "Json is ${json.toString()}"
 
 		ResultInfo result = http.callPostMethodWithoutAuthentication(REGISTER_USER_TM_URI,null,json)
 		if(result.getResponseCode()==CommonVariable.STATUS_201){
@@ -81,15 +81,15 @@ final class TradesmanService{
 		}
 	}
 
-	private def authToken(){
+	private ResultInfo authToken(){
 		String token = null
-		HttpConnectionService http = new HttpConnectionService()
 		def query = [
 			grant_type: CommonVariable.DEFAULT_PASSWORD,
 			username: DYNAMIC_USER,
 			password: CommonVariable.DEFAULT_PASSWORD ,
 			scope: 'all'
 		]
+
 		ResultInfo result = http.callGetToken(CommonVariable.DEFAULT_GET_TOKEN_URI,query,null)
 		if(result.getResponseCode()==CommonVariable.STATUS_200){
 			ACCESS_TOKEN_DYNAMIC_TM = MatcherStringUtility.getMatch("access_token=(.*)expires", result.getBody())
@@ -99,15 +99,15 @@ final class TradesmanService{
 		}
 	}
 
-	private def authTokenTm(){
+	private ResultInfo authTokenTm(){
 		String token = null
-		HttpConnectionService http = new HttpConnectionService()
 		def query = [
 			grant_type: CommonVariable.DEFAULT_PASSWORD,
 			username: CommonVariable.DEFAULT_TM_USERNAME,
 			password: CommonVariable.DEFAULT_PASSWORD ,
 			scope: 'all'
 		]
+
 		ResultInfo result = http.callGetToken(CommonVariable.DEFAULT_GET_TOKEN_URI,query,null)
 		if(result.getResponseCode()==CommonVariable.STATUS_200){
 			ACCESS_TOKEN_DYNAMIC_TM = MatcherStringUtility.getMatch("access_token=(.*)expires", result.getBody())
@@ -118,8 +118,6 @@ final class TradesmanService{
 	}
 
 	private def getUserId() {
-		HttpConnectionService http = new HttpConnectionService()
-
 		ResultInfo result = http.callGetMethodWithAuthentication(CommonVariable.DEFAULT_ME_URI,ACCESS_TOKEN_DYNAMIC_TM,null)
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
 			USER_ID_DYNAMIC_TM = MatcherStringUtility.getMatch("userId=(.*),userName", result.getBody())
@@ -129,8 +127,7 @@ final class TradesmanService{
 		}
 	}
 
-
-	private def getAdminToken(){
+	private ResultInfo getAdminToken(){
 		String token = null
 		def query = [
 			grant_type: CommonVariable.DEFAULT_PASSWORD,
@@ -138,7 +135,7 @@ final class TradesmanService{
 			password: CommonVariable.DEFAULT_PASSWORD,
 			scope: 'all'
 		]
-		HttpConnectionService http = new HttpConnectionService()
+
 		ResultInfo result = http.callGetToken(CommonVariable.DEFAULT_GET_TOKEN_URI,query,null)
 		if(result.getResponseCode()==CommonVariable.STATUS_200){
 			ACCESS_TOKEN_ADMIN = MatcherStringUtility.getMatch("access_token=(.*)expires", result.getBody())
@@ -148,13 +145,12 @@ final class TradesmanService{
 		}
 	}
 
-	private def changeStatus() {
+	private ResultInfo changeStatus() {
 		String token = null
 		def query = [
 			status: CommonVariable.STATUS_ACTIVE
 		]
 
-		HttpConnectionService http = new HttpConnectionService()
 		String url = STATUS_URI + USER_ID_DYNAMIC_TM + URL_STATUS
 		ResultInfo result = http.callPutMethodWithAuthentication(url,ACCESS_TOKEN_ADMIN,query,null)
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){

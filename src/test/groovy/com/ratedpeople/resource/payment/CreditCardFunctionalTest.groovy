@@ -4,16 +4,12 @@
 package com.ratedpeople.resource.payment
 
 import groovy.json.*
-import groovyx.net.http.ContentType
-import groovyx.net.http.Method
 import spock.lang.Specification
-
 import com.ratedpeople.service.HomeownerService
 import com.ratedpeople.service.PaymentService
 import com.ratedpeople.service.utility.ResultInfo
 import com.ratedpeople.service.utility.UserInfo
 import com.ratedpeople.support.CommonVariable
-import com.ratedpeople.support.DatabaseHelper
 /**
  * @author shabana.khanam
  *
@@ -25,33 +21,25 @@ class CreditCardFunctionalTest extends Specification {
 	private PaymentService paymentService = new PaymentService()
 
 	def testCreditCardSuccess() {
-		println "CreditCardFunctionalTest"
-		println "Test 1 :  testCreditCardSuccess"
 		given:
-		UserInfo user =  homeownerService.createAndActivateDynamicUser()
-		
+			UserInfo user =  homeownerService.createAndActivateDynamicUser()
 		when:
-		def json = createJsonCreditCard(user);
-		ResultInfo result = paymentService.postCreditCard(user, json)
+			def json = createJsonCreditCard(user);
+			ResultInfo result = paymentService.postCreditCard(user, json)
 		then:
-		result.getResponseCode().contains(CommonVariable.STATUS_201)
+			result.getResponseCode().contains(CommonVariable.STATUS_201)
 	}
 
-
 	def testGetCardDetails(){
-		println "CreditCardFunctionalTest"
-		println "Test 1 :  testCreditCardSuccess"
-		
 		given:
-		UserInfo user =  homeownerService.createAndActivateDynamicUser()
-		def json = createJsonCreditCard(user);
-		paymentService.postCreditCard(user, json)
+			UserInfo user =  homeownerService.createAndActivateDynamicUser()
+			def json = createJsonCreditCard(user);
+			paymentService.postCreditCard(user, json)
 		when:
-		ResultInfo result = paymentService.getCreditCard(user)
+			ResultInfo result = paymentService.getCreditCard(user)
 		then:
-		result.getResponseCode().contains(CommonVariable.STATUS_200)
-		
-		}
+			result.getResponseCode().contains(CommonVariable.STATUS_200)
+	}
 
 	/*def testCreateCreditCardValidation(){
 		given:
@@ -97,23 +85,17 @@ class CreditCardFunctionalTest extends Specification {
 	}
 */
 	def testCreateCreditCardWhenAlreadyExists(){
-		
-		
-		
 		given:
-		UserInfo user =  homeownerService.createAndActivateDynamicUser()
-		println "Test 3 :  testCreateCreditCardValidation"
-		println "USER IS ${user.getId()}"
-		def json = createJsonCreditCard(user);
-		paymentService.postCreditCard(user, json)
-		given:
+			UserInfo user =  homeownerService.createAndActivateDynamicUser()
+			println "Test 3 :  testCreateCreditCardValidation"
+			println "USER IS ${user.getId()}"
+			def json = createJsonCreditCard(user);
+			paymentService.postCreditCard(user, json)
 		when:
-		ResultInfo result = paymentService.postCreditCard(user, json)
+			ResultInfo result = paymentService.postCreditCard(user, json)
 		then:
-		result.getResponseCode().contains(CommonVariable.STATUS_409)
-		
+			result.getResponseCode().contains(CommonVariable.STATUS_409)	
 	}
-
 
 	public def createJsonCreditCard(UserInfo user){
 		def json = new JsonBuilder()

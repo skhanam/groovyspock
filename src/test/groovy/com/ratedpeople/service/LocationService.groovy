@@ -14,7 +14,7 @@ final class LocationService{
 
 	private static HttpConnectionService http = new HttpConnectionService()
 
-	public def getPostcode(String postcode){
+	public ResultInfo getPostcode(String postcode){
 		String url = POSTCODE_PREFIX +postcode
 
 		ResultInfo result = http.callGetMethodWithoutAuthentication(url, null)
@@ -25,7 +25,7 @@ final class LocationService{
 		return result;
 	}
 
-	public def getAddressInfo(String postcode){
+	public ResultInfo getAddressInfo(String postcode){
 		String url = POSTCODE_PREFIX +postcode+"/addresses"
 
 		ResultInfo result = http.callGetMethodWithoutAuthentication(url, null)
@@ -36,7 +36,7 @@ final class LocationService{
 		return result;
 	}
 
-	private def updateArea(String postcode,def body){
+	private ResultInfo updateArea(String postcode,def body){
 		String url =  POSTCODE_PREFIX + postcode
 
 		ResultInfo result = http.callPutMethodWithoutAuthentication(url,null,body)

@@ -16,7 +16,7 @@ final class JobService{
 
 	private static HttpConnectionService http = new HttpConnectionService()
 
-	public def createJob(def job,UserInfo userInfo){
+	public ResultInfo createJob(def job,UserInfo userInfo){
 		String url =  CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/" + userInfo.getId() + "/jobs"
 		
 		ResultInfo result = http.callPostMethodWithAuthentication(url, userInfo.getToken(), job)
@@ -28,7 +28,7 @@ final class JobService{
 	}
 
 
-	public def getAllJobsForHo(UserInfo userInfo){
+	public ResultInfo getAllJobsForHo(UserInfo userInfo){
 		String url =  CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/" + userInfo.getId() + "/hojobs"
 
 		def query = [
@@ -45,7 +45,7 @@ final class JobService{
 		return result;
 	}
 
-	public def getJobForHo(UserInfo userInfo,String jobId){
+	public ResultInfo getJobForHo(UserInfo userInfo,String jobId){
 		String url =  CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/" + userInfo.getId() + "/hojobs/"+jobId
 
 		ResultInfo result = http.callGetMethodWithAuthentication(url, userInfo.getToken(), null)
@@ -56,7 +56,7 @@ final class JobService{
 		return result;
 	}
 
-	public def getJobForTm(UserInfo userInfo,String jobId){
+	public ResultInfo getJobForTm(UserInfo userInfo,String jobId){
 		String url =  CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/" + userInfo.getId() + "/tmjobs/"+jobId
 
 		ResultInfo result = http.callGetMethodWithAuthentication(url, userInfo.getToken(), null)
@@ -67,7 +67,7 @@ final class JobService{
 		return result;
 	}
 
-	public def withdrawJob(UserInfo userInfo,String jobId){
+	public ResultInfo withdrawJob(UserInfo userInfo,String jobId){
 		String url =  CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/" + userInfo.getId() + "/hojobs/"+jobId+"/withdraw"
 		
 		ResultInfo result = http.callPutMethodWithAuthentication(url, userInfo.getToken(), null,null)
@@ -78,7 +78,7 @@ final class JobService{
 		return result;
 	}
 
-	public def acceptJob(UserInfo userInfo,String jobId){
+	public ResultInfo acceptJob(UserInfo userInfo,String jobId){
 		String url =  CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/" + userInfo.getId() + "/tmjobs/"+jobId+"/schedule"
 		
 		ResultInfo result = http.callPutMethodWithAuthentication(url, userInfo.getToken(), null,null)
@@ -89,7 +89,7 @@ final class JobService{
 		return result;
 	}
 
-	public def startJob(UserInfo userInfo,String jobId){
+	public ResultInfo startJob(UserInfo userInfo,String jobId){
 		String url =  CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/" + userInfo.getId() + "/tmjobs/"+jobId+"/start"
 		
 		ResultInfo result = http.callPutMethodWithAuthentication(url, userInfo.getToken(), null,null)
@@ -100,7 +100,7 @@ final class JobService{
 		return result;
 	}
 
-	public def pauseJob(UserInfo userInfo,String jobId,def body){
+	public ResultInfo pauseJob(UserInfo userInfo,String jobId,def body){
 		String url =  CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/" + userInfo.getId() + "/tmjobs/"+jobId+"/pause"
 		
 		ResultInfo result = http.callPutMethodWithAuthentication(url, userInfo.getToken(), null,body)
@@ -111,7 +111,7 @@ final class JobService{
 		return result;
 	}
 
-	public def completeJob(UserInfo userInfo,String jobId,def body){
+	public ResultInfo completeJob(UserInfo userInfo,String jobId,def body){
 		String url =  CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/" + userInfo.getId() + "/tmjobs/"+jobId+"/complete"
 		
 		ResultInfo result = http.callPutMethodWithAuthentication(url, userInfo.getToken(), null,body)
@@ -122,7 +122,7 @@ final class JobService{
 		return result;
 	}
 
-	public def rejectJob(UserInfo userInfo,String jobId,def body){
+	public ResultInfo rejectJob(UserInfo userInfo,String jobId,def body){
 		String url =  CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/" + userInfo.getId() + "/tmjobs/"+jobId+"/reject"
 		
 		ResultInfo result = http.callPutMethodWithAuthentication(url, userInfo.getToken(), null,body)
@@ -133,7 +133,7 @@ final class JobService{
 		return result;
 	}
 
-	public def raiseInvoice(UserInfo userInfo,String jobId,def body){
+	public ResultInfo raiseInvoice(UserInfo userInfo,String jobId,def body){
 		String url =  CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/" + userInfo.getId() + "/tmjobs/"+jobId+"/invoice"
 		
 		ResultInfo result = http.callPutMethodWithAuthentication(url, userInfo.getToken(), null,body)
@@ -144,7 +144,7 @@ final class JobService{
 		return result;
 	}
 
-	public def getAllJobsForTm(UserInfo userInfo){
+	public ResultInfo getAllJobsForTm(UserInfo userInfo){
 		String url =  CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/" + userInfo.getId() + "/tmjobs"
 
 		def query = [
@@ -161,7 +161,7 @@ final class JobService{
 		return result;
 	}
 
-	public def getJobInfoForTm(UserInfo userInfo,String hoId){
+	public ResultInfo getJobInfoForTm(UserInfo userInfo,String hoId){
 		String url =  CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/" + hoId + "/contactdetails"
 
 		ResultInfo result = http.callGetMethodWithAuthentication(url, userInfo.getToken(), null)

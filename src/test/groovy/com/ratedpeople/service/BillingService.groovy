@@ -18,7 +18,7 @@ final class BillingService{
 
 	private static final HttpConnectionService http = new HttpConnectionService()
 
-	public def getAllBillingsForTm(final UserInfo userInfo){
+	public ResultInfo getAllBillingsForTm(final UserInfo userInfo){
 		String url = BILLING_URI_PREFIX + userInfo.getId() +"/billingdetails"
 
 		ResultInfo result = http.callGetMethodWithAuthentication(url, userInfo.getToken(),null)
@@ -31,7 +31,7 @@ final class BillingService{
 		return result;
 	}
 
-	public def getSingleBillingDetailsForTm(final UserInfo userInfo, final String billingId){
+	public ResultInfo getSingleBillingDetailsForTm(final UserInfo userInfo, final String billingId){
 		String url = BILLING_URI_PREFIX + userInfo.getId() +"/billingdetails/"+billingId
 
 		ResultInfo result = http.callGetMethodWithAuthentication(url, userInfo.getToken(),null)
@@ -57,7 +57,7 @@ final class BillingService{
 		return result;
 	}
 
-	public def getBankDetails(final UserInfo userInfo ){
+	public ResultInfo getBankDetails(final UserInfo userInfo ){
 		String url = BILLING_URI_PREFIX + userInfo.getId() +"/bankdetails"
 
 		ResultInfo result = http.callGetMethodWithAuthentication(url, userInfo.getToken(),null)
@@ -70,7 +70,7 @@ final class BillingService{
 		return result;
 	}
 
-	public def updateBankDetails(final def bank, final UserInfo userInfo){
+	public ResultInfo updateBankDetails(final def bank, final UserInfo userInfo){
 		String url = BILLING_URI_PREFIX + userInfo.getId() + "/bankdetails"
 		
 		ResultInfo result = http.callPutMethodWithAuthentication(url, userInfo.getToken(), null, bank)
