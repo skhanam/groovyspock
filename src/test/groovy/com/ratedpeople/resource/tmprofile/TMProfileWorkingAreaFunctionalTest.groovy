@@ -46,16 +46,17 @@ class TMProfileWorkingAreaFunctionalTest extends Specification{
 			println "Test Running .... Update TM Workingarea"
 			tmProfileService.createWorkingArea(user, json)
 		when:
-
+			def  queryReuslt = DatabaseHelper.select("select id from tmprofile.working_area where updated_by =  '${user.getId()}'")
+			String workingId = MatcherStringUtility.getMatch("id=(.*)}",queryReuslt)
 			def jsonOne = new JsonBuilder()
 			jsonOne {
-				"id" workingID
+				"id" workingId
 				"longitude" CommonVariable.DEFAULT_LONGITUDE
 				"latitude" CommonVariable.DEFAULT_LATITUDE
 				"radius" CommonVariable.DEFAULT_RADIUS
 			}
 		
-			ResultInfo result = tmProfileService.updateWorkingarea(user, workingID,json)
+			ResultInfo result = tmProfileService.updateWorkingarea(user, workingId,json)
 		then:
 			result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
@@ -69,18 +70,12 @@ class TMProfileWorkingAreaFunctionalTest extends Specification{
 			println "Test Running .... Update TM Workingarea"
 			tmProfileService.createWorkingArea(user, json)
 		when:
-			def  queryReuslt = DatabaseHelper.select("select id from tmprofile.working_area where updated_by =  '${user.getId()}'")
-			String workingID = MatcherStringUtility.getMatch("id=(.*)}",queryReuslt)
-			ResultInfo result = tmProfileService.getWorkingarea(user, workingID)
+			ResultInfo result = tmProfileService.getWorkingarea(user)
 		then:
 			result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
 	
-	private def getWorkingAreaId(final UserInfo user){
-		def  queryReuslt = DatabaseHelper.select("select id from tmprofile.working_area where updated_by =  '${user.getId()}'")
-		return MatcherStringUtility.getMatch("id=(.*)}",queryReuslt)
-	}
-
+	
 	private def getWorkingarea(final int additionalInfo){
 		def json = new JsonBuilder()
 		json {

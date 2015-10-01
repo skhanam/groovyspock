@@ -57,4 +57,16 @@ final class PaymentService{
 
 		return result;
 	}
+	
+	
+	public ResultInfo postPayment(UserInfo userInfo,String jobId,def body){
+		
+		String url = PAYMENT_RESOURCE_URI + userInfo.getId() + "/jobs/"+jobId
+		ResultInfo result = http.callPutMethodWithAuthentication(url, userInfo.getToken(),null, body)
+		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
+			println "Created"
+		}
+
+		return result;
+	}
 }

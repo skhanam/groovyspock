@@ -17,6 +17,7 @@ import com.ratedpeople.support.CommonVariable
 class HomeownerService{
 
 	private static final String HOMEOWNER_URI_PREFIX = CommonVariable.USER_SERVICE_PREFIX + "v1.0/homeowners/"
+	private static final String USER_URI_PREFIX = CommonVariable.USER_SERVICE_PREFIX + "v1.0/users/"
 	private static final String EMAIL_POSTFIX = "@gid.com"
 
 	private String ACCESS_TOKEN_DYNAMIC_HO
@@ -168,4 +169,65 @@ class HomeownerService{
 			throw new Exception("AuthToken failed " +result.getResponseCode())
 		}
 	}
+
+
+	public def getHoInfo(UserInfo userInfo){
+		String url = USER_URI_PREFIX + userInfo.getId()
+
+		ResultInfo result = http.callGetMethodWithAuthentication(url, userInfo.getToken(),null)
+		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
+			println "Ok"
+		}
+
+		return result;
+	}
+	
+	public def getPasswordToken(UserInfo userInfo){
+		String url =  USER_URI_PREFIX + userInfo.getId() + "/password/token"
+
+		ResultInfo result = http.callPostMethodWithoutAuthentication(url,null,null)
+		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_201)){
+			println "Ok"
+		}
+
+		return result;
+	}
+	
+	public def updatePassword(UserInfo userInfo,def body){
+		String url =  USER_URI_PREFIX + userInfo.getId() + "/password/reset"
+
+		ResultInfo result = http.callPutMethodWithoutAuthentication(url,null,body)
+		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
+			println "Ok"
+		}
+
+		return result;
+	}
+	
+	
+	public ResultInfo updateEmailToken(UserInfo userInfo){
+		String url = USER_URI_PREFIX + userInfo.getId() + "/email/token"
+		
+		ResultInfo result = http.callPutMethodWithAuthentication(url, userInfo.getToken(),null, null)
+		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
+			println "Updated"
+		}
+		
+		return result;
+	}
+
+	public ResultInfo validateEmailToken(UserInfo userInfo,def body){
+		String url = USER_URI_PREFIX + userInfo.getId() + "/email/verify"
+		
+		ResultInfo result = http.callPutMethodWithAuthentication(url, userInfo.getToken(),null, body)
+		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
+			println "Updated"
+		}
+		
+		return result;
+	}
+
+	
+	
+	
 }
