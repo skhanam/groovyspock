@@ -1,119 +1,109 @@
-/**
- * 
- */
 package com.ratedpeople.service
 
 import groovy.json.*
-
 import com.ratedpeople.service.utility.HttpConnectionService
 import com.ratedpeople.service.utility.ResultInfo
 import com.ratedpeople.service.utility.UserInfo
 import com.ratedpeople.support.CommonVariable
-/**
- * @author shabana.khanam
- *
- */
-class HOProfileService{
 
-	//private static final String URL_STATUS = "/status"
+final class HOProfileService{
 
-	//private static final String REGISTER = "register"
-
-	private static final String HOMEOWNER_URI_PREFIX = CommonVariable.USER_SERVICE_PREFIX + "v1.0/homeowners/"
-
-	//private static final String EMAIL_POSTFIX = "@gid.com"
-	
 	private static final PROFILE_PREFIX = CommonVariable.HOPROFILE_SERVICE_PREFIX + "v1.0/users/"
+	private static final String EMAIL_POSTFIX = "@gid.com"
 
-	HttpConnectionService http = new HttpConnectionService()
+	private static HttpConnectionService http = new HttpConnectionService()
 
-
-	public def getAllProfiles(UserInfo userInfo){
-
+	public ResultInfo getAllProfiles(final UserInfo userInfo){
 		String url = CommonVariable.HOPROFILE_SERVICE_PREFIX + "v1.0/allprofiles"
 		def query = [
 			freeText: CommonVariable.DEFAULT_HO_FIRSTNAME,
 			offset:0
 		]
 
-		ResultInfo result = http.callGetMethodWithAuthorization(url, userInfo.getToken(),query)
+		ResultInfo result = http.callGetMethodWithAuthentication(url, userInfo.getToken(),query)
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
 			println "Ok"
 		}
+
 		return result;
 	}
 
-	public def createAddress(def address,UserInfo userInfo){
-
+	public ResultInfo createAddress(final def address, final UserInfo userInfo){
 		String url = PROFILE_PREFIX + userInfo.getId() + "/addresses"
 		ResultInfo result = http.callPostMethodWithAuthentication(url, userInfo.getToken(), address)
+
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_201)){
 			println "Created"
 		}
+
 		return result;
 	}
 
-	public def updateAddress(def address,UserInfo userInfo){
-
+	public ResultInfo updateAddress(final def address, final UserInfo userInfo){
 		String url = PROFILE_PREFIX + userInfo.getId() + "/addresses"
-		ResultInfo result = http.callPutMethodWithAuthorization(url, userInfo.getToken(),null, address)
+		ResultInfo result = http.callPutMethodWithAuthentication(url, userInfo.getToken(), null, address)
+
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
 			println "Updated"
 		}
+
 		return result;
 	}
 
-	public def updateProfile(def profile,UserInfo userInfo){
-
+	public ResultInfo updateProfile(final def profile, final UserInfo userInfo){
 		String url = CommonVariable.HOPROFILE_SERVICE_PREFIX + "v1.0/users/" +userInfo.getId() +"/profiles"
-		ResultInfo result = http.callPutMethodWithAuthorization(url, userInfo.getToken(),null, profile)
+		ResultInfo result = http.callPutMethodWithAuthentication(url, userInfo.getToken(), null, profile)
+
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
 			println "Updated"
 		}
+
 		return result;
 	}
 
-
-	public def getAddress(UserInfo userInfo){
-
+	public ResultInfo getAddress(final UserInfo userInfo){
 		String url = PROFILE_PREFIX + userInfo.getId() + "/addresses"
-		ResultInfo result = http.callGetMethodWithAuthorization(url, userInfo.getToken(), null)
+		ResultInfo result = http.callGetMethodWithAuthentication(url, userInfo.getToken(), null)
+
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
 			println "Ok"
 		}
+
 		return result;
 	}
 
-	public def getHomeownerProfile(UserInfo userInfo){
-
+	public ResultInfo getHomeownerProfile(final UserInfo userInfo){
 		String url = PROFILE_PREFIX + userInfo.getId() + "/profiles"
-		ResultInfo result = http.callGetMethodWithAuthorization(url, userInfo.getToken(), null)
+		ResultInfo result = http.callGetMethodWithAuthentication(url, userInfo.getToken(), null)
+
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
 			println "Ok"
 		}else{
 			throw new Exception("Failed " +result.getResponseCode())
 		}
+
 		return result;
 	}
 
-	public def resetPin(UserInfo userInfo,String phoneId){
-
+	public ResultInfo resetPin(final UserInfo userInfo, final String phoneId){
 		String url = CommonVariable.HOPROFILE_SERVICE_PREFIX + "v1.0/users/" +userInfo.getId() +"/phones/"+phoneId+"/resetpin"
-		ResultInfo result = http.callPutMethodWithAuthorization(url, userInfo.getToken(),null, null)
+		ResultInfo result = http.callPutMethodWithAuthentication(url, userInfo.getToken(), null, null)
+
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
 			println "Updated"
 		}
+
 		return result;
 	}
 
-	public def verifyPin(UserInfo userInfo,String phoneId,def phone){
-
+	public ResultInfo verifyPin(final UserInfo userInfo, final String phoneId, final def phone){
 		String url = CommonVariable.HOPROFILE_SERVICE_PREFIX + "v1.0/users/" +userInfo.getId() +"/phones/"+phoneId+"/verify"
-		ResultInfo result = http.callPutMethodWithAuthorization(url, userInfo.getToken(),null, phone)
+		ResultInfo result = http.callPutMethodWithAuthentication(url, userInfo.getToken(), null, phone)
+
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
 			println "Updated"
 		}
+
 		return result;
 	}
-
 }

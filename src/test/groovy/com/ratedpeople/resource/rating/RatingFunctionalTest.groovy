@@ -1,74 +1,70 @@
 /**
  * 
  */
-package com.ratedpeople.resource.rating
-import groovy.json.*
-import spock.lang.Specification;
+package com.ratedpeople.rating.resource
 
+import groovy.json.JsonBuilder
+import spock.lang.Specification
+import com.ratedpeople.service.HomeownerService
+import com.ratedpeople.service.RatingService
+import com.ratedpeople.service.utility.MatcherStringUtility
+import com.ratedpeople.service.utility.ResultInfo
+import com.ratedpeople.service.utility.UserInfo
+import com.ratedpeople.support.CommonVariable
+import com.ratedpeople.support.DatabaseHelper
 
-/**
- * @author Shabana
- *
- */
-class RatingFunctionalTest extends  Specification{
+class RatingFunctionalTest extends Specification {
 
-/*
-	def "Rating HO "(){
+	private HomeownerService homeownerService = new HomeownerService()
+	private RatingService ratingService = new RatingService()
+
+	def "test add HO Rating"(){
 		given :
-		def  getratingVal = DatabaseHelper.select("select rating from rating.rating where job_id=7")
-		if (getratingVal.startsWith("[{rating")){
-			getratingVal = getratingVal.replace("[{rating=", "").replace("}]","")
-			println "rating  value : " +getratingVal
-			if(getratingVal != null ){
-				DatabaseHelper.executeQuery("UPDATE rating.rating SET rating = null  WHERE job_id = 7")
-				println "You are cleaning up rating for job Id 7"
-			}
-		}
-		String responseCode = null
+			final UserInfo user = homeownerService.getHoUser();
+			final def json = getRatingObject(user)
+			println "Json is " +  json.toString()
+			println "********************************"
+			println "Test running ..  Rating HO"
+		when:
+			ResultInfo result = ratingService.createRating(json, CommonVariable.DEFAULT_INVOICED_JOB_ID, user)
+		then:
+			result.getResponseCode().contains(CommonVariable.STATUS_200)
+		cleanup:
+			String queryReuslt = DatabaseHelper.select("select id from rating.rating WHERE job_id = ${CommonVariable.DEFAULT_INVOICED_JOB_ID}")
+			String ratingId = MatcherStringUtility.getMatch("id=(.*)}",queryReuslt)
+			
+			println "You are cleaning up rating for job Id 8"
+			DatabaseHelper.executeQuery("UPDATE rating.rating SET rating = null  WHERE job_id = ${CommonVariable.DEFAULT_INVOICED_JOB_ID}")
+			DatabaseHelper.executeQuery("UPDATE job.job SET rated = 'F'  WHERE id = ${CommonVariable.DEFAULT_INVOICED_JOB_ID}")
+			DatabaseHelper.executeQuery("DELETE FROM rating.rating_comment WHERE rating_id = ${ratingId}")
+	}
+	
+	def "test get Rating"(){
+		given :
+			final UserInfo user = homeownerService.getHoUser();
+		when:
+			ResultInfo result = ratingService.getRating(CommonVariable.DEFAULT_CLOSED_JOB_ID, user)
+		then:
+			result.getResponseCode().contains(CommonVariable.STATUS_200)
+	}
+	
+	private def getRatingObject(final UserInfo user){
 		def json = new JsonBuilder()
 		json{
-			"jobId" "7"
+			"jobId" CommonVariable.DEFAULT_INVOICED_JOB_ID
 			"ratingType" "HOMEOWNER"
 			"rating" 2
-			"fromUserId" "2"
+			"fromUserId" user.getId()
 			"toUserId" "1"
 			"ratingComment" {
 				"comment" "I am commenting because this person is awesome"
-				"fromUserId" "2"
+				"fromUserId" user.getId()
 				"toUserId" "1"
 			}
 		}
-
-		println "Json is " +  json.toString()
-		println "********************************"
-		println "Test running ..  Rating HO"
-		when:
-		HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
-			uri.path = CommonVariable.RATING_SERVICE_PREFIX + "v1.0/users/2/jobs/7/ratings"
-			println "uri.path   :"+uri.path
-			println "Access Token HO : "+ ACCESS_TOKEN_HO
-			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_HO
-			body = json.toString()
-
-			requestContentType = ContentType.JSON
-			println "Uri is " + uri
-
-			response.success = { resp, reader ->
-				println "Success"
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-				responseCode = resp.statusLine.statusCode
-				reader.each{ "Results  : "+ "$it" }
-			}
-
-			response.failure = { resp, reader ->
-				responseCode = resp.statusLine.statusCode
-				println " stacktrace : "+reader.each{"$it"}
-			}
-		}
-		then:
-		responseCode == CommonVariable.STATUS_200
-	}*/
+		
+		return json;
+	}
 }
 
 

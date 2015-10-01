@@ -16,43 +16,33 @@ import com.ratedpeople.support.CommonVariable
  */
 class HomeownerService{
 
-	private static final String URL_STATUS = "/status"
-
-	private static final String REGISTER = "register"
-
 	private static final String HOMEOWNER_URI_PREFIX = CommonVariable.USER_SERVICE_PREFIX + "v1.0/homeowners/"
-
 	private static final String EMAIL_POSTFIX = "@gid.com"
 
-	private  String ACCESS_TOKEN_DYNAMIC_HO
-	//private  String REFRESH_TOKEN_DYNAMIC_HO
-	private  String USER_ID_DYNAMIC_HO
-	private  String ACCESS_TOKEN_ADMIN
-	//private  String REFRESH_TOKEN_ADMIN
+	private String ACCESS_TOKEN_DYNAMIC_HO
+	private String USER_ID_DYNAMIC_HO
+	private String ACCESS_TOKEN_ADMIN
+	private String DYNAMIC_USER
 
-	private  String DYNAMIC_USER
-
-
-
-	HttpConnectionService http = new HttpConnectionService()
+	private static final HttpConnectionService http = new HttpConnectionService()
 
 	public UserInfo createAndActivateDynamicUser(){
-
-		UserInfo user = new UserInfo();
 		createDynamicUser();
 		authToken()
 		getUserId()
 		getAdminToken()
 		changeStatus()
 		authToken()
+
+		UserInfo user = new UserInfo();
 		user.setId(USER_ID_DYNAMIC_HO);
 		user.setToken(ACCESS_TOKEN_DYNAMIC_HO)
 		user.setUsername(DYNAMIC_USER);
+
 		return user;
 	}
 
 	public UserInfo getAdminUser(){
-
 		UserInfo user = new UserInfo();
 		getAdminToken()
 
@@ -62,14 +52,12 @@ class HomeownerService{
 	}
 
 	public UserInfo getHoUser(){
-
 		UserInfo user = new UserInfo();
 		authTokenHo()
 		user.setId("2")
 		user.setToken(ACCESS_TOKEN_DYNAMIC_HO)
 		user.setUsername(CommonVariable.DEFAULT_HO_USERNAME);
 		return user;
-		
 	}
 
 	private def createDynamicUser(){
@@ -85,14 +73,13 @@ class HomeownerService{
 		println "Json is ${json.toString()}"
 
 
-		ResultInfo result = http.callPostMethodWithoutAuthentication(HOMEOWNER_URI_PREFIX + REGISTER,null,json)
+		ResultInfo result = http.callPostMethodWithoutAuthentication(HOMEOWNER_URI_PREFIX + "register", null, json)
 		if(result.getResponseCode()==CommonVariable.STATUS_201){
 			println "OK"
 		}else{
 			throw new Exception("Failed " +result.getResponseCode())
 		}
 	}
-
 
 	private def authToken(){
 		String token = null
@@ -103,6 +90,7 @@ class HomeownerService{
 			password: CommonVariable.DEFAULT_PASSWORD ,
 			scope: 'all'
 		]
+
 		ResultInfo result = http.callGetToken(CommonVariable.DEFAULT_GET_TOKEN_URI,query,null)
 		if(result.getResponseCode()==CommonVariable.STATUS_200){
 			ACCESS_TOKEN_DYNAMIC_HO = MatcherStringUtility.getMatch("access_token=(.*)expires", result.getBody())
@@ -111,7 +99,7 @@ class HomeownerService{
 			throw new Exception("AuthToken failed " +result.getResponseCode())
 		}
 	}
-	
+
 	private def authTokenHo(){
 		String token = null
 		HttpConnectionService http = new HttpConnectionService()
@@ -121,6 +109,7 @@ class HomeownerService{
 			password: CommonVariable.DEFAULT_PASSWORD ,
 			scope: 'all'
 		]
+
 		ResultInfo result = http.callGetToken(CommonVariable.DEFAULT_GET_TOKEN_URI,query,null)
 		if(result.getResponseCode()==CommonVariable.STATUS_200){
 			ACCESS_TOKEN_DYNAMIC_HO = MatcherStringUtility.getMatch("access_token=(.*)expires", result.getBody())
@@ -133,7 +122,7 @@ class HomeownerService{
 	private def getUserId() {
 		HttpConnectionService http = new HttpConnectionService()
 
-		ResultInfo result = http.callGetMethodWithAuthorization(CommonVariable.DEFAULT_ME_URI,ACCESS_TOKEN_DYNAMIC_HO,null)
+		ResultInfo result = http.callGetMethodWithAuthentication(CommonVariable.DEFAULT_ME_URI,ACCESS_TOKEN_DYNAMIC_HO,null)
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
 			USER_ID_DYNAMIC_HO = MatcherStringUtility.getMatch("userId=(.*),userName", result.getBody())
 			println "User id : " + USER_ID_DYNAMIC_HO
@@ -151,8 +140,10 @@ class HomeownerService{
 			password: CommonVariable.DEFAULT_PASSWORD,
 			scope: 'all'
 		]
+
 		HttpConnectionService http = new HttpConnectionService()
-		ResultInfo result = http.callGetToken(CommonVariable.DEFAULT_GET_TOKEN_URI,query,null)
+		ResultInfo result = http.callGetToken(CommonVariable.DEFAULT_GET_TOKEN_URI, query, null)
+
 		if(result.getResponseCode()==CommonVariable.STATUS_200){
 			ACCESS_TOKEN_ADMIN = MatcherStringUtility.getMatch("access_token=(.*)expires", result.getBody())
 			println "Access Token: " + ACCESS_TOKEN_ADMIN
@@ -168,8 +159,9 @@ class HomeownerService{
 		]
 
 		HttpConnectionService http = new HttpConnectionService()
-		String url = HOMEOWNER_URI_PREFIX + USER_ID_DYNAMIC_HO + URL_STATUS
-		ResultInfo result = http.callPutMethodWithAuthorization(url,ACCESS_TOKEN_ADMIN,query,null)
+		String url = HOMEOWNER_URI_PREFIX + USER_ID_DYNAMIC_HO + "/status"
+		ResultInfo result = http.callPutMethodWithAuthentication(url,ACCESS_TOKEN_ADMIN,query,null)
+
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
 			println "Status changed"
 		}else{
