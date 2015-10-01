@@ -108,11 +108,23 @@ public abstract class CommonVariable {
 	
 	
 	/* Job section */
-	
 	private static final String DEFAULT_TITLE = "CLEANER"
 	private static final String DEFAULT_DESCRIPTION = "This is a test job with 30 or more character"
 	private static final String DEFAULT_HOURRATE = "12.00"
 	private static final String DEFAULT_TRADE_ID = "2"
+	
+	private static final String DEFAULT_PENDING_JOB_ID = "1"
+	private static final String DEFAULT_REQUESTED_JOB_ID = "2"
+	private static final String DEFAULT_SCHEDULED_JOB_ID = "3"
+	private static final String DEFAULT_REJECTED_JOB_ID = "4"
+	private static final String DEFAULT_STARTED_JOB_ID = "5"
+	private static final String DEFAULT_PAUSED_JOB_ID = "6"
+	private static final String DEFAULT_COMPLETED_JOB_ID = "7"
+	private static final String DEFAULT_INVOICED_JOB_ID = "8"
+	private static final String DEFAULT_CLOSED_JOB_ID = "9"
+	private static final String DEFAULT_WITHDRAWN_JOB_ID = "10"
+	private static final String DEFAULT_EXPIRED_JOB_ID = "11"
+	private static final String DEFAULT_DISPUTED_JOB_ID = "12"
 	
 	/* Working area */
 	

@@ -4,8 +4,6 @@
 package com.ratedpeople.service
 
 import groovy.json.*
-import groovyx.net.http.HTTPBuilder;
-
 import com.ratedpeople.service.utility.HttpConnectionService
 import com.ratedpeople.service.utility.MatcherStringUtility
 import com.ratedpeople.service.utility.ResultInfo
@@ -15,38 +13,29 @@ import com.ratedpeople.support.CommonVariable
  * @author shabana.khanam
  *
  */
-class TradesmanService{
+final class TradesmanService{
 
 	private static final String URL_STATUS = "/status"
-
 	private static final String EMAIL_POSTFIX = "@gid.com"
-
 	private static final String REGISTER_USER_TM_URI = CommonVariable.USER_SERVICE_PREFIX + "v1.0/tradesmen/register"
-
 	private static final STATUS_URI = CommonVariable.USER_SERVICE_PREFIX + "v1.0/tradesmen/"
 
-
 	private  String ACCESS_TOKEN_DYNAMIC_TM
-	//private  String REFRESH_TOKEN_DYNAMIC_HO
 	private  String USER_ID_DYNAMIC_TM
 	private  String ACCESS_TOKEN_ADMIN
-	//private  String REFRESH_TOKEN_ADMIN
-
 	private  String DYNAMIC_USER
 
-
-
-	HttpConnectionService http = new HttpConnectionService()
+	private static HttpConnectionService http = new HttpConnectionService()
 
 	public UserInfo createAndActivateDynamicUser(){
-
-		UserInfo user = new UserInfo();
 		createDynamicUser();
 		authToken()
 		getUserId()
 		getAdminToken()
 		changeStatus()
 		authToken()
+
+		UserInfo user = new UserInfo();
 		user.setId(USER_ID_DYNAMIC_TM);
 		user.setToken(ACCESS_TOKEN_DYNAMIC_TM)
 		user.setUsername(DYNAMIC_USER);
@@ -54,7 +43,6 @@ class TradesmanService{
 	}
 
 	public UserInfo createAdminUser(){
-
 		UserInfo user = new UserInfo();
 		getAdminToken()
 
@@ -64,7 +52,6 @@ class TradesmanService{
 	}
 
 	public UserInfo createTradesmanUser(){
-
 		UserInfo user = new UserInfo();
 		authTokenTm()
 		user.setId("1")
@@ -72,11 +59,6 @@ class TradesmanService{
 		user.setUsername(CommonVariable.DEFAULT_TM_USERNAME);
 		return user;
 	}
-
-
-
-
-
 
 	private def createDynamicUser(){
 		DYNAMIC_USER = CommonVariable.TM_USER_PREFIX + System.currentTimeMillis() + EMAIL_POSTFIX
@@ -99,7 +81,6 @@ class TradesmanService{
 		}
 	}
 
-
 	private def authToken(){
 		String token = null
 		HttpConnectionService http = new HttpConnectionService()
@@ -117,7 +98,7 @@ class TradesmanService{
 			throw new Exception("AuthToken failed " +result.getResponseCode())
 		}
 	}
-	
+
 	private def authTokenTm(){
 		String token = null
 		HttpConnectionService http = new HttpConnectionService()
@@ -139,7 +120,7 @@ class TradesmanService{
 	private def getUserId() {
 		HttpConnectionService http = new HttpConnectionService()
 
-		ResultInfo result = http.callGetMethodWithAuthorization(CommonVariable.DEFAULT_ME_URI,ACCESS_TOKEN_DYNAMIC_TM,null)
+		ResultInfo result = http.callGetMethodWithAuthentication(CommonVariable.DEFAULT_ME_URI,ACCESS_TOKEN_DYNAMIC_TM,null)
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
 			USER_ID_DYNAMIC_TM = MatcherStringUtility.getMatch("userId=(.*),userName", result.getBody())
 			println "User id : " + USER_ID_DYNAMIC_TM
@@ -175,7 +156,7 @@ class TradesmanService{
 
 		HttpConnectionService http = new HttpConnectionService()
 		String url = STATUS_URI + USER_ID_DYNAMIC_TM + URL_STATUS
-		ResultInfo result = http.callPutMethodWithAuthorization(url,ACCESS_TOKEN_ADMIN,query,null)
+		ResultInfo result = http.callPutMethodWithAuthentication(url,ACCESS_TOKEN_ADMIN,query,null)
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
 			println "Status changed"
 		}else{

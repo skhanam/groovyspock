@@ -16,7 +16,7 @@ import com.ratedpeople.support.DatabaseHelper
  * @author shabana.khanam
  *
  */
-class JobTest extends Specification{
+class JobFunctionalTest extends Specification{
 
 	protected static long RANDOM_MOBILE = Math.round(Math.random()*1000000000);
 	private static final String JOB_URI_PREFIX = CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/"
