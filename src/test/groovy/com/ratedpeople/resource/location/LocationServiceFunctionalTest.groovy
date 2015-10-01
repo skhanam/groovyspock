@@ -17,7 +17,7 @@ import com.ratedpeople.support.CommonVariable
  *
  */
 
-class LocationServiceTest extends Specification {
+class LocationServiceFunctionalTest extends Specification {
 
 
 	private LocationService locationService = new LocationService();

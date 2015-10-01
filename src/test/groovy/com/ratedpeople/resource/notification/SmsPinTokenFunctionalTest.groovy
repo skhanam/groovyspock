@@ -16,7 +16,7 @@ import com.ratedpeople.support.DatabaseHelper
  * @author shabana.khanam
  *
  */
-class SmsPinTokenTest extends Specification{
+class SmsPinTokenFunctionalTest extends Specification{
 
 	private static String getpinToken
 

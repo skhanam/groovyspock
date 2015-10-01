@@ -16,7 +16,7 @@ import com.ratedpeople.support.DatabaseHelper
  * @author shabana.khanam
  *
  */
-class TMJobListTest extends Specification {
+class TMJobListFunctionalTest extends Specification {
 
 	protected static long RANDOM_MOBILE = Math.round(Math.random()*100000000);
 

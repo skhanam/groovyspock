@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.ratedpeople.rating.resource
+package com.ratedpeople.resource.rating
 
 import groovy.json.JsonBuilder
 import spock.lang.Specification
