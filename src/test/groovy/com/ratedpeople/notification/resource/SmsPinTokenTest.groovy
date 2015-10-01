@@ -4,9 +4,7 @@
 package com.ratedpeople.notification.resource
 
 import groovy.json.JsonBuilder
-import groovyx.net.http.ContentType
-import groovyx.net.http.HTTPBuilder
-import groovyx.net.http.Method
+import spock.lang.Specification
 
 import com.ratedpeople.service.HOProfileService
 import com.ratedpeople.service.HomeownerService
@@ -14,12 +12,11 @@ import com.ratedpeople.service.utility.ResultInfo
 import com.ratedpeople.service.utility.UserInfo
 import com.ratedpeople.support.CommonVariable
 import com.ratedpeople.support.DatabaseHelper
-import com.ratedpeople.user.resource.AbstractUserToken
 /**
  * @author shabana.khanam
  *
  */
-class SmsPinTokenTest extends AbstractUserToken{
+class SmsPinTokenTest extends Specification{
 
 	private static String getpinToken
 
