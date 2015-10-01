@@ -19,7 +19,7 @@ class BillingService{
 
 	HttpConnectionService http = new HttpConnectionService()
 
-	private def getAllBillingsForTm(UserInfo userInfo){
+	public def getAllBillingsForTm(UserInfo userInfo){
 
 		String url = BILLING_URI_PREFIX + userInfo.getId() +"/billingdetails"
 
@@ -32,7 +32,7 @@ class BillingService{
 		return result;
 	}
 
-	private def getSingleBillingDetailsForTm(UserInfo userInfo,String billingId){
+	public def getSingleBillingDetailsForTm(UserInfo userInfo,String billingId){
 
 		String url = BILLING_URI_PREFIX + userInfo.getId() +"/billingdetails/"+billingId
 
@@ -46,7 +46,7 @@ class BillingService{
 	}
 
 
-	private def createBankDetails(def bank,UserInfo userInfo){
+	public def createBankDetails(def bank,UserInfo userInfo){
 
 		String url = BILLING_URI_PREFIX + userInfo.getId() + "/bankdetails"
 		ResultInfo result = http.callPostMethodWithAuthentication(url, userInfo.getToken(), bank)
@@ -60,7 +60,7 @@ class BillingService{
 
 
 
-	private def getBankDetails(UserInfo userInfo ){
+	public def getBankDetails(UserInfo userInfo ){
 
 		String url = BILLING_URI_PREFIX + userInfo.getId() +"/bankdetails"
 
@@ -73,7 +73,7 @@ class BillingService{
 		return result;
 	}
 
-	private def updateBankDetails(def bank,UserInfo userInfo){
+	public def updateBankDetails(def bank,UserInfo userInfo){
 
 		String url = BILLING_URI_PREFIX + userInfo.getId() + "/bankdetails"
 		ResultInfo result = http.callPutMethodWithAuthorization(url, userInfo.getToken(),null, bank)

@@ -26,7 +26,7 @@ class HomeownerProfileFunctionalTest  extends Specification {
 
 	def "Matching Free Text"(){
 		given:
-		UserInfo admin =homeownerService.createAdminUser()
+		UserInfo admin =homeownerService.getAdminUser()
 		String responseCode = null
 		println "********************************"
 		println "Test Running ... Matching Free Text "

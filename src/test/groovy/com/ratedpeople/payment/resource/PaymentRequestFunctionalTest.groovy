@@ -18,13 +18,9 @@ import com.ratedpeople.support.DatabaseHelper
  */
 class PaymentRequestFunctionalTest extends Specification{
 
-	/*
-	 *  Negative scenarios are not written as there are no validations in place 
-	 *  will update once this is being put in place
-	 */
-
+	
 	private static final long RANDOM_JOB_ID = Math.round(Math.random()*1000);
-
+/*
 	def "test request payment "(){
 		given:
 		String responseStatus = null
@@ -79,6 +75,6 @@ class PaymentRequestFunctionalTest extends Specification{
 		println "Skrill transaction Id : " + getSkrillID
 		DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id ='8' WHERE id = 8")
 		Thread.sleep(2000);
-	}
+	}*/
 }
 

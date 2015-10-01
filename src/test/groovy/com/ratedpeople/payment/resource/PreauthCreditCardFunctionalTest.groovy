@@ -4,10 +4,13 @@
 package com.ratedpeople.payment.resource
 
 import groovy.json.*
-import groovyx.net.http.ContentType
-import groovyx.net.http.Method
 import spock.lang.Specification
 
+import com.ratedpeople.service.HomeownerService
+import com.ratedpeople.service.PaymentService
+import com.ratedpeople.service.TradesmanService
+import com.ratedpeople.service.utility.ResultInfo
+import com.ratedpeople.service.utility.UserInfo
 import com.ratedpeople.support.CommonVariable
 import com.ratedpeople.support.DatabaseHelper
 
@@ -19,17 +22,23 @@ import com.ratedpeople.support.DatabaseHelper
 class PreauthCreditCardFunctionalTest extends Specification{
 
 
+	private HomeownerService homeownerService = new HomeownerService();
+	private PaymentService paymentService = new PaymentService()
+	private TradesmanService tradesmanService = new TradesmanService()
 
 	private static final long RANDOM_JOB_ID = Math.round(Math.random()*1000);
 
 	def "test preauth credit card"(){
 
 		given:
-		String responseStatus = null
+
+		UserInfo ho =  homeownerService.getHoUser()
+		UserInfo tm =  tradesmanService.createTradesmanUser()
+
 		def json = new JsonBuilder()
 		json {
-			"fromUserId" USER_ID_HO
-			"toUserId" USER_ID_TM
+			"fromUserId" ho.getId()
+			"toUserId" tm.getId()
 			"jobId" RANDOM_JOB_ID
 			"ccToken" CommonVariable.DEFAULT_CC_TOKEN
 			"currency" CommonVariable.DEFAULT_CURRENCY
@@ -41,41 +50,10 @@ class PreauthCreditCardFunctionalTest extends Specification{
 
 		println "Json is " +  json.toString()
 		when:
-		HTTP_BUILDER.request(Method.POST, ContentType.JSON){
-			uri.path = CommonVariable.PAYMENT_SERVICE_PREFIX + "v1.0/users/"+USER_ID_HO+"/preauth"
-			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_HO
-
-			body = json.toString()
-			requestContentType = ContentType.JSON
-
-			println "Uri : " + uri
-			response.success = { resp, reader ->
-				println "Success"
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-
-				responseStatus = resp.statusLine.statusCode
-
-				reader.each{
-					println "Token values : "+"$it"
-
-					String token = "$it"
-					String key = token.substring(0, token.indexOf("="))
-					String value = token.substring(token.indexOf("=") + 1, token.length())
-					println key
-					println value
-				}
-			}
-
-			response.failure = { resp, reader ->
-				println "Request failed with status ${resp.status}"
-				reader.each{ println "Error values : "+"$it" }
-				responseStatus = resp.statusLine.statusCode
-			}
-		}
+		ResultInfo result = paymentService.preauth(ho, json)
 		then:
-		responseStatus == CommonVariable.STATUS_201
+		result.getResponseCode().contains(CommonVariable.STATUS_201)
 		cleanup:
-		DatabaseHelper.executeQuery("delete from payment.preauth_transaction where from_user_id = '${USER_ID_HO}'")
+		DatabaseHelper.executeQuery("delete from payment.preauth_transaction where from_user_id = '${ho.getId()}'")
 	}
 }

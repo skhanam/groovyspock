@@ -24,7 +24,7 @@ class ResetPasswordFunctionalTest extends HomeownerService {
 	
 	private static String ACCESS_TOKEN
 
-	
+	/*
 		def "Generate and Verify Reset password"(){
 			given:
 				String responseStatus = null
@@ -96,5 +96,5 @@ class ResetPasswordFunctionalTest extends HomeownerService {
 				}
 			then:
 				responseStatus == CommonVariable.STATUS_200
-		}
+		}*/
 }

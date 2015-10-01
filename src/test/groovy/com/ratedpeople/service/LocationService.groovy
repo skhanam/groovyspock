@@ -19,7 +19,7 @@ class LocationService{
 
 	HttpConnectionService http = new HttpConnectionService()
 
-	private def getPostcode(String postcode){
+	public def getPostcode(String postcode){
 
 		String url = POSTCODE_PREFIX +postcode
 
@@ -30,7 +30,7 @@ class LocationService{
 		return result;
 	}
 
-	private def getAddressInfo(String postcode){
+	public def getAddressInfo(String postcode){
 
 		String url = POSTCODE_PREFIX +postcode+"/addresses"
 

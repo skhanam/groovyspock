@@ -14,7 +14,7 @@ import spock.lang.Specification;
 class SuspendPaymentFunctionalTest extends Specification{
 
 
-
+/*
 	def "test suspend payment "(){
 		given:
 		String responseStatus = null
@@ -244,7 +244,7 @@ class SuspendPaymentFunctionalTest extends Specification{
 		responseStatus == CommonVariable.STATUS_200
 
 	}
-
+*/
 
 }
 

@@ -39,7 +39,7 @@ class JobService{
 
 
 
-	private def createJob(def job,UserInfo userInfo){
+	public def createJob(def job,UserInfo userInfo){
 
 		String url =  CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/" + userInfo.getId() + "/jobs"
 		ResultInfo result = http.callPostMethodWithAuthentication(url, userInfo.getToken(), job)
@@ -50,7 +50,7 @@ class JobService{
 	}
 
 
-	private def getAllJobsForHo(UserInfo userInfo){
+	public def getAllJobsForHo(UserInfo userInfo){
 
 		String url =  CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/" + userInfo.getId() + "/hojobs"
 
@@ -66,7 +66,7 @@ class JobService{
 		return result;
 	}
 
-	private def getJobForHo(UserInfo userInfo,String jobId){
+	public def getJobForHo(UserInfo userInfo,String jobId){
 
 		String url =  CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/" + userInfo.getId() + "/hojobs/"+jobId
 
@@ -78,7 +78,7 @@ class JobService{
 		return result;
 	}
 
-	private def getJobForTm(UserInfo userInfo,String jobId){
+	public def getJobForTm(UserInfo userInfo,String jobId){
 
 		String url =  CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/" + userInfo.getId() + "/tmjobs/"+jobId
 
@@ -93,7 +93,7 @@ class JobService{
 
 
 
-	private def withdrawJob(UserInfo userInfo,String jobId){
+	public def withdrawJob(UserInfo userInfo,String jobId){
 
 		String url =  CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/" + userInfo.getId() + "/hojobs/"+jobId+"/withdraw"
 		ResultInfo result = http.callPutMethodWithAuthorization(url, userInfo.getToken(), null,null)
@@ -103,7 +103,7 @@ class JobService{
 		return result;
 	}
 
-	private def acceptJob(UserInfo userInfo,String jobId){
+	public def acceptJob(UserInfo userInfo,String jobId){
 
 		String url =  CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/" + userInfo.getId() + "/tmjobs/"+jobId+"/schedule"
 		ResultInfo result = http.callPutMethodWithAuthorization(url, userInfo.getToken(), null,null)
@@ -113,7 +113,7 @@ class JobService{
 		return result;
 	}
 
-	private def startJob(UserInfo userInfo,String jobId){
+	public def startJob(UserInfo userInfo,String jobId){
 
 		String url =  CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/" + userInfo.getId() + "/tmjobs/"+jobId+"/start"
 		ResultInfo result = http.callPutMethodWithAuthorization(url, userInfo.getToken(), null,null)
@@ -123,7 +123,7 @@ class JobService{
 		return result;
 	}
 
-	private def pauseJob(UserInfo userInfo,String jobId,def body){
+	public def pauseJob(UserInfo userInfo,String jobId,def body){
 
 		String url =  CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/" + userInfo.getId() + "/tmjobs/"+jobId+"/pause"
 		ResultInfo result = http.callPutMethodWithAuthorization(url, userInfo.getToken(), null,body)
@@ -133,7 +133,7 @@ class JobService{
 		return result;
 	}
 
-	private def completeJob(UserInfo userInfo,String jobId,def body){
+	public def completeJob(UserInfo userInfo,String jobId,def body){
 
 		String url =  CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/" + userInfo.getId() + "/tmjobs/"+jobId+"/complete"
 		ResultInfo result = http.callPutMethodWithAuthorization(url, userInfo.getToken(), null,body)
@@ -143,7 +143,7 @@ class JobService{
 		return result;
 	}
 
-	private def rejectJob(UserInfo userInfo,String jobId,def body){
+	public def rejectJob(UserInfo userInfo,String jobId,def body){
 
 		String url =  CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/" + userInfo.getId() + "/tmjobs/"+jobId+"/reject"
 		ResultInfo result = http.callPutMethodWithAuthorization(url, userInfo.getToken(), null,body)
@@ -153,7 +153,7 @@ class JobService{
 		return result;
 	}
 
-	private def raiseInvoice(UserInfo userInfo,String jobId,def body){
+	public def raiseInvoice(UserInfo userInfo,String jobId,def body){
 
 		String url =  CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/" + userInfo.getId() + "/tmjobs/"+jobId+"/invoice"
 		ResultInfo result = http.callPutMethodWithAuthorization(url, userInfo.getToken(), null,body)
@@ -163,7 +163,7 @@ class JobService{
 		return result;
 	}
 
-	private def getAllJobsForTm(UserInfo userInfo){
+	public def getAllJobsForTm(UserInfo userInfo){
 
 		String url =  CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/" + userInfo.getId() + "/tmjobs"
 
@@ -179,7 +179,7 @@ class JobService{
 		return result;
 	}
 
-	private def getJobInfoForTm(UserInfo userInfo,String hoId){
+	public def getJobInfoForTm(UserInfo userInfo,String hoId){
 
 		String url =  CommonVariable.JOB_SERVICE_PREFIX + "v1.0/users/" + hoId + "/contactdetails"
 

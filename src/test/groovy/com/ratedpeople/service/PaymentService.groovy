@@ -15,13 +15,13 @@ import com.ratedpeople.support.CommonVariable
  */
 class PaymentService{
 
-	private final String CREDIT_CARD_RESOURCE_URI = CommonVariable.PAYMENT_SERVICE_PREFIX + "v1.0/users/"
+	private final String PAYMENT_RESOURCE_URI = CommonVariable.PAYMENT_SERVICE_PREFIX + "v1.0/users/"
 
 	HttpConnectionService http = new HttpConnectionService()
 
-	private def postCreditCard(UserInfo userInfo,def creditCard){
+	public def postCreditCard(UserInfo userInfo,def creditCard){
 
-		String url = CREDIT_CARD_RESOURCE_URI + userInfo.getId() +"/cards"
+		String url = PAYMENT_RESOURCE_URI + userInfo.getId() +"/cards"
 
 		ResultInfo result = http.callPostMethodWithAuthentication(url, userInfo.getToken(),creditCard)
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_201)){
@@ -30,9 +30,9 @@ class PaymentService{
 		return result;
 	}
 
-	private def getCreditCard(UserInfo userInfo ){
+	public def getCreditCard(UserInfo userInfo ){
 
-		String url = CREDIT_CARD_RESOURCE_URI + userInfo.getId() +"/cards"
+		String url = PAYMENT_RESOURCE_URI + userInfo.getId() +"/cards"
 
 		ResultInfo result = http.callGetMethodWithAuthorization(url, userInfo.getToken(),null)
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
@@ -43,12 +43,22 @@ class PaymentService{
 		return result;
 	}
 
-	private def updateBankDetails(def bank,UserInfo userInfo){
+	public def updateBankDetails(def bank,UserInfo userInfo){
 
-		String url = BILLING_URI_PREFIX + userInfo.getId() + "/bankdetails"
+		String url = PAYMENT_RESOURCE_URI + userInfo.getId() + "/bankdetails"
 		ResultInfo result = http.callPutMethodWithAuthorization(url, userInfo.getToken(),null, bank)
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
 			println "Updated"
+		}
+		return result;
+	}
+
+	public def preauth(UserInfo userInfo,def card){
+
+		String url = PAYMENT_RESOURCE_URI + userInfo.getId() + "/preauth"
+		ResultInfo result = http.callPostMethodWithAuthentication(url, userInfo.getToken(), card)
+		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
+			println "Created"
 		}
 		return result;
 	}
