@@ -74,16 +74,7 @@ final class TMProfileService{
 		return result;
 	}
 
-	public def getTmInfo(UserInfo userInfo){
-		String url = PROFILE_PREFIX + userInfo.getId()
-
-		ResultInfo result = http.callGetMethodWithAuthentication(url, userInfo.getToken(),null)
-		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
-			println "Ok"
-		}
-
-		return result;
-	}
+	
 
 	public ResultInfo getTmProfile(UserInfo userInfo){
 		String url = PROFILE_PREFIX + userInfo.getId()+"/profiles"

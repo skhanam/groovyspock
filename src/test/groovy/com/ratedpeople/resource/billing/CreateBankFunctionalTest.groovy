@@ -11,7 +11,7 @@ import com.ratedpeople.support.DatabaseHelper
 
 class CreateBankFunctionalTest extends Specification{
 
-	private static Integer RANDOM_BANK_ACCOUNT = (Math.random()*9000000)+10000000;
+	
 
 	private BillingService billingService = new BillingService();
 	private TradesmanService tradesmanService = new TradesmanService();
@@ -55,6 +55,7 @@ class CreateBankFunctionalTest extends Specification{
 
 	private def getBank(UserInfo user,String additionInfo){
 		def json = new JsonBuilder()
+		Integer RANDOM_BANK_ACCOUNT = (Math.random()*9000000)+10000000;
 		json {
 			"userId"  user.getId()
 			"beneficiaryName" CommonVariable.DEFAULT_BENEFICIARY_NAME + " additionInfo"

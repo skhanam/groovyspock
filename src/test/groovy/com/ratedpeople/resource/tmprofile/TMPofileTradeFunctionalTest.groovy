@@ -18,10 +18,7 @@ import com.ratedpeople.support.DatabaseHelper
  */
 class TMPofileTradeFunctionalTest  extends Specification{
 
-	private static final String PROFILE_PREFIX = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"
-
-	private static final String MATCH_PREFIX = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/match"
-
+	
 	private TradesmanService tradesmanService = new TradesmanService();
 	private TMProfileService tmProfileService = new TMProfileService()
 
@@ -70,16 +67,7 @@ class TMPofileTradeFunctionalTest  extends Specification{
 			result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
 	
-	def "Get  Tradesman info Id"(){
-		given :
-			UserInfo user =  tradesmanService.createTradesmanUser()
-			println "********************************"
-			println "Test running ..  Get Tradesman Id"
-		when:
-			ResultInfo result = tmProfileService.getTmInfo(user)
-		then:
-			result.getResponseCode().contains(CommonVariable.STATUS_200)
-	}
+	
 	
 	def "Delete  Tradesman Trade"(){
 		given :
