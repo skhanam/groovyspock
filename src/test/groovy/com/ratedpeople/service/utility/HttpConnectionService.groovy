@@ -6,6 +6,9 @@ import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
 
+import org.apache.http.entity.mime.MultipartEntityBuilder
+import org.apache.http.entity.mime.content.ByteArrayBody
+
 import com.ratedpeople.support.CommonVariable
 
 
@@ -49,14 +52,89 @@ class HttpConnectionService {
 
 		return info;
 	}
-	
-	
+
+
 	private def callPostMethodWithAuthentication(String url,String token, def json){
 		ResultInfo info = new ResultInfo()
 		def response = HTTP_BUILDER.request(Method.POST,ContentType.JSON) {
 			uri.path = url
 			headers.'Authorization' = "Bearer "+ token
 			body = json.toString()
+			requestContentType = ContentType.JSON
+			headers.Accept = ContentType.JSON
+			println "Post user Uri : " + uri
+
+
+			response.success = { resp, reader ->
+				println "Success"
+
+				//info.responseCode = resp.statusLine.statusCode
+				info.responseCode = resp.statusLine.statusCode
+				reader.each{
+					//"Results  : "+ "$it"
+					String temp = "$it"
+					//println temp
+					info.setBody(info.getBody()+temp)
+				}
+			}
+			response.failure = { resp, reader ->
+				println "Fail"
+				reader.each{
+					//"Results  : "+ "$it"
+					String temp = "$it"
+					info.setError(info.getError()+temp)
+				}
+				info.responseCode = resp.statusLine
+			}
+		}
+
+		return info;
+	}
+
+	private def callPostMethodWithAuthenticationAndImage(String url,String token, def queryText){
+		ResultInfo info = new ResultInfo()
+		def response = HTTP_BUILDER.request(Method.POST,ContentType.JSON) {req ->
+			requestContentType = 'multipart/form-data'
+			uri.path = url
+			uri.query = queryText
+			headers.'Authorization' = "Bearer "+ token
+			MultipartEntityBuilder entity = new MultipartEntityBuilder()
+			def file = new File('src/test/resources/imageTest1.jpg');
+			entity.addPart("file",new ByteArrayBody(file.getBytes(), 'src/test/resources/imageTest1.jpg'))
+			req.entity = entity.build();
+			println "Post user Uri : " + uri
+
+			response.success = { resp, reader ->
+				println "Success"
+
+				//info.responseCode = resp.statusLine.statusCode
+				info.responseCode = resp.statusLine.statusCode
+				reader.each{
+					//"Results  : "+ "$it"
+					String temp = "$it"
+					//println temp
+					info.setBody(info.getBody()+temp)
+				}
+			}
+			response.failure = { resp, reader ->
+				println "Fail"
+				reader.each{
+					//"Results  : "+ "$it"
+					String temp = "$it"
+					info.setError(info.getError()+temp)
+				}
+				info.responseCode = resp.statusLine
+			}
+		}
+
+		return info;
+	}
+
+	private def callDeleteMethodWithAuthentication(String url,String token){
+		ResultInfo info = new ResultInfo()
+		def response = HTTP_BUILDER.request(Method.DELETE,ContentType.JSON) {
+			uri.path = url
+			headers.'Authorization' = "Bearer "+ token
 			requestContentType = ContentType.JSON
 			headers.Accept = ContentType.JSON
 			println "Post user Uri : " + uri
@@ -159,8 +237,8 @@ class HttpConnectionService {
 		}
 		return info
 	}
-	
-	
+
+
 	private def callGetMethod(String url,def query){
 		ResultInfo info = new ResultInfo()
 
@@ -193,7 +271,7 @@ class HttpConnectionService {
 	}
 
 	private def callPutMethodWithAuthorization(String url,String token, def queryText,def bodyText){
-		
+
 		ResultInfo info = new ResultInfo()
 
 		HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
@@ -229,9 +307,9 @@ class HttpConnectionService {
 		}
 		return info
 	}
-	
+
 	private def callPutMethod(String url, def queryText,def bodyText){
-		
+
 		ResultInfo info = new ResultInfo()
 
 		HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
@@ -265,5 +343,5 @@ class HttpConnectionService {
 		}
 		return info
 	}
-	
+
 }

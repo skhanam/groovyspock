@@ -12,6 +12,11 @@ import groovyx.net.http.ContentType
 import groovyx.net.http.Method
 import spock.lang.Specification
 
+import com.ratedpeople.service.TMProfileService
+import com.ratedpeople.service.TradesmanService
+import com.ratedpeople.service.utility.MatcherStringUtility;
+import com.ratedpeople.service.utility.ResultInfo;
+import com.ratedpeople.service.utility.UserInfo
 import com.ratedpeople.support.CommonVariable
 import com.ratedpeople.support.DatabaseHelper
 /**
@@ -20,80 +25,36 @@ import com.ratedpeople.support.DatabaseHelper
  */
 class TMProfileAddressFunctionalTest extends Specification{
 
-	private static final String PROFILE_PREFIX = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"
+	
+	private TradesmanService tradesmanService = new TradesmanService();
+	private TMProfileService tmProfileService = new TMProfileService()
 
-	private static final String MATCH_PREFIX = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/match"
-
-	private static final String ALLPROFILE_PREFIX = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/allprofiles"
 
 	def "Add TM Address"() {
 		given:
-		String responseCode = null
+		UserInfo user =  tradesmanService.createAndActivateDynamicUser()
 		def json = getAddress("")
 		println "Json is " +  json.toString()
 		println "********************************"
 		println "Test Running .... Add TM Address"
-		def  getaddressID = DatabaseHelper.select("select id from tmprofile.address where tm_profile_id = 1")
-		if (getaddressID.startsWith("[{id=")){
-			getaddressID = getaddressID.replace("[{id=", "").replace("}]","")
-			println "Address id : " +getaddressID
-		}
-		if(getaddressID != null){
-			DatabaseHelper.executeQuery("delete from tmprofile.address where tm_profile_id = 1 ")
-		}
 		when:
-		responseCode = postAddress(json)
+		ResultInfo result = tmProfileService.createAddress(json,user)
 		then:
-		responseCode == CommonVariable.STATUS_201
-		cleanup:
-		DatabaseHelper.executeQuery("delete from tmprofile.address where tm_profile_id = 1 and address_type = '${CommonVariable.ADDRESS_TYPE_BUSINESS}'")
+		result.getResponseCode().contains(CommonVariable.STATUS_201)
 	}
 
 
 	def "Get List Matching tradesman"(){
 		given:
-		String responseCode = null
+		UserInfo user =  tradesmanService.createAdminUser()
 		println "********************************"
 		println "Test running ..  " +"Get List Matching tradesman"
 
 		when:
-		HTTP_BUILDER.request(Method.GET,ContentType.JSON){
-			headers.Accept = 'application/json'
-			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_ADMIN
-			uri.path = ALLPROFILE_PREFIX
-			uri.query = [
-				freeText: "test",
-				page: 0,
-				limit:2
-			]
-			println "Uri is " + uri
-
-			response.success = { resp, reader ->
-				println "Success"
-				responseCode = resp.statusLine.statusCode
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-				reader.each{
-					println "Response data: " + "$it"
-					String user = "$it"
-					if (user.startsWith("userId")){
-						user = user.replace("userId=", "")
-						println "User values : " +user
-					}
-				}
-			}
-			response.failure = { resp, reader ->
-				println "Request failed with status ${resp.status}"
-				reader.each{ println "Error values : "+"$it" }
-				responseCode = resp.statusLine.statusCode
-			}
-		}
-
+		ResultInfo result = tmProfileService.getAllProfiles(user)
 		then:
-		responseCode == CommonVariable.STATUS_200
+		result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
-
-
 
 
 	def "Get Matching tradesman"(){
@@ -101,176 +62,53 @@ class TMProfileAddressFunctionalTest extends Specification{
 		String responseCode = null
 		println "********************************"
 		println "Test running ..  " +"Get Match tradesman"
+		def query = [
+			longitude: CommonVariable.DEFAULT_LONGITUDE	,
+			latitude: CommonVariable.DEFAULT_LATITUDE ,
+			tradeId:CommonVariable.DEFAULT_TRADE_ID
+		]
 		when:
-		HTTP_BUILDER.request(Method.GET,ContentType.JSON){
-			headers.Accept = 'application/json'
-			uri.path = MATCH_PREFIX
-			uri.query = [
-				longitude: CommonVariable.DEFAULT_LONGITUDE	,
-				latitude: CommonVariable.DEFAULT_LATITUDE ,
-				tradeId:CommonVariable.DEFAULT_TRADE_ID
-			]
-			println "Uri is " + uri
-
-			response.success = { resp, reader ->
-				println "Success"
-				responseCode = resp.statusLine.statusCode
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-				reader.each{
-					println "Response data: " + "$it"
-					String user = "$it"
-					if (user.startsWith("userId")){
-						user = user.replace("userId=", "")
-						println "User values : " +user
-					}
-				}
-			}
-			response.failure = { resp, reader ->
-				println "Request failed with status ${resp.status}"
-				reader.each{ println "Error values : "+"$it" }
-				responseStatus = resp.statusLine.statusCode
-			}
-		}
-
+		ResultInfo result = tmProfileService.getMatchingTm(query)
 		then:
-		responseCode == CommonVariable.STATUS_200
+		result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
 
 	def "Get TM address"(){
 		given:
+		UserInfo user =  tradesmanService.createAndActivateDynamicUser()
 		def json = getAddress("")
-		String responseCode = null
+		tmProfileService.createAddress(json,user)
 		println "********************************"
 		println "Test running ..  " +"Get TM address"
 		when:
-		HTTP_BUILDER.request(Method.POST,ContentType.JSON){
-			uri.path = PROFILE_PREFIX + USER_ID_TM + "/addresses"
-			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-			body = json.toString()
-			requestContentType = ContentType.JSON
-			println "Uri is " + uri
-
-			response.success = { resp, reader ->
-				println "Success"
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-				responseCode = resp.statusLine.statusCode
-				reader.each{ "Results  : "+ "$it" }
-			}
-
-			response.failure = { resp, reader ->
-				println " stacktrace : "+reader.each{"$it"}
-				println 'Not found'
-				responseCode = resp.statusLine.statusCode
-			}
-		}
-
-		HTTP_BUILDER.request(Method.GET){
-			headers.Accept = 'application/json'
-			headers.'Authorization' = "Bearer " + ACCESS_TOKEN_TM
-			uri.path = PROFILE_PREFIX + USER_ID_TM + "/addresses"
-
-			println "Uri is " + uri
-
-			response.success = { resp, reader ->
-				println "Success"
-				responseCode = resp.statusLine.statusCode
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-
-				reader.each{
-					println "Response data: " + "$it"
-
-					String user = "$it"
-					if (user.startsWith("userId")){
-						user = user.replace("userId=", "")
-						println "User values : " +user
-					}
-				}
-			}
-
-			response.failure = { resp, reader ->
-				println "Request failed with status ${resp.status}"
-				reader.each{ println "Error values : "+"$it" }
-				responseStatus = resp.statusLine.statusCode
-			}
-		}
-
+		ResultInfo result = tmProfileService.getAddress(user)
 		then:
-		responseCode == CommonVariable.STATUS_200
+		result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
 
 
 
 	def "Update TM Address"(){
 		given:
-		String responseCode = null
-		def json = getAddress("Update")
-		println "Json is " +  json.toString()
-		println "********************************"
-		println "Test Running .... Add TM Address"
-		postAddress(json)
-
-		def  getaddressID = DatabaseHelper.select("select id from tmprofile.address where address_type = '${CommonVariable.ADDRESS_TYPE_BUSINESS}'")
-		//			def  getaddressID = DatabaseHelper.select("select id from tmprofile.address where address_type = 'HOME'")
-		if (getaddressID.startsWith("[{id=")){
-			getaddressID = getaddressID.replace("[{id=", "").replace("}]","")
-			println "Address id : " +getaddressID
-		}
+		given:
+		UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+		def json = getAddress("")
+		tmProfileService.createAddress(json,user)
+		def json2 = getAddress("Update")
+		String  queryReuslt = DatabaseHelper.select("select id from tmprofile.address where updated_by = '${user.getId()}'")
+		String addressId = MatcherStringUtility.getMatch("id=(.*)}",queryReuslt)
 		println "********************************"
 		println "Test Running .... Update TM Address"
-		json.getContent().put("addressId", getaddressID)
+		println "Test Running .... Add TM Address"
+		json2.getContent().put("addressId", addressId)
+
 		when:
-		HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
-			uri.path = PROFILE_PREFIX + USER_ID_TM + "/addresses/"+getaddressID
-			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-			body = json.toString()
-			requestContentType = ContentType.JSON
-			println "Uri is " + uri
-			response.success = { resp, reader ->
-				println "Success"
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-				responseCode = resp.statusLine.statusCode
-				reader.each{ "Results  : "+ "$it" }
-			}
-			response.failure = { resp, reader ->
-				println " stacktrace : "+reader.each{"$it"}
-				println 'Not found'
-				responseCode = resp.statusLine.statusCode
-			}
-		}
+		ResultInfo result = tmProfileService.updateAddress(json2, addressId,user)
 		then:
-		responseCode == CommonVariable.STATUS_200
-		cleanup:
-		DatabaseHelper.executeQuery("delete from tmprofile.address where tm_profile_id = 1 and address_type = '${CommonVariable.ADDRESS_TYPE_BUSINESS}'")
-		//		DatabaseHelper.executeQuery("delete from tmprofile.address where tm_profile_id = 1 and address_type = 'HOME'")
+		result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
 
-	private def postAddress(JsonBuilder json){
-		HTTP_BUILDER.request(Method.POST,ContentType.JSON){
-			uri.path = PROFILE_PREFIX + USER_ID_TM + "/addresses"
-			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-			body = json.toString()
-			requestContentType = ContentType.JSON
-			println "Uri is " + uri
 
-			response.success = { resp, reader ->
-				println "Success"
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-				reader.each{ "Results  : "+ "$it" }
-				return resp.statusLine.statusCode
-			}
-
-			response.failure = { resp, reader ->
-				println " stacktrace : "+reader.each{"$it"}
-				println 'Not found'
-				return resp.statusLine.statusCode
-			}
-		}
-	}
 
 	private def getAddress(String additionalInfo){
 		def json = new JsonBuilder()
@@ -284,5 +122,4 @@ class TMProfileAddressFunctionalTest extends Specification{
 		}
 		return json;
 	}
-
 }

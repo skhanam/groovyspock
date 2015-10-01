@@ -3,13 +3,15 @@
  */
 package com.ratedpeople.tradesman.profile.resource
 
-import groovyx.net.http.HTTPBuilder;
-
 import groovy.json.JsonBuilder
 import groovyx.net.http.ContentType
 import groovyx.net.http.Method
 import spock.lang.Specification
 
+import com.ratedpeople.service.TMProfileService
+import com.ratedpeople.service.TradesmanService
+import com.ratedpeople.service.utility.ResultInfo
+import com.ratedpeople.service.utility.UserInfo
 import com.ratedpeople.support.CommonVariable
 
 
@@ -19,45 +21,21 @@ import com.ratedpeople.support.CommonVariable
  */
 class TMProfileFunctionalTest extends Specification{
 
-	private static final String PROFILE_PREFIX = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"
+	private TradesmanService tradesmanService = new TradesmanService();
+	private TMProfileService tmProfileService = new TMProfileService()
 
-	private static final String MATCH_PREFIX = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/match"
+
+
 
 	def "Get TradesMan Profile"() {
 		given:
-		String responseCode = null
+		UserInfo user =  tradesmanService.createTradesmanUser()
 		println "********************************"
 		println "Test running ..  " +"Get TradesMan Profile"
 		when:
-		HTTP_BUILDER.request(Method.GET){
-			headers.Accept = 'application/json'
-			headers.'Authorization' = "Bearer " + ACCESS_TOKEN_TM
-			uri.path = PROFILE_PREFIX + USER_ID_TM + "/profiles"
-			println "Uri is " + uri
-			response.success = { resp, reader ->
-				println "Success"
-				responseCode = resp.statusLine.statusCode
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-				reader.each{
-					println "Response data: " + "$it"
-					String user = "$it"
-					if (user.startsWith("userId")){
-						user = user.replace("userId=", "")
-						println "User values : " +user
-					}
-				}
-			}
-
-			response.failure = { resp, reader ->
-				println "Request failed with status ${resp.status}"
-				reader.each{ println "Error values : "+"$it" }
-				responseStatus = resp.statusLine.statusCode
-			}
-		}
-
+		ResultInfo result = tmProfileService.getTmProfile(user)
 		then:
-		responseCode == CommonVariable.STATUS_200
+		result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
 
 
@@ -65,21 +43,15 @@ class TMProfileFunctionalTest extends Specification{
 
 
 	def "Update Tradesman Profile"(){
-		given :
-		String responseCode = null
+		given:
+		UserInfo user =  tradesmanService.createTradesmanUser()
 		def json = new JsonBuilder()
 		json{
-			"userId" USER_ID_TM
+			"userId" user.getId()
 			"firstName" CommonVariable.DEFAULT_TM_FIRSTNAME + " Update"
 			"lastName" CommonVariable.DEFAULT_TM_LASTNAME
 			"email" CommonVariable.DEFAULT_TM_USERNAME
 			"description" "This is a desc of more for the tm it needs to have more than 60 chars"
-			//				"listPhone" ([
-			//							{"number" CommonVariable.DEFAULT_MOBILE_PREFIX  + RANDOM_MOBILE
-			//							"phoneType" "MOBILE_PHONE"},
-			//							{"number" CommonVariable.DEFAULT_MOBILE_PREFIX  + RANDOM_MOBILE
-			//							 "phoneType" "OFFICE_PHONE"}
-			//						])
 			"company"{ "name" CommonVariable.DEFAULT_COMPANY_NAME }
 
 		}
@@ -88,30 +60,9 @@ class TMProfileFunctionalTest extends Specification{
 		println "********************************"
 		println "Test running ..  Update Tradesman Profile"
 		when:
-		HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
-			uri.path = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"+USER_ID_TM+"/profiles"
-			println "uri.path   :"+uri.path
-			println "Access Token TM : "+ ACCESS_TOKEN_TM
-			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-			body = json.toString()
-			requestContentType = ContentType.JSON
-			println "Uri is " + uri
-
-			response.success = { resp, reader ->
-				println "Success"
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-				responseCode = resp.statusLine.statusCode
-				reader.each{ "Results  : "+ "$it" }
-			}
-
-			response.failure = { resp, reader ->
-				responseCode = resp.statusLine.statusCode
-				println " stacktrace : "+reader.each{"$it"}
-			}
-		}
+		ResultInfo result = tmProfileService.updateTmProfile(user,json)
 		then:
-		responseCode == CommonVariable.STATUS_200
+		result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
 
 

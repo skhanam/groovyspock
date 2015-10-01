@@ -1,14 +1,16 @@
 /**
  * 
  */
-package com.ratedpeople.tradesman.profile.resourceimport com.ratedpeople.user.resource.AbstractUserToken;
-import groovyx.net.http.HTTPBuilder;
-
-import groovy.json.JsonBuilder
+package com.ratedpeople.tradesman.profile.resourceimport groovy.json.JsonBuilder
 import groovyx.net.http.ContentType
 import groovyx.net.http.Method
 import spock.lang.Specification
 
+import com.ratedpeople.service.TMProfileService
+import com.ratedpeople.service.TradesmanService
+import com.ratedpeople.service.utility.MatcherStringUtility
+import com.ratedpeople.service.utility.ResultInfo
+import com.ratedpeople.service.utility.UserInfo
 import com.ratedpeople.support.CommonVariable
 import com.ratedpeople.support.DatabaseHelper
 
@@ -23,44 +25,20 @@ class TMPofileTradeFunctionalTest  extends Specification{
 
 	private static final String MATCH_PREFIX = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/match"
 
-
-
+	private TradesmanService tradesmanService = new TradesmanService();
+	private TMProfileService tmProfileService = new TMProfileService()
 
 	def "Add  Tradesman Profile Trade"() {
 		given :
-		String responseCode = null
-		def  getTradeId = DatabaseHelper.select("select trade_id from tmprofile.tm_profile_trade where tm_profile_id =  1 limit 1")
+		UserInfo user =  tradesmanService.createAndActivateDynamicUser()
 		def json = getTrade(1,10.00)
 		println "Json is " +  json.toString()
 		println "********************************"
 		println "Test running ..  Add Tradesman Profile"
 		when:
-		HTTP_BUILDER.request(Method.POST,ContentType.JSON){
-			uri.path = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"+USER_ID_TM+"/profiletrades"
-			println "uri.path   :"+uri.path
-			println "Access Token TM : "+ ACCESS_TOKEN_TM
-			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-			body = json.toString();
-			requestContentType = ContentType.JSON
-			println "Uri is " + uri
-
-			response.success = { resp, reader ->
-				println "Success"
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-				responseCode = resp.statusLine.statusCode
-				reader.each{ "Results  : "+ "$it" }
-			}
-
-			response.failure = { resp, reader ->
-				responseCode = resp.statusLine.statusCode
-				println " stacktrace : "+reader.each{"$it"}
-			}
-		}
+		ResultInfo result = tmProfileService.addTrade(user, json)
 		then:
-		responseCode == CommonVariable.STATUS_201
-		cleanup:
-		DatabaseHelper.executeQuery("delete from tmprofile.tm_profile_trade where tm_profile_id =  1 and trade_id=1")
+		result.getResponseCode().contains(CommonVariable.STATUS_201)
 	}
 
 
@@ -68,75 +46,20 @@ class TMPofileTradeFunctionalTest  extends Specification{
 
 	def "Update  Tradesman Trade"(){
 		given :
-		String responseCode = null
-		def json = getTrade(3,10.00)
+		UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+		def json = getTrade(1,10.00)
+		tmProfileService.addTrade(user, json)
 		println "Json is " +  json.toString()
 		println "********************************"
 		println "Test running ..  Update Tradesman Trade"
 
-		def  getId = DatabaseHelper.select("select id from tmprofile.tm_profile_trade where updated_by=1  limit 1")
-
-		if(getId != null) {
-			DatabaseHelper.executeQuery("delete from tmprofile.tm_profile_trade where updated_by = 1")
-		}
-
-
-		HTTP_BUILDER.request(Method.POST,ContentType.JSON){
-			uri.path = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"+USER_ID_TM+"/profiletrades"
-			println "uri.path   :"+uri.path
-			println "Access Token TM : "+ ACCESS_TOKEN_TM
-			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-			body = json.toString();
-			requestContentType = ContentType.JSON
-			println "Uri is " + uri
-
-			response.success = { resp, reader ->
-				println "Success"
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-				responseCode = resp.statusLine.statusCode
-				reader.each{ "Results  : "+ "$it" }
-			}
-
-			response.failure = { resp, reader ->
-				responseCode = resp.statusLine.statusCode
-				println " stacktrace : "+reader.each{"$it"}
-			}
-		}
-		def  getProfiletradeId = DatabaseHelper.select("select id from tmprofile.tm_profile_trade where updated_by=1  limit 1")
-		if (getProfiletradeId.startsWith("[{id=")){
-			getProfiletradeId = getProfiletradeId.replace("[{id=", "").replace("}]","")
-			println "Profile trade id : " +getProfiletradeId
-		}
+		String queryReuslt = DatabaseHelper.select("select id from tmprofile.tm_profile_trade where updated_by= '${user.getId()}'  limit 1")
+		String tradeProfileId =MatcherStringUtility.getMatch("id=(.*)}",queryReuslt)
+		def json1 = getTrade(1,15.00)
 		when:
-
-		def json1 = getTrade(3,15.00)
-		HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
-			uri.path = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"+USER_ID_TM+"/profiletrades/"+getProfiletradeId
-			println "uri.path   :"+uri.path
-			println "Access Token TM : "+ ACCESS_TOKEN_TM
-			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-			body = json1.toString()
-
-			println "Json Body : "+body
-			requestContentType = ContentType.JSON
-			println "Uri is " + uri
-
-			response.success = { resp, reader ->
-				println "Success"
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-				responseCode = resp.statusLine.statusCode
-				reader.each{ "Results  : "+ "$it" }
-			}
-
-			response.failure = { resp, reader ->
-				responseCode = resp.statusLine.statusCode
-				println " stacktrace : "+reader.each{"$it"}
-			}
-		}
+		ResultInfo result = tmProfileService.updateTrade(user,tradeProfileId,json1)
 		then:
-		responseCode == CommonVariable.STATUS_200
+		result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
 
 
@@ -144,66 +67,29 @@ class TMPofileTradeFunctionalTest  extends Specification{
 
 	def "Get  Tradesman Trade"(){
 		given :
-		String responseCode = null
+		UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+		def json = getTrade(1,10.00)
+		tmProfileService.addTrade(user, json)
 		println "********************************"
 		println "Test running ..  Get Tradesman Trade"
 		when:
-		HTTP_BUILDER.request(Method.GET,ContentType.JSON){
-			uri.path = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"+USER_ID_TM+"/profiletrades"
-			println "uri.path   :"+uri.path
-			println "Access Token TM : "+ ACCESS_TOKEN_TM
-			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-			requestContentType = ContentType.JSON
-			println "Uri is " + uri
-
-			response.success = { resp, reader ->
-				println "Success"
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-				responseCode = resp.statusLine.statusCode
-				reader.each{ "Results  : "+ "$it" }
-			}
-
-			response.failure = { resp, reader ->
-				responseCode = resp.statusLine.statusCode
-				println " stacktrace : "+reader.each{"$it"}
-			}
-		}
+		ResultInfo result = tmProfileService.getTrade(user)
 		then:
-		responseCode == CommonVariable.STATUS_200
+		result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
 
 
 
-	def "Get  Tradesman user Id"(){
+	def "Get  Tradesman info Id"(){
 		given :
-		String responseCode = null
+		
+		UserInfo user =  tradesmanService.createTradesmanUser()
 		println "********************************"
 		println "Test running ..  Get Tradesman Id"
 		when:
-		HTTP_BUILDER.request(Method.GET,ContentType.JSON){
-			uri.path = CommonVariable.USER_SERVICE_PREFIX + "v1.0/users/"+USER_ID_TM
-			println "uri.path   :"+uri.path
-			println "Access Token TM : "+ ACCESS_TOKEN_TM
-			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-			requestContentType = ContentType.JSON
-			println "Uri is " + uri
-
-			response.success = { resp, reader ->
-				println "Success"
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-				responseCode = resp.statusLine.statusCode
-				reader.each{ "Results  : "+ "$it" }
-			}
-
-			response.failure = { resp, reader ->
-				responseCode = resp.statusLine.statusCode
-				println " stacktrace : "+reader.each{"$it"}
-			}
-		}
+		ResultInfo result = tmProfileService.getTmInfo(user)
 		then:
-		responseCode == CommonVariable.STATUS_200
+		result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
 
 
@@ -213,64 +99,20 @@ class TMPofileTradeFunctionalTest  extends Specification{
 
 	def "Delete  Tradesman Trade"(){
 		given :
-		String responseCode = null
+		UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+		def json = getTrade(1,10.00)
+		tmProfileService.addTrade(user, json)
 		println "********************************"
 		println "Test running ..  Delete Tradesman Trade"
-
-		def json = getTrade(2,15.00);
-		HTTP_BUILDER.request(Method.POST,ContentType.JSON){
-			uri.path = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"+USER_ID_TM+"/profiletrades"
-			println "uri.path   :"+uri.path
-			println "Access Token TM : "+ ACCESS_TOKEN_TM
-			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-			body = json.toString();
-			requestContentType = ContentType.JSON
-			println "Uri is " + uri
-
-			response.success = { resp, reader ->
-				println "Success"
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-				responseCode = resp.statusLine.statusCode
-				reader.each{ "Results  : "+ "$it" }
-			}
-
-			response.failure = { resp, reader ->
-				responseCode = resp.statusLine.statusCode
-				println " stacktrace : "+reader.each{"$it"}
-			}
-		}
-
-		def  getId = DatabaseHelper.select("select id from tmprofile.tm_profile_trade where tm_profile_id =  '${USER_ID_TM}' limit 1")
-		if (getId.startsWith("[{id=")){
-			getId = getId.replace("[{id=", "").replace("}]","")
-			println "TM Profile id : " +getId
-		}
-
-
+		String queryReuslt = DatabaseHelper.select("select id from tmprofile.tm_profile_trade where updated_by= '${user.getId()}'  limit 1")
+		String tradeProfileId =MatcherStringUtility.getMatch("id=(.*)}",queryReuslt)
+		
 		when:
-		HTTP_BUILDER.request(Method.DELETE,ContentType.JSON){
-			uri.path = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"+USER_ID_TM+"/profiletrades/"+getId
-			println "uri.path   :"+uri.path
-			println "Access Token TM : "+ ACCESS_TOKEN_TM
-			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-			requestContentType = ContentType.JSON
-			println "Uri is " + uri
-			response.success = { resp, reader ->
-				println "Success"
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-				responseCode = resp.statusLine.statusCode
-				reader.each{ "Results  : "+ "$it" }
-			}
-
-			response.failure = { resp, reader ->
-				responseCode = resp.statusLine.statusCode
-				println " stacktrace : "+reader.each{"$it"}
-			}
-		}
+		ResultInfo result = tmProfileService.deleteTrade(user,tradeProfileId)
 		then:
-		responseCode == CommonVariable.STATUS_200
+		result.getResponseCode().contains(CommonVariable.STATUS_200)
+
+		
 	}
 
 

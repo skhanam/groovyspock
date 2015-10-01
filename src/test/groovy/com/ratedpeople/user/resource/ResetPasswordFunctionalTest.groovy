@@ -24,46 +24,6 @@ class ResetPasswordFunctionalTest extends HomeownerService {
 	
 	private static String ACCESS_TOKEN
 
-//	def "Create  User TM"()
-//	{
-//		given:
-//			String responseCode = null
-//			def json = new JsonBuilder()
-//			json {
-//		
-//				"username" DataValues.requestValues.get("TMUSER")
-//				"password" DataValues.requestValues.get("PASSWORD")
-//			}
-//			println "Json is " +  json.toString()
-//			println "********************************"
-//			println "Test Running ........  Create  User TM"
-//			
-//		when:
-//			HTTP_BUILDER.request(Method.POST,ContentType.JSON){
-//				uri.path = REGISTER_USER_TM_URI
-//				body = json.toString()
-//				requestContentType = ContentType.JSON
-//				println "Uri is " + uri
-//				
-//				response.success = { resp, reader ->
-//					println "Success"
-//					println "Got response: ${resp.statusLine}"
-//					println "Content-Type: ${resp.headers.'Content-Type'}"
-//					responseCode = resp.statusLine.statusCode
-//					reader.each{
-//						"Results  : "+ "$it"
-//					}
-//				}
-//
-//				response.failure = {
-//					resp, reader -> println " stacktrace : "+reader.each{"$it"}
-//					println 'Not found'
-//				}
-//			}
-//		then:
-//			responseCode == DataValues.requestValues.get("STATUS201")
-//	}
-	
 	
 		def "Generate and Verify Reset password"(){
 			given:

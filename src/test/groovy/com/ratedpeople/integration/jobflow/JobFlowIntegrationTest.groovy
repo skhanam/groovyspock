@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.ratedpeople.integration.JobFlow
+package com.ratedpeople.integration.jobflow
 
 import com.ratedpeople.homeowner.profile.resource.HomeownerProfileFunctionalTest;
 import com.ratedpeople.service.HomeownerService;

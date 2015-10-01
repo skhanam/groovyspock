@@ -5,13 +5,16 @@
  */
 package com.ratedpeople.tradesman.profile.resource
 
-import com.ratedpeople.user.resource.AbstractUserToken;
-import com.ratedpeople.user.resource.AbstractUserToken;
 import groovy.json.JsonBuilder
 import groovyx.net.http.ContentType
 import groovyx.net.http.Method
 import spock.lang.Specification
 
+import com.ratedpeople.service.TMProfileService
+import com.ratedpeople.service.TradesmanService
+import com.ratedpeople.service.utility.MatcherStringUtility
+import com.ratedpeople.service.utility.ResultInfo
+import com.ratedpeople.service.utility.UserInfo
 import com.ratedpeople.support.CommonVariable
 import com.ratedpeople.support.DatabaseHelper
 
@@ -21,166 +24,68 @@ import com.ratedpeople.support.DatabaseHelper
  */
 class TMProfileWorkingAreaFunctionalTest extends Specification{
 
-	private static final String PROFILE_PREFIX = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"
+	private TradesmanService tradesmanService = new TradesmanService();
+	private TMProfileService tmProfileService = new TMProfileService()
 
-	private static final String MATCH_PREFIX = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/match"
 
 	def "Post a Tradesman Workingarea"(){
-		given:
-		String responseCode = null
+		given :
+		UserInfo user =  tradesmanService.createAndActivateDynamicUser()
 		def json = getWorkingarea(0)
 		println "Json is " +  json.toString()
 		println "********************************"
 		println "Test Running .... Post TM Workingarea"
-		def  getId = DatabaseHelper.select("select id from tmprofile.working_area where updated_by=1 ")
-		if(getId != null){
-			println "Profile working area id : " +getId
-			if (getId.startsWith("[{id=")){
-				getId = getId.replace("[{id=", "").replace("}]","")
-				println "Profile Address id : " +getId
-				DatabaseHelper.executeQuery("delete from tmprofile.working_area where updated_by =  1")
-			}
-		}
 
 		when:
-		HTTP_BUILDER.request(Method.POST,ContentType.JSON){
-			uri.path = PROFILE_PREFIX + USER_ID_TM + "/workingareas"
-			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-			body = json.toString()
-			requestContentType = ContentType.JSON
-			println "Uri is " + uri
-			response.success = { resp, reader ->
-				println "Success"
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-				responseCode = resp.statusLine.statusCode
-				reader.each{ "Results  : "+ "$it" }
-			}
-			response.failure = { resp, reader ->
-				println " stacktrace : "+reader.each{"$it"}
-				println 'Not found'
-				responseCode = resp.statusLine.statusCode
-			}
-		}
+		ResultInfo result = tmProfileService.createWorkingArea(user, json)
 		then:
-		responseCode == CommonVariable.STATUS_201
+		result.getResponseCode().contains(CommonVariable.STATUS_201)
+
+
+		
 	}
 
 
 
 	def "Update a Tradesman Workingarea"(){
-		given:
-		String responseCode = null
-		def json = getWorkingarea(1)
+		given :
+		UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+		def json = getWorkingarea(0)
 		println "Json is " +  json.toString()
 		println "********************************"
-		println "Test Running .... Add TM Workingarea"
-		HTTP_BUILDER.request(Method.POST,ContentType.JSON){
-			uri.path = PROFILE_PREFIX + USER_ID_TM + "/workingareas"
-			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-			body = json.toString()
-			requestContentType = ContentType.JSON
-			println "Uri is " + uri
-			response.success = { resp, reader ->
-				println "Success"
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-				responseCode = resp.statusLine.statusCode
-				reader.each{ "Results  : "+ "$it" }
-			}
-			response.failure = { resp, reader ->
-				println " stacktrace : "+reader.each{"$it"}
-				println 'Not found'
-				responseCode = resp.statusLine.statusCode
-			}
-		}
-		def  getworkingID = DatabaseHelper.select("select id from tmprofile.working_area where updated_by =  '${USER_ID_TM}'")
-		if (getworkingID.startsWith("[{id=")){
-			getworkingID = getworkingID.replace("[{id=", "").replace("}]","")
-			println "Address id : " +getworkingID
-		}
+		println "Test Running .... Update TM Workingarea"
+		tmProfileService.createWorkingArea(user, json)
+		when:
+		def  queryReuslt = DatabaseHelper.select("select id from tmprofile.working_area where updated_by =  '${user.getId()}'")
+		String workingID = MatcherStringUtility.getMatch("id=(.*)}",queryReuslt)
 		def jsonOne = new JsonBuilder()
 		jsonOne {
-			"id" getworkingID
+			"id" workingID
 			"longitude" CommonVariable.DEFAULT_LONGITUDE
 			"latitude" CommonVariable.DEFAULT_LATITUDE
 			"radius" CommonVariable.DEFAULT_RADIUS
 		}
-		when:
-		println "********************************"
-		println "Test Running .... Update TM Workingarea"
-		HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
-			uri.path = PROFILE_PREFIX + USER_ID_TM + "/workingareas/"+getworkingID
-			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-			body = jsonOne.toString()
-			requestContentType = ContentType.JSON
-			println "Uri is " + uri
-			response.success = { resp, reader ->
-				println "Success"
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-				responseCode = resp.statusLine.statusCode
-				reader.each{ "Results  : "+ "$it" }
-			}
-			response.failure = { resp, reader ->
-				println " stacktrace : "+reader.each{"$it"}
-				println 'Not found'
-				responseCode = resp.statusLine.statusCode
-			}
-		}
+		
+		ResultInfo result = tmProfileService.updateWorkingarea(user, workingID,json)
 		then:
-		responseCode == CommonVariable.STATUS_200
+		result.getResponseCode().contains(CommonVariable.STATUS_200)
+		
 	}
 
 	def "Get a Tradesman Workingarea"(){
-		given:
-		String responseCode = null
+		given :
+		UserInfo user =  tradesmanService.createAndActivateDynamicUser()
 		def json = getWorkingarea(0)
 		println "Json is " +  json.toString()
 		println "********************************"
-		println "Test Running .... Add TM Workingarea"
-		HTTP_BUILDER.request(Method.POST,ContentType.JSON){
-			uri.path = PROFILE_PREFIX + USER_ID_TM + "/workingareas"
-			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-			body = json.toString()
-			requestContentType = ContentType.JSON
-			println "Uri is " + uri
-			response.success = { resp, reader ->
-				println "Success"
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-				responseCode = resp.statusLine.statusCode
-				reader.each{ "Results  : "+ "$it" }
-			}
-			response.failure = { resp, reader ->
-				println " stacktrace : "+reader.each{"$it"}
-				println 'Not found'
-				responseCode = resp.statusLine.statusCode
-			}
-		}
+		println "Test Running .... Update TM Workingarea"
+		tmProfileService.createWorkingArea(user, json)
 		when:
-		println "********************************"
-		println "Test Running .... Get TM Workingarea"
-		HTTP_BUILDER.request(Method.GET,ContentType.JSON){
-			uri.path = PROFILE_PREFIX + USER_ID_TM + "/workingareas"
-			headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_TM
-			requestContentType = ContentType.JSON
-			println "Uri is " + uri
-			response.success = { resp, reader ->
-				println "Success"
-				println "Got response: ${resp.statusLine}"
-				println "Content-Type: ${resp.headers.'Content-Type'}"
-				responseCode = resp.statusLine.statusCode
-				reader.each{ "Results  : "+ "$it" }
-			}
-			response.failure = { resp, reader ->
-				println " stacktrace : "+reader.each{"$it"}
-				println 'Not found'
-				responseCode = resp.statusLine.statusCode
-			}
-		}
+		def  queryReuslt = DatabaseHelper.select("select id from tmprofile.working_area where updated_by =  '${user.getId()}'")
+		String workingID = MatcherStringUtility.getMatch("id=(.*)}",queryReuslt)
+		ResultInfo result = tmProfileService.getWorkingarea(user, workingID)
 		then:
-		responseCode == CommonVariable.STATUS_200
+		result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
 
 
