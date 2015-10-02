@@ -15,7 +15,7 @@ final class HttpConnectionService {
 
 	private ResultInfo callPostMethodWithoutAuthentication(final String url, final def query, final def json){
 		ResultInfo info = new ResultInfo()
-		
+		HTTP_BUILDER.ignoreSSLIssues();
 		def response = HTTP_BUILDER.request(Method.POST,ContentType.JSON) {
 			uri.path = url
 			uri.query = query
@@ -52,6 +52,7 @@ final class HttpConnectionService {
 
 	private ResultInfo callPostMethodWithAuthentication(final String url, final String token, final def json){
 		ResultInfo info = new ResultInfo()
+		HTTP_BUILDER.ignoreSSLIssues();
 		def response = HTTP_BUILDER.request(Method.POST,ContentType.JSON) {
 			uri.path = url
 			headers.'Authorization' = "Bearer "+ token
@@ -83,6 +84,7 @@ final class HttpConnectionService {
 
 	private ResultInfo callPostMethodWithAuthenticationAndImage(final String url, final String token, final def queryText){
 		ResultInfo info = new ResultInfo()
+		HTTP_BUILDER.ignoreSSLIssues();
 		def response = HTTP_BUILDER.request(Method.POST,ContentType.JSON) {req ->
 			requestContentType = 'multipart/form-data'
 			uri.path = url
@@ -120,6 +122,7 @@ final class HttpConnectionService {
 
 	private ResultInfo callDeleteMethodWithAuthentication(final String url, final String token){
 		ResultInfo info = new ResultInfo()
+		HTTP_BUILDER.ignoreSSLIssues();
 		def response = HTTP_BUILDER.request(Method.DELETE,ContentType.JSON) {
 			uri.path = url
 			headers.'Authorization' = "Bearer "+ token
@@ -156,6 +159,7 @@ final class HttpConnectionService {
 
 	private ResultInfo callGetToken(final String url, final def query, final def json){
 		ResultInfo info = new ResultInfo()
+		HTTP_BUILDER.ignoreSSLIssues();
 		def response = HTTP_BUILDER.request(Method.POST,ContentType.JSON) {
 			headers.Accept = 'application/json'
 			headers.'Authorization' = "Basic "+ CommonVariable.DEFAULT_CLIENT_CREDENTIAL.bytes.encodeBase64().toString()
@@ -189,7 +193,7 @@ final class HttpConnectionService {
 
 	private ResultInfo callGetMethodWithAuthentication(final String url, final String token, final def query){
 		ResultInfo info = new ResultInfo()
-
+		HTTP_BUILDER.ignoreSSLIssues();
 		HTTP_BUILDER.request(Method.GET){
 			headers.Accept = 'application/json'
 			headers.'Authorization' = "Bearer " + token
@@ -219,7 +223,7 @@ final class HttpConnectionService {
 
 	private ResultInfo callGetMethodWithoutAuthentication(final String url, final def query){
 		ResultInfo info = new ResultInfo()
-
+		HTTP_BUILDER.ignoreSSLIssues();
 		HTTP_BUILDER.request(Method.GET,ContentType.JSON){
 			uri.path = url
 			uri.query = query
@@ -248,7 +252,7 @@ final class HttpConnectionService {
 
 	private ResultInfo callPutMethodWithAuthentication(final String url, final String token, final def query, final def bodyText){	
 		ResultInfo info = new ResultInfo()
-
+		HTTP_BUILDER.ignoreSSLIssues();
 		HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
 			headers.Accept = 'application/json'
 			headers.'Authorization' = "Bearer "+ token
@@ -287,7 +291,7 @@ final class HttpConnectionService {
 	
 	private ResultInfo callPutMethodWithoutAuthentication(final String url, final def query, final def bodyText){
 		ResultInfo info = new ResultInfo()
-
+		HTTP_BUILDER.ignoreSSLIssues();
 		HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
 			uri.path = url
 			
