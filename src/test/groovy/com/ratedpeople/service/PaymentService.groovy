@@ -29,8 +29,17 @@ final class PaymentService{
 		ResultInfo result = http.callGetMethodWithAuthentication(url, userInfo.getToken(),null)
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
 			println "Ok"
-		}else{
-			throw new Exception("Failed " +result.getResponseCode())
+		}
+
+		return result;
+	}
+
+	public ResultInfo getPaymentDetails(UserInfo userInfo,String jobId ){
+		String url = PAYMENT_RESOURCE_URI + userInfo.getId() +"/jobs/"+jobId+"/payments"
+
+		ResultInfo result = http.callGetMethodWithAuthentication(url, userInfo.getToken(),null)
+		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
+			println "Ok"
 		}
 
 		return result;
@@ -57,14 +66,47 @@ final class PaymentService{
 
 		return result;
 	}
-	
-	
+
+
 	public ResultInfo postPayment(UserInfo userInfo,String jobId,def body){
-		
+
 		String url = PAYMENT_RESOURCE_URI + userInfo.getId() + "/jobs/"+jobId
 		ResultInfo result = http.callPutMethodWithAuthentication(url, userInfo.getToken(),null, body)
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
-			println "Created"
+			println "UPdated"
+		}
+
+		return result;
+	}
+
+	public ResultInfo disputePayment(UserInfo userInfo,String hoId,String jobId,String pamyentId, def body){
+
+		String url = PAYMENT_RESOURCE_URI + hoId + "/jobs/"+jobId+"/payments/"+pamyentId+"/dispute"
+		ResultInfo result = http.callPutMethodWithAuthentication(url, userInfo.getToken(),null, body)
+		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
+			println "Updated"
+		}
+
+		return result;
+	}
+
+	public ResultInfo approvePayment(UserInfo userInfo,String hoId,String jobId,String pamyentId, def body){
+
+		String url = PAYMENT_RESOURCE_URI + hoId + "/jobs/"+jobId+"/payments/"+pamyentId+"/approve"
+		ResultInfo result = http.callPutMethodWithAuthentication(url, userInfo.getToken(),null, body)
+		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
+			println "Updated"
+		}
+
+		return result;
+	}
+
+	public ResultInfo addCommentDisputePayment(UserInfo userInfo,String hoId,String jobId,String pamyentId, def body){
+
+		String url = PAYMENT_RESOURCE_URI + hoId + "/jobs/"+jobId+"/payments/"+pamyentId+"/dispute"
+		ResultInfo result = http.callPostMethodWithAuthentication(url, userInfo.getToken(), body)
+		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
+			println "Updated"
 		}
 
 		return result;
