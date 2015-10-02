@@ -104,7 +104,7 @@ final class PaymentService{
 	public ResultInfo addCommentDisputePayment(UserInfo userInfo,String hoId,String jobId,String pamyentId, def body){
 
 		String url = PAYMENT_RESOURCE_URI + hoId + "/jobs/"+jobId+"/payments/"+pamyentId+"/dispute"
-		ResultInfo result = http.callPostMethodWithAuthentication(url, userInfo.getToken(),null, body)
+		ResultInfo result = http.callPostMethodWithAuthentication(url, userInfo.getToken(), body)
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
 			println "Updated"
 		}

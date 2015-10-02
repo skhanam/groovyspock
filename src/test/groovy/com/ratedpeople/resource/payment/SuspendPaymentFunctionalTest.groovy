@@ -74,11 +74,8 @@ class SuspendPaymentFunctionalTest extends Specification{
 			}
 	
 			println "Json is " +  json.toString()
-			def getSkrillID1 = DatabaseHelper.executeQuery("select skrill_transaction from  payment.payment_transaction WHERE job_id=8")
-			println "Skrill transaction Id : " + getSkrillID1
-			if(getSkrillID1.equals(true)){
-				DatabaseHelper.executeQuery("UPDATE payment.payment_transaction SET skrill_transaction='', payment_status_id='3' WHERE job_id=8 and id=1")
-			}
+			DatabaseHelper.executeQuery("UPDATE payment.payment_transaction SET skrill_transaction='', payment_status_id='3' WHERE job_id=8 and id=1")
+			
 
 		when:
 			ResultInfo result = paymentService.addCommentDisputePayment(admin,"2","8","1", json)
@@ -86,9 +83,7 @@ class SuspendPaymentFunctionalTest extends Specification{
 			result.getResponseCode().contains(CommonVariable.STATUS_201)
 		cleanup:
 			Thread.sleep(3000)
-			DatabaseHelper.executeQuery("UPDATE payment.payment_transaction SET skrill_transaction='', payment_status_id=1 WHERE job_id=8")
-			def getSkrillID = DatabaseHelper.executeQuery("select skrill_transaction from  payment.payment_transaction WHERE job_id=8")
-			println "Skrill transaction Id : " + getSkrillID
+			DatabaseHelper.executeQuery("UPDATE payment.payment_transaction SET skrill_transaction='', payment_status_id=1 WHERE id=1")
 			DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id ='8' WHERE id = 8")
 			DatabaseHelper.executeQuery("Delete from payment.payment_dispute_comment where payment_transaction_id = 1");
 	}
@@ -103,26 +98,21 @@ class SuspendPaymentFunctionalTest extends Specification{
 			"paymentTransactionId" "1"
 			"jobId" "8"
 			"homeownerUserId" 2
-			"comment" "This is a payment is ok"
+			"comment" "This is a payment is ok and can go ahead"
 		}
 
 		println "Json is " +  json.toString()
-		def getSkrillID1 = DatabaseHelper.executeQuery("select skrill_transaction from  payment.payment_transaction WHERE job_id=8")
-		println "Skrill transaction Id : " + getSkrillID1
-		if(getSkrillID1.equals(true)){
-			DatabaseHelper.executeQuery("UPDATE payment.payment_transaction SET skrill_transaction='', payment_status_id='3' WHERE job_id=8 and id=1" )
-		}
+		DatabaseHelper.executeQuery("UPDATE payment.payment_transaction SET skrill_transaction='', payment_status_id='3' WHERE job_id=8 and id=1" )
+		
 	
 		
 		when:
-			ResultInfo result = paymentService.addCommentDisputePayment(admin,"2","8","1", json)
+			ResultInfo result = paymentService.approvePayment(admin,"2","8","1", json)
 		then:
 			result.getResponseCode().contains(CommonVariable.STATUS_200)
 		cleanup:
 			Thread.sleep(3000)
 			DatabaseHelper.executeQuery("UPDATE payment.payment_transaction SET skrill_transaction='', payment_status_id='1' WHERE job_id=8")
-			def getSkrillID = DatabaseHelper.executeQuery("select skrill_transaction from  payment.payment_transaction WHERE job_id=8")
-			println "Skrill transaction Id : " + getSkrillID
 			DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id ='8' WHERE id = 8")
 			DatabaseHelper.executeQuery("Delete from payment.payment_dispute_comment where payment_transaction_id = 1");
 
