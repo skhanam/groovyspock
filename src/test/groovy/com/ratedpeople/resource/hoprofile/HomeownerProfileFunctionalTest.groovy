@@ -14,9 +14,7 @@ import com.ratedpeople.support.CommonVariable
  */
 class HomeownerProfileFunctionalTest  extends Specification {
 
-	private final HTTPBuilder HTTP_BUILDER = new HTTPBuilder(CommonVariable.SERVER_URL)
-	private static final PROFILE_PREFIX = CommonVariable.HOPROFILE_SERVICE_PREFIX + "v1.0/users/"
-
+	
 	private HomeownerService homeownerService = new HomeownerService()
 	private HOProfileService hoProfileService = new HOProfileService()
 

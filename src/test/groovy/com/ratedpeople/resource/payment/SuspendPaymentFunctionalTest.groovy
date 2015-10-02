@@ -3,7 +3,15 @@
  */
 package com.ratedpeople.resource.payment
 import groovy.json.JsonBuilder
-import spock.lang.Specification;
+import spock.lang.Specification
+
+import com.ratedpeople.service.HomeownerService
+import com.ratedpeople.service.PaymentService
+import com.ratedpeople.service.TradesmanService
+import com.ratedpeople.service.utility.ResultInfo;
+import com.ratedpeople.service.utility.UserInfo;
+import com.ratedpeople.support.CommonVariable;
+import com.ratedpeople.support.DatabaseHelper;
 
 /**
  * @author shabana.khanam
@@ -13,143 +21,89 @@ import spock.lang.Specification;
 
 class SuspendPaymentFunctionalTest extends Specification{
 
+	private HomeownerService homeownerService = new HomeownerService();
+	private PaymentService paymentService = new PaymentService()
+	private TradesmanService tradesmanService = new TradesmanService()
 
-/*
 	def "test suspend payment "(){
+	
 		given:
-		String responseStatus = null
-		def json = new JsonBuilder()
-		json {
-			"paymentTransactionId" "1"
-			"jobId" "8"
-			"homeownerUserId" 2
-			"comment" "This is a payment that needs to be stopped"
-		}
-
-		println "Json is " +  json.toString()
-		def getSkrillID1 = DatabaseHelper.executeQuery("select skrill_transaction from  payment.payment_transaction WHERE job_id=8")
-		println "Skrill transaction Id : " + getSkrillID1
-		if(getSkrillID1.equals(true)){
-			DatabaseHelper.executeQuery("UPDATE payment.payment_transaction SET skrill_transaction='', payment_status_id='1' WHERE job_id=8")
-		}
-
-		when:
-		try{
-			HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
-				uri.path = CommonVariable.PAYMENT_SERVICE_PREFIX + "v1.0/users/2/jobs/8/payments/1/dispute"
-				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_ADMIN
-				body = json.toString()
-				requestContentType = ContentType.JSON
-
-				println "Uri : " + uri
-				response.success = { resp, reader ->
-					println "Success"
-					println "Got response: ${resp.statusLine}"
-					println "Content-Type: ${resp.headers.'Content-Type'}"
-					responseStatus = resp.statusLine.statusCode
-					reader.each{
-						println "Token values : "+"$it"
-						String token = "$it"
-						String key = token.substring(0, token.indexOf("="))
-						String value = token.substring(token.indexOf("=") + 1, token.length())
-						println key
-						println value
-					}
-				}
-				response.failure = { resp, reader ->
-					println "Request failed with status ${resp.status}"
-					reader.each{ println "Error values : "+"$it" }
-					responseStatus = resp.statusLine.statusCode
-				}
+			UserInfo admin =  homeownerService.getAdminUser()
+			def json = new JsonBuilder()
+			json {
+				"paymentTransactionId" "1"
+				"jobId" "8"
+				"homeownerUserId" 2
+				"comment" "This is a payment that needs to be stopped"
 			}
-		}catch(java.net.ConnectException ex){
-			ex.printStackTrace()
-		}
+	
+			println "Json is " +  json.toString()
+			def getSkrillID1 = DatabaseHelper.executeQuery("select skrill_transaction from  payment.payment_transaction WHERE job_id=8")
+			println "Skrill transaction Id : " + getSkrillID1
+			if(getSkrillID1.equals(true)){
+				DatabaseHelper.executeQuery("UPDATE payment.payment_transaction SET skrill_transaction='', payment_status_id='1' WHERE job_id=8")
+			}
+	
+		when:
+		
+			ResultInfo result = paymentService.disputePayment(admin,"2","8","1", json)
 		then:
-		responseStatus == CommonVariable.STATUS_200
+			result.getResponseCode().contains(CommonVariable.STATUS_200)
+		
+		
 		cleanup:
-		Thread.sleep(3000)
-		DatabaseHelper.executeQuery("UPDATE payment.payment_transaction SET skrill_transaction='', payment_status_id='1' WHERE job_id=8")
-		def getSkrillID = DatabaseHelper.executeQuery("select skrill_transaction from  payment.payment_transaction WHERE job_id=8")
-		println "Skrill transaction Id : " + getSkrillID
-		DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id ='8' WHERE id = 8")
-		DatabaseHelper.executeQuery("Delete from payment.payment_dispute_comment where payment_transaction_id = 1");
+			Thread.sleep(3000)
+			DatabaseHelper.executeQuery("UPDATE payment.payment_transaction SET skrill_transaction='', payment_status_id='1' WHERE job_id=8")
+			def getSkrillID = DatabaseHelper.executeQuery("select skrill_transaction from  payment.payment_transaction WHERE job_id=8")
+			println "Skrill transaction Id : " + getSkrillID
+			DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id ='8' WHERE id = 8")
+			DatabaseHelper.executeQuery("Delete from payment.payment_dispute_comment where payment_transaction_id = 1");
 	}
 
 
 
 	def "Test Add Comment to disputed payment"(){
 		given:
-		String responseStatus = null
-		def json = new JsonBuilder()
-		json {
-			"paymentTransactionId" "1"
-			"jobId" "8"
-			"homeownerUserId" 2
-			"comment" "This is a payment that needs to be stopped Update"
-		}
-
-		println "Json is " +  json.toString()
-		def getSkrillID1 = DatabaseHelper.executeQuery("select skrill_transaction from  payment.payment_transaction WHERE job_id=8")
-		println "Skrill transaction Id : " + getSkrillID1
-		if(getSkrillID1.equals(true)){
-			DatabaseHelper.executeQuery("UPDATE payment.payment_transaction SET skrill_transaction='', payment_status_id='3' WHERE job_id=8 and id=1")
-		}
+			UserInfo admin =  homeownerService.getAdminUser()
+			def json = new JsonBuilder()
+			json {
+				"paymentTransactionId" "1"
+				"jobId" "8"
+				"homeownerUserId" 2
+				"comment" "This is a payment that needs to be stopped Update"
+			}
+	
+			println "Json is " +  json.toString()
+			def getSkrillID1 = DatabaseHelper.executeQuery("select skrill_transaction from  payment.payment_transaction WHERE job_id=8")
+			println "Skrill transaction Id : " + getSkrillID1
+			if(getSkrillID1.equals(true)){
+				DatabaseHelper.executeQuery("UPDATE payment.payment_transaction SET skrill_transaction='', payment_status_id='3' WHERE job_id=8 and id=1")
+			}
 
 		when:
-		try{
-			HTTP_BUILDER.request(Method.POST, ContentType.JSON){
-				uri.path = CommonVariable.PAYMENT_SERVICE_PREFIX + "v1.0/users/2/jobs/8/payments/1/dispute"
-				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_ADMIN
-				body = json.toString()
-				requestContentType = ContentType.JSON
-
-				println "Uri : " + uri
-				response.success = { resp, reader ->
-					println "Success"
-					println "Got response: ${resp.statusLine}"
-					println "Content-Type: ${resp.headers.'Content-Type'}"
-					responseStatus = resp.statusLine.statusCode
-					reader.each{
-						println "Token values : "+"$it"
-						String token = "$it"
-						String key = token.substring(0, token.indexOf("="))
-						String value = token.substring(token.indexOf("=") + 1, token.length())
-						println key
-						println value
-					}
-				}
-				response.failure = { resp, reader ->
-					println "Request failed with status ${resp.status}"
-					reader.each{ println "Error values : "+"$it" }
-					responseStatus = resp.statusLine.statusCode
-				}
-			}
-		}catch(java.net.ConnectException ex){
-			ex.printStackTrace()
-		}
+			ResultInfo result = paymentService.addCommentDisputePayment(admin,"2","8","1", json)
 		then:
-		responseStatus == CommonVariable.STATUS_201
+			result.getResponseCode().contains(CommonVariable.STATUS_201)
 		cleanup:
-		Thread.sleep(3000)
-		DatabaseHelper.executeQuery("UPDATE payment.payment_transaction SET skrill_transaction='', payment_status_id=1 WHERE job_id=8")
-		def getSkrillID = DatabaseHelper.executeQuery("select skrill_transaction from  payment.payment_transaction WHERE job_id=8")
-		println "Skrill transaction Id : " + getSkrillID
-		DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id ='8' WHERE id = 8")
-		DatabaseHelper.executeQuery("Delete from payment.payment_dispute_comment where payment_transaction_id = 1");
+			Thread.sleep(3000)
+			DatabaseHelper.executeQuery("UPDATE payment.payment_transaction SET skrill_transaction='', payment_status_id=1 WHERE job_id=8")
+			def getSkrillID = DatabaseHelper.executeQuery("select skrill_transaction from  payment.payment_transaction WHERE job_id=8")
+			println "Skrill transaction Id : " + getSkrillID
+			DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id ='8' WHERE id = 8")
+			DatabaseHelper.executeQuery("Delete from payment.payment_dispute_comment where payment_transaction_id = 1");
 	}
 
 
 
 	def "Test Approve a disputed payment"(){
 		given:
-		String responseStatus = null
+		UserInfo admin =  homeownerService.getAdminUser()
 		def json = new JsonBuilder()
 		json {
 			"paymentTransactionId" "1"
 			"jobId" "8"
 			"homeownerUserId" 2
-			"comment" "This is a payment that needs to be stopped Update"
+			"comment" "This is a payment is ok"
 		}
 
 		println "Json is " +  json.toString()
@@ -158,50 +112,19 @@ class SuspendPaymentFunctionalTest extends Specification{
 		if(getSkrillID1.equals(true)){
 			DatabaseHelper.executeQuery("UPDATE payment.payment_transaction SET skrill_transaction='', payment_status_id='3' WHERE job_id=8 and id=1" )
 		}
-		//			def getTransactionID = DatabaseHelper.executeQuery("select skrill_transaction from  payment.payment_transaction WHERE job_id=8")
-		//			println "payment transaction Id : " +getTransactionID
-
+	
+		
 		when:
-		try{
-			HTTP_BUILDER.request(Method.PUT, ContentType.JSON){
-				uri.path = CommonVariable.PAYMENT_SERVICE_PREFIX + "v1.0/users/2/jobs/8/payments/1/approve"
-				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_ADMIN
-				body = json.toString()
-				requestContentType = ContentType.JSON
-
-				println "Uri : " + uri
-				response.success = { resp, reader ->
-					println "Success"
-					println "Got response: ${resp.statusLine}"
-					println "Content-Type: ${resp.headers.'Content-Type'}"
-					responseStatus = resp.statusLine.statusCode
-					reader.each{
-						println "Token values : "+"$it"
-						String token = "$it"
-						String key = token.substring(0, token.indexOf("="))
-						String value = token.substring(token.indexOf("=") + 1, token.length())
-						println key
-						println value
-					}
-				}
-				response.failure = { resp, reader ->
-					println "Request failed with status ${resp.status}"
-					reader.each{ println "Error values : "+"$it" }
-					responseStatus = resp.statusLine.statusCode
-				}
-			}
-		}catch(java.net.ConnectException ex){
-			ex.printStackTrace()
-		}
+			ResultInfo result = paymentService.addCommentDisputePayment(admin,"2","8","1", json)
 		then:
-		responseStatus == CommonVariable.STATUS_200
+			result.getResponseCode().contains(CommonVariable.STATUS_200)
 		cleanup:
-		Thread.sleep(3000)
-		DatabaseHelper.executeQuery("UPDATE payment.payment_transaction SET skrill_transaction='', payment_status_id='1' WHERE job_id=8")
-		def getSkrillID = DatabaseHelper.executeQuery("select skrill_transaction from  payment.payment_transaction WHERE job_id=8")
-		println "Skrill transaction Id : " + getSkrillID
-		DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id ='8' WHERE id = 8")
-		DatabaseHelper.executeQuery("Delete from payment.payment_dispute_comment where payment_transaction_id = 1");
+			Thread.sleep(3000)
+			DatabaseHelper.executeQuery("UPDATE payment.payment_transaction SET skrill_transaction='', payment_status_id='1' WHERE job_id=8")
+			def getSkrillID = DatabaseHelper.executeQuery("select skrill_transaction from  payment.payment_transaction WHERE job_id=8")
+			println "Skrill transaction Id : " + getSkrillID
+			DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id ='8' WHERE id = 8")
+			DatabaseHelper.executeQuery("Delete from payment.payment_dispute_comment where payment_transaction_id = 1");
 
 	}
 
@@ -209,42 +132,15 @@ class SuspendPaymentFunctionalTest extends Specification{
 
 	def "test get  payment details from job "(){
 		given:
-		String responseStatus = null
+			UserInfo ho =  homeownerService.getHoUser()
 		when:
-		try{
-			HTTP_BUILDER.request(Method.GET, ContentType.JSON){
-				uri.path = CommonVariable.PAYMENT_SERVICE_PREFIX + "v1.0/users/2/jobs/8/payments"
-				headers.'Authorization' = "Bearer "+ ACCESS_TOKEN_ADMIN
-				requestContentType = ContentType.JSON
-				println "Uri : " + uri
-				response.success = { resp, reader ->
-					println "Success"
-					println "Got response: ${resp.statusLine}"
-					println "Content-Type: ${resp.headers.'Content-Type'}"
-					responseStatus = resp.statusLine.statusCode
-					reader.each{
-						println "Token values : "+"$it"
-						String token = "$it"
-						String key = token.substring(0, token.indexOf("="))
-						String value = token.substring(token.indexOf("=") + 1, token.length())
-						println key
-						println value
-					}
-				}
-				response.failure = { resp, reader ->
-					println "Request failed with status ${resp.status}"
-					reader.each{ println "Error values : "+"$it" }
-					responseStatus = resp.statusLine.statusCode
-				}
-			}
-		}catch(java.net.ConnectException ex){
-			ex.printStackTrace()
-		}
+			ResultInfo result = paymentService.getPaymentDetails(ho, "8")
 		then:
-		responseStatus == CommonVariable.STATUS_200
+			result.getResponseCode().contains(CommonVariable.STATUS_200)
+		
 
 	}
-*/
+
 
 }
 
