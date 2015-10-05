@@ -28,7 +28,7 @@ dependencies {
 
 task testOnMinerva(type: Test){
 	testLogging.showStandardStreams = true
-	systemProperty "SERVER_URL", "http://minerva.ratedcloud.net:8765"
+	systemProperty "SERVER_URL", "https://minerva.ratedcloud.net:8765"
 	systemProperty "DB_URL", "jdbc:mysql://minerva.ratedcloud.net:3306/"
 }
 
