@@ -51,7 +51,7 @@ class TMProfileImageFunctionalTest extends Specification{
 				imageType:CommonVariable.IMAGE_TYPE_PROFILE
 			]
 			tmProfileService.postImage(user,query)
-			Thread.sleep(4000);
+			Thread.sleep(6000);
 			println "********************************"
 			println "Test Running .... Get Image to TM Profile"
 		when:
