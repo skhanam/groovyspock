@@ -5,13 +5,12 @@ package com.ratedpeople.resource.payment
 import groovy.json.JsonBuilder
 import spock.lang.Specification
 
-import com.ratedpeople.service.HomeownerService
+import com.ratedpeople.service.UserService
 import com.ratedpeople.service.PaymentService
-import com.ratedpeople.service.TradesmanService
-import com.ratedpeople.service.utility.ResultInfo;
-import com.ratedpeople.service.utility.UserInfo;
-import com.ratedpeople.support.CommonVariable;
-import com.ratedpeople.support.DatabaseHelper;
+import com.ratedpeople.service.utility.ResultInfo
+import com.ratedpeople.service.utility.UserInfo
+import com.ratedpeople.support.CommonVariable
+import com.ratedpeople.support.DatabaseHelper
 
 /**
  * @author shabana.khanam
@@ -21,14 +20,14 @@ import com.ratedpeople.support.DatabaseHelper;
 
 class SuspendPaymentFunctionalTest extends Specification{
 
-	private HomeownerService homeownerService = new HomeownerService();
+	private UserService userService = new UserService();
 	private PaymentService paymentService = new PaymentService()
-	private TradesmanService tradesmanService = new TradesmanService()
+	
 
 	def "test suspend payment "(){
 	
 		given:
-			UserInfo admin =  homeownerService.getAdminUser()
+			UserInfo admin =  userService.getDefaultAdmin()
 			def json = new JsonBuilder()
 			json {
 				"paymentTransactionId" "1"
@@ -64,7 +63,7 @@ class SuspendPaymentFunctionalTest extends Specification{
 
 	def "Test Add Comment to disputed payment"(){
 		given:
-			UserInfo admin =  homeownerService.getAdminUser()
+			UserInfo admin =  userService.getDefaultAdmin()
 			def json = new JsonBuilder()
 			json {
 				"paymentTransactionId" "1"
@@ -92,7 +91,7 @@ class SuspendPaymentFunctionalTest extends Specification{
 
 	def "Test Approve a disputed payment"(){
 		given:
-		UserInfo admin =  homeownerService.getAdminUser()
+		UserInfo admin =  userService.getDefaultAdmin()
 		def json = new JsonBuilder()
 		json {
 			"paymentTransactionId" "1"
@@ -122,7 +121,7 @@ class SuspendPaymentFunctionalTest extends Specification{
 
 	def "test get  payment details from job "(){
 		given:
-			UserInfo ho =  homeownerService.getHoUser()
+			UserInfo ho =  userService.getDefaultHO()
 		when:
 			ResultInfo result = paymentService.getPaymentDetails(ho, "8")
 		then:

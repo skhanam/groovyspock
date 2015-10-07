@@ -5,8 +5,9 @@ package com.ratedpeople.resource.tmprofile
 
 import groovy.json.JsonBuilder
 import spock.lang.Specification
+
+import com.ratedpeople.service.UserService
 import com.ratedpeople.service.TMProfileService
-import com.ratedpeople.service.TradesmanService
 import com.ratedpeople.service.utility.ResultInfo
 import com.ratedpeople.service.utility.UserInfo
 import com.ratedpeople.support.CommonVariable
@@ -18,12 +19,12 @@ import com.ratedpeople.support.CommonVariable
  */
 class TMProfileFunctionalTest extends Specification{
 
-	private TradesmanService tradesmanService = new TradesmanService();
+	private UserService userService = new UserService();
 	private TMProfileService tmProfileService = new TMProfileService()
 
 	def "Get TradesMan Profile"() {
 		given:
-			UserInfo user =  tradesmanService.createTradesmanUser()
+			UserInfo user =  userService.getDefaultTM()
 			println "********************************"
 			println "Test running ..  " +"Get TradesMan Profile"
 		when:
@@ -34,7 +35,7 @@ class TMProfileFunctionalTest extends Specification{
 
 	def "Update Tradesman Profile"(){
 		given:
-			UserInfo user =  tradesmanService.createTradesmanUser()
+			UserInfo user =   userService.getDefaultTM()
 			def json = new JsonBuilder()
 			json{
 				"userId" user.getId()

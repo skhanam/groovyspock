@@ -1,18 +1,19 @@
 package com.ratedpeople.resource.billing
 import spock.lang.Specification
+
 import com.ratedpeople.service.BillingService
-import com.ratedpeople.service.TradesmanService
+import com.ratedpeople.service.UserService
 import com.ratedpeople.service.utility.ResultInfo
 import com.ratedpeople.service.utility.UserInfo
 import com.ratedpeople.support.CommonVariable
 
 class BillingFunctionalTest extends Specification{
 	private BillingService billingService = new BillingService();
-	private TradesmanService tradesmanService = new TradesmanService();
+	private UserService userService = new UserService();
 
 	def "Get list billing "(){
 		given:
-			UserInfo user = tradesmanService.createTradesmanUser()
+			UserInfo user = userService.getDefaultTM()
 		when:
 			ResultInfo result = billingService.getAllBillingsForTm(user)
 		then:
@@ -21,7 +22,7 @@ class BillingFunctionalTest extends Specification{
 
 	def "Get details about billing "(){
 		given:
-			UserInfo user = tradesmanService.createTradesmanUser()
+			UserInfo user = userService.getDefaultTM()
 		when:
 			ResultInfo result = billingService.getSingleBillingDetailsForTm(user,"2")
 		then:

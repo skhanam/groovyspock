@@ -4,7 +4,7 @@ import groovy.json.JsonBuilder
 import groovyx.net.http.HTTPBuilder
 import spock.lang.Specification
 import com.ratedpeople.service.HOProfileService
-import com.ratedpeople.service.HomeownerService
+import com.ratedpeople.service.UserService
 import com.ratedpeople.service.utility.ResultInfo
 import com.ratedpeople.service.utility.UserInfo
 import com.ratedpeople.support.CommonVariable
@@ -15,12 +15,12 @@ import com.ratedpeople.support.CommonVariable
 class HomeownerProfileFunctionalTest  extends Specification {
 
 	
-	private HomeownerService homeownerService = new HomeownerService()
+	private UserService userService = new UserService()
 	private HOProfileService hoProfileService = new HOProfileService()
 
 	def "Matching Free Text"(){
 		given:
-			UserInfo admin = homeownerService.getAdminUser()
+			UserInfo admin = userService.getDefaultAdmin()
 			String responseCode = null
 			println "********************************"
 			println "Test Running ... Matching Free Text "
@@ -33,7 +33,7 @@ class HomeownerProfileFunctionalTest  extends Specification {
 	def "Add HO Address"() {
 		given:
 			def jsonAddress1 = getAddress("")
-			UserInfo user = homeownerService.createAndActivateDynamicUser();
+			UserInfo user = userService.getActivateDynamicHO();
 			println "Json is " +  jsonAddress1.toString()
 			println "********************************"
 			println "Test Running .... Add HO Address"
@@ -47,7 +47,7 @@ class HomeownerProfileFunctionalTest  extends Specification {
 		given:
 			String responseCode = null
 			def jsonAddress1 = getAddress("")
-			UserInfo user = homeownerService.createAndActivateDynamicUser();
+			UserInfo user = userService.getActivateDynamicHO();
 			hoProfileService.createAddress(jsonAddress1, user)
 			def jsonAddress2 = getAddress("Update")
 			println "Json is " +  jsonAddress2.toString()
@@ -64,7 +64,7 @@ class HomeownerProfileFunctionalTest  extends Specification {
 			println "********************************"
 			println "Test running ..  " +"Get HO address"
 			def json = getAddress("")
-			UserInfo user = homeownerService.createAndActivateDynamicUser();
+			UserInfo user = userService.getActivateDynamicHO();
 			hoProfileService.createAddress(json, user)
 		when:
 			ResultInfo result = hoProfileService.getAddress(user)
@@ -76,7 +76,7 @@ class HomeownerProfileFunctionalTest  extends Specification {
 		given:
 			println "********************************"
 			println "Test running ..  " +"Get HomeOwners Profile"
-			UserInfo user = homeownerService.createAndActivateDynamicUser();
+			UserInfo user = userService.getActivateDynamicHO();
 		when:
 			ResultInfo result = hoProfileService.getHomeownerProfile(user)
 		then:

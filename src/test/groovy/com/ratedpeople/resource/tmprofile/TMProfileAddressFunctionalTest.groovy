@@ -9,8 +9,9 @@ package com.ratedpeople.resource.tmprofile
 
 import groovy.json.JsonBuilder
 import spock.lang.Specification
+
+import com.ratedpeople.service.UserService
 import com.ratedpeople.service.TMProfileService
-import com.ratedpeople.service.TradesmanService
 import com.ratedpeople.service.utility.MatcherStringUtility
 import com.ratedpeople.service.utility.ResultInfo
 import com.ratedpeople.service.utility.UserInfo
@@ -22,12 +23,12 @@ import com.ratedpeople.support.DatabaseHelper
  */
 class TMProfileAddressFunctionalTest extends Specification{
 
-	private TradesmanService tradesmanService = new TradesmanService();
+	private UserService userService = new UserService();
 	private TMProfileService tmProfileService = new TMProfileService()
 
 	def "Add TM Address"() {
 		given:
-			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			UserInfo user =  userService.getActivateDynamicTM()
 			def json = getAddress("")
 			println "Json is " +  json.toString()
 			println "********************************"
@@ -40,7 +41,7 @@ class TMProfileAddressFunctionalTest extends Specification{
 
 	def "Get List Matching tradesman"(){
 		given:
-			UserInfo user =  tradesmanService.createAdminUser()
+			UserInfo user =  userService.getDefaultAdmin()
 			println "********************************"
 			println "Test running ..  " +"Get List Matching tradesman"
 		when:
@@ -67,7 +68,7 @@ class TMProfileAddressFunctionalTest extends Specification{
 
 	def "Get TM address"(){
 		given:
-			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			UserInfo user =  userService.getActivateDynamicTM()
 			def json = getAddress("")
 			tmProfileService.createAddress(json,user)
 			println "********************************"
@@ -80,7 +81,7 @@ class TMProfileAddressFunctionalTest extends Specification{
 
 	def "Update TM Address"(){
 		given:
-			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			UserInfo user =   userService.getActivateDynamicTM()
 			def json = getAddress("")
 			tmProfileService.createAddress(json,user)
 			def json2 = getAddress("Update")

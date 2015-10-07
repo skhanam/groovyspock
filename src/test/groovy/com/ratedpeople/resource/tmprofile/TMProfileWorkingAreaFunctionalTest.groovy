@@ -7,8 +7,9 @@ package com.ratedpeople.resource.tmprofile
 
 import groovy.json.JsonBuilder
 import spock.lang.Specification
+
+import com.ratedpeople.service.UserService;
 import com.ratedpeople.service.TMProfileService
-import com.ratedpeople.service.TradesmanService
 import com.ratedpeople.service.utility.MatcherStringUtility
 import com.ratedpeople.service.utility.ResultInfo
 import com.ratedpeople.service.utility.UserInfo
@@ -21,12 +22,12 @@ import com.ratedpeople.support.DatabaseHelper
  */
 class TMProfileWorkingAreaFunctionalTest extends Specification{
 
-	private TradesmanService tradesmanService = new TradesmanService();
+	private UserService userService = new UserService()
 	private TMProfileService tmProfileService = new TMProfileService()
 
 	def "Post a Tradesman Workingarea"(){
 		given :
-			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			UserInfo user =  userService.getActivateDynamicTM()
 			def json = getWorkingarea(0)
 			println "Json is " +  json.toString()
 			println "********************************"
@@ -39,7 +40,7 @@ class TMProfileWorkingAreaFunctionalTest extends Specification{
 
 	def "Update a Tradesman Workingarea"(){
 		given :
-			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			UserInfo user =   userService.getActivateDynamicTM()
 			def json = getWorkingarea(0)
 			println "Json is " +  json.toString()
 			println "********************************"
@@ -63,7 +64,7 @@ class TMProfileWorkingAreaFunctionalTest extends Specification{
 
 	def "Get a Tradesman Workingarea"(){
 		given :
-			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			UserInfo user =  userService.getActivateDynamicTM()
 			def json = getWorkingarea(0)
 			println "Json is " +  json.toString()
 			println "********************************"

@@ -11,10 +11,10 @@ public abstract class CommonVariable {
 	public static final String DB_USERNAME = "ratedpeople"
 	public static final String DB_PWD = "ratedpeople"
 	public static final String DB_DRIVER = "com.mysql.jdbc.Driver"
-	
-//	public static final String SERVER_URL = System.getProperty('env')
+			
+	/* Common URL section*/
+	//public static final String SERVER_URL = System.getProperty('env')
 	public static final String DEFAULT_URL = "https://minerva.ratedcloud.net:8765"
-//	public static final String DEFAULT_URL = "http://davide-devbox.ratedcloud.net:8765"
 	public static final String USER_SERVICE_PREFIX = "/api/user/"
 	public static final String AUTHORIZATION_SERVER_PREFIX = "/api/uaa/"
 	public static final String PAYMENT_SERVICE_PREFIX = "/api/payment/"
@@ -25,10 +25,6 @@ public abstract class CommonVariable {
 	public static final String TMPROFILE_SERVICE_PREFIX = "/api/tmprofile/"
 	public static final String LOCATION_SERVICE_PREFIX = "/api/location/"
 	
-	public static final String DEFAULT_MOBILE_PREFIX = "07"
-	public static final String DEFAULT_LANDLINE_PREFIX = "02"
-	
-	/* Common URL section*/
 	public static final String DEFAULT_GET_TOKEN_URI = CommonVariable.AUTHORIZATION_SERVER_PREFIX + "oauth/token"
 	public static final String DEFAULT_ME_URI = CommonVariable.USER_SERVICE_PREFIX + "v1.0/me"
 	
@@ -78,6 +74,10 @@ public abstract class CommonVariable {
 	public static final String STATUS_PENDING = "PENDING"
 	public static final String STATUS_BLACKLISTED = "BLACKLISTED"
 	
+	/* Phone Section*/
+	public static final String DEFAULT_MOBILE_PREFIX = "07"
+	public static final String DEFAULT_LANDLINE_PREFIX = "02"
+	
 	/* Credit Card Section*/
 	public static final String DEFAULT_CC_TOKEN = "83f1c8e83a004ebdb8c8c35362a688ff"
 	public static final String DEFAULT_CC_NAME = "davide"
@@ -87,6 +87,7 @@ public abstract class CommonVariable {
 	public static final String DEFAULT_CC_EXPIRY_YEAR = "2016"
 	public static final String DEFAULT_CC_TYPE = "visa"
 	public static final String DEFAULT_CC_USER_ID = "34"
+	public static final String UNIQUE_CC_NUMBER = "4000000000000"
 	
 	/* Credit Card Validation Error Messages*/
 	public static final String CC_VALIDATION = "credit card has invalid characters - credit card number is compulsory - credit card has wrong size -   "
@@ -110,7 +111,6 @@ public abstract class CommonVariable {
 	private static final String DEFAULT_CURRENCY = "GBP"
 	private static final String DEFAULT_AMOUNT = "1000"
 	
-	
 	/* Job section */
 	private static final String DEFAULT_TITLE = "CLEANER"
 	private static final String DEFAULT_DESCRIPTION = "This is a test job with 30 or more character"
@@ -131,14 +131,12 @@ public abstract class CommonVariable {
 	private static final String DEFAULT_DISPUTED_JOB_ID = "12"
 	
 	/* Working area */
-	
 	private static final String DEFAULT_LONGITUDE = "-0.057477"
 	private static final String DEFAULT_LATITUDE = "51.5009274587931"
 	private static final String DEFAULT_RADIUS = "1"
 	
 	
 	/* Company details */
-	
 	private static final String DEFAULT_COMPANY_NAME = "GID Company"
 	
 	/* Image Section */

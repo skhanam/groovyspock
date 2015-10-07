@@ -5,7 +5,7 @@ package com.ratedpeople.resource.payment
 
 import groovy.json.*
 import spock.lang.Specification
-import com.ratedpeople.service.HomeownerService
+import com.ratedpeople.service.UserService
 import com.ratedpeople.service.PaymentService
 import com.ratedpeople.service.utility.ResultInfo
 import com.ratedpeople.service.utility.UserInfo
@@ -17,12 +17,12 @@ import com.ratedpeople.support.CommonVariable
 
 class CreditCardFunctionalTest extends Specification {
 
-	private HomeownerService homeownerService = new HomeownerService();
+	private UserService userService = new UserService();
 	private PaymentService paymentService = new PaymentService()
 
 	def testCreditCardSuccess() {
 		given:
-			UserInfo user =  homeownerService.createAndActivateDynamicUser()
+			UserInfo user =  userService.getActivateDynamicHO()
 		when:
 			def json = createJsonCreditCard(user);
 			ResultInfo result = paymentService.postCreditCard(user, json)
@@ -32,7 +32,7 @@ class CreditCardFunctionalTest extends Specification {
 
 	def testGetCardDetails(){
 		given:
-			UserInfo user =  homeownerService.createAndActivateDynamicUser()
+			UserInfo user =  userService.getActivateDynamicHO()
 			def json = createJsonCreditCard(user);
 			paymentService.postCreditCard(user, json)
 		when:
@@ -43,7 +43,7 @@ class CreditCardFunctionalTest extends Specification {
 
 	/*def testCreateCreditCardValidation(){
 		given:
-		UserInfo user =  homeownerService.createAndActivateDynamicUser()
+		UserInfo user =  userService.createAndActivateDynamicUser()
 		println "Test 3 :  testCreateCreditCardValidation"
 		println "User is : "+ user.getId()
 		String responseStatus = null
@@ -86,7 +86,7 @@ class CreditCardFunctionalTest extends Specification {
 */
 	def testCreateCreditCardWhenAlreadyExists(){
 		given:
-			UserInfo user =  homeownerService.createAndActivateDynamicUser()
+			UserInfo user =  userService.getActivateDynamicHO()
 			println "Test 3 :  testCreateCreditCardValidation"
 			println "USER IS ${user.getId()}"
 			def json = createJsonCreditCard(user);
