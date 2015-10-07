@@ -21,8 +21,6 @@ class UserService{
 	private static final String USER_URI_PREFIX = CommonVariable.USER_SERVICE_PREFIX + "v1.0/users/"
 	private static final String EMAIL_POSTFIX = "@gid.com"
 
-
-
 	private static final HttpConnectionService http = new HttpConnectionService()
 
 	public UserInfo getActivateDynamicHO(){
@@ -32,7 +30,7 @@ class UserService{
 		authToken(user)
 		return user;
 	}
-	
+
 	public UserInfo getActivateDynamicTM(){
 		UserInfo tm = getPendingDynamicTm();
 		UserInfo admin = getDefaultAdmin();
@@ -41,14 +39,14 @@ class UserService{
 		Thread.sleep(400)
 		return tm;
 	}
-	
+
 	public UserInfo getPendingDynamicHO(){
 		UserInfo user = createDynamicUser();
 		authToken(user)
 		getUserId(user)
 		return user;
 	}
-	
+
 	public UserInfo getPendingDynamicTm(){
 		UserInfo user = createDynamicTm();
 		authToken(user)
@@ -61,23 +59,22 @@ class UserService{
 		authToken(admin)
 		return admin;
 	}
-	
+
 	public UserInfo getDefaultHO(){
 		UserInfo user = createDefaultUser();
 		authToken(user)
 		return user;
 	}
-	
+
 	public UserInfo getDefaultTM(){
 		UserInfo tm = createDefaultTMUser()
 		authToken(tm)
 		return tm;
 	}
 
-	
 	private def createDynamicUser(){
 		UserInfo user = new UserInfo();
-		
+
 		String DYNAMIC_USER = CommonVariable.HO_USER_PREFIX + System.currentTimeMillis() + EMAIL_POSTFIX
 
 		def json = new JsonBuilder()
@@ -100,10 +97,10 @@ class UserService{
 			throw new Exception("Failed " +result.getResponseCode())
 		}
 	}
-	
+
 	private def createDynamicTm(){
 		UserInfo user = new UserInfo();
-		
+
 		String DYNAMIC_USER = CommonVariable.TM_USER_PREFIX + System.currentTimeMillis() + EMAIL_POSTFIX
 
 		def json = new JsonBuilder()
@@ -126,14 +123,14 @@ class UserService{
 			throw new Exception("Failed " +result.getResponseCode())
 		}
 	}
-	
+
 	private def createAdminUser(){
 		UserInfo user = new UserInfo();
 		user.setUsername(CommonVariable.DEFAULT_ADMIN_USERNAME)
 		user.setPassword(CommonVariable.DEFAULT_PASSWORD)
 		return user
 	}
-	
+
 	public UserInfo createDefaultUser(){
 		UserInfo user = new UserInfo();
 		user.setUsername(CommonVariable.DEFAULT_HO_USERNAME)
@@ -141,7 +138,7 @@ class UserService{
 		user.setId("2")
 		return user;
 	}
-	
+
 	public UserInfo createDefaultTMUser(){
 		UserInfo user = new UserInfo();
 		user.setUsername(CommonVariable.DEFAULT_TM_USERNAME)
@@ -149,8 +146,6 @@ class UserService{
 		user.setId("1")
 		return user;
 	}
-	
-	
 
 	public void authToken(final UserInfo user){
 		String token = null
@@ -167,7 +162,6 @@ class UserService{
 			String ACCESS_TOKEN = MatcherStringUtility.getMatch("access_token=(.*)expires", result.getBody())
 			println "Access Token: " + ACCESS_TOKEN
 			user.setToken(ACCESS_TOKEN)
-			
 		}else{
 			throw new Exception("AuthToken failed " +result.getResponseCode())
 		}
@@ -181,7 +175,6 @@ class UserService{
 			String USER_ID = MatcherStringUtility.getMatch("userId=(.*),userName", result.getBody())
 			println "User id : " + USER_ID
 			user.setId(USER_ID)
-			
 		}else{
 			throw new Exception("Error " +result.getResponseCode())
 		}
@@ -204,8 +197,7 @@ class UserService{
 			throw new Exception("AuthToken failed " +result.getResponseCode())
 		}
 	}
-	
-	
+
 	private def changeStatusTm(final UserInfo admin,final UserInfo user) {
 		String token = null
 		def query = [
@@ -234,7 +226,7 @@ class UserService{
 
 		return result;
 	}
-	
+
 	public def getPasswordToken(UserInfo userInfo){
 		String url =  USER_URI_PREFIX + userInfo.getId() + "/password/token"
 
@@ -245,7 +237,7 @@ class UserService{
 
 		return result;
 	}
-	
+
 	public def updatePassword(UserInfo userInfo,def body){
 		String url =  USER_URI_PREFIX + userInfo.getId() + "/password/reset"
 
@@ -256,31 +248,26 @@ class UserService{
 
 		return result;
 	}
-	
-	
+
 	public ResultInfo updateEmailToken(UserInfo userInfo){
 		String url = USER_URI_PREFIX + userInfo.getId() + "/email/token"
-		
+
 		ResultInfo result = http.callPutMethodWithAuthentication(url, userInfo.getToken(),null, null)
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
 			println "Updated"
 		}
-		
+
 		return result;
 	}
 
 	public ResultInfo validateEmailToken(UserInfo userInfo,def body){
 		String url = USER_URI_PREFIX + userInfo.getId() + "/email/verify"
-		
+
 		ResultInfo result = http.callPutMethodWithAuthentication(url, userInfo.getToken(),null, body)
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
 			println "Updated"
 		}
-		
+
 		return result;
 	}
-
-	
-	
-	
 }
