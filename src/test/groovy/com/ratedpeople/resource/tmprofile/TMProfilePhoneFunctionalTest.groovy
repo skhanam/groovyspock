@@ -2,8 +2,9 @@ package com.ratedpeople.resource.tmprofile
 
 import groovy.json.JsonBuilder
 import spock.lang.Specification
+
+import com.ratedpeople.service.UserService
 import com.ratedpeople.service.TMProfileService
-import com.ratedpeople.service.TradesmanService
 import com.ratedpeople.service.utility.MatcherStringUtility
 import com.ratedpeople.service.utility.ResultInfo
 import com.ratedpeople.service.utility.UserInfo
@@ -20,12 +21,12 @@ import com.ratedpeople.support.DatabaseHelper
  */
 class TMProfilePhoneFunctionalTest extends Specification{
 
-	private TradesmanService tradesmanService = new TradesmanService();
+	private UserService userService = new UserService();
 	private TMProfileService tmProfileService = new TMProfileService()
 
 	def "Add TM Phone"() {
 		given :
-			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			UserInfo user =  userService.getActivateDynamicTM()
 		
 			println "********************************"
 			println "Test running ..  Add Tradesman Phone"
@@ -39,7 +40,7 @@ class TMProfilePhoneFunctionalTest extends Specification{
 
 	def "Update TM Phone"() {
 		given :
-			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			UserInfo user =   userService.getActivateDynamicTM()
 			def json = getPhone(user)
 			tmProfileService.createPhone(user, json)
 			def  queryReuslt = DatabaseHelper.select("select id from tmprofile.phone where updated_by = '${user.getId()}'")

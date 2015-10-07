@@ -1,12 +1,15 @@
 package com.ratedpeople.service.utility
-
-import groovyx.net.http.HTTPBuilder;
 import groovy.json.*
 import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
+
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
 import org.apache.http.entity.mime.MultipartEntityBuilder
 import org.apache.http.entity.mime.content.ByteArrayBody
+
 import com.ratedpeople.support.CommonVariable
 
 final class HttpConnectionService {
@@ -15,9 +18,14 @@ final class HttpConnectionService {
 
 	private ResultInfo callPostMethodWithoutAuthentication(final String url, final def query, final def json){
 		ResultInfo info = new ResultInfo()
+		HTTP_BUILDER.ignoreSSLIssues();
 		
+		String dateLocal = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyy"))
+		String base64String= "clientId=${CommonVariable.CLIENT_ID}&date=${dateLocal}&methodType=POST"
+		println base64String
 		def response = HTTP_BUILDER.request(Method.POST,ContentType.JSON) {
 			uri.path = url
+			headers.'Authentication' = new String(Base64.getEncoder().encode(base64String.getBytes()))
 			uri.query = query
 			body = json.toString()
 			requestContentType = ContentType.JSON
@@ -52,6 +60,7 @@ final class HttpConnectionService {
 
 	private ResultInfo callPostMethodWithAuthentication(final String url, final String token, final def json){
 		ResultInfo info = new ResultInfo()
+		HTTP_BUILDER.ignoreSSLIssues();
 		def response = HTTP_BUILDER.request(Method.POST,ContentType.JSON) {
 			uri.path = url
 			headers.'Authorization' = "Bearer "+ token
@@ -83,6 +92,7 @@ final class HttpConnectionService {
 
 	private ResultInfo callPostMethodWithAuthenticationAndImage(final String url, final String token, final def queryText){
 		ResultInfo info = new ResultInfo()
+		HTTP_BUILDER.ignoreSSLIssues();
 		def response = HTTP_BUILDER.request(Method.POST,ContentType.JSON) {req ->
 			requestContentType = 'multipart/form-data'
 			uri.path = url
@@ -120,6 +130,7 @@ final class HttpConnectionService {
 
 	private ResultInfo callDeleteMethodWithAuthentication(final String url, final String token){
 		ResultInfo info = new ResultInfo()
+		HTTP_BUILDER.ignoreSSLIssues();
 		def response = HTTP_BUILDER.request(Method.DELETE,ContentType.JSON) {
 			uri.path = url
 			headers.'Authorization' = "Bearer "+ token
@@ -156,6 +167,7 @@ final class HttpConnectionService {
 
 	private ResultInfo callGetToken(final String url, final def query, final def json){
 		ResultInfo info = new ResultInfo()
+		HTTP_BUILDER.ignoreSSLIssues();
 		def response = HTTP_BUILDER.request(Method.POST,ContentType.JSON) {
 			headers.Accept = 'application/json'
 			headers.'Authorization' = "Basic "+ CommonVariable.DEFAULT_CLIENT_CREDENTIAL.bytes.encodeBase64().toString()
@@ -189,7 +201,7 @@ final class HttpConnectionService {
 
 	private ResultInfo callGetMethodWithAuthentication(final String url, final String token, final def query){
 		ResultInfo info = new ResultInfo()
-
+		HTTP_BUILDER.ignoreSSLIssues();
 		HTTP_BUILDER.request(Method.GET){
 			headers.Accept = 'application/json'
 			headers.'Authorization' = "Bearer " + token
@@ -219,8 +231,13 @@ final class HttpConnectionService {
 
 	private ResultInfo callGetMethodWithoutAuthentication(final String url, final def query){
 		ResultInfo info = new ResultInfo()
-
+		String dateLocal = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyy"))
+		String base64String= "clientId=${CommonVariable.CLIENT_ID}&date=${dateLocal}&methodType=GET"
+		println base64String
+		
+		HTTP_BUILDER.ignoreSSLIssues();
 		HTTP_BUILDER.request(Method.GET,ContentType.JSON){
+			headers.'Authentication' = new String(Base64.getEncoder().encode(base64String.getBytes()))
 			uri.path = url
 			uri.query = query
 			println "Uri is " + uri
@@ -248,7 +265,7 @@ final class HttpConnectionService {
 
 	private ResultInfo callPutMethodWithAuthentication(final String url, final String token, final def query, final def bodyText){	
 		ResultInfo info = new ResultInfo()
-
+		HTTP_BUILDER.ignoreSSLIssues();
 		HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
 			headers.Accept = 'application/json'
 			headers.'Authorization' = "Bearer "+ token
@@ -287,10 +304,13 @@ final class HttpConnectionService {
 	
 	private ResultInfo callPutMethodWithoutAuthentication(final String url, final def query, final def bodyText){
 		ResultInfo info = new ResultInfo()
-
+		String dateLocal = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyy"))
+		String base64String= "clientId=${CommonVariable.CLIENT_ID}&date=${dateLocal}&methodType=PUT"
+		println base64String
+		HTTP_BUILDER.ignoreSSLIssues();
 		HTTP_BUILDER.request(Method.PUT,ContentType.JSON){
+			headers.'Authentication' = new String(Base64.getEncoder().encode(base64String.getBytes()))
 			uri.path = url
-			
 			if(query!=null){
 				uri.query = query
 			}

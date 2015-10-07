@@ -5,7 +5,7 @@ package com.ratedpeople.resource.rating
 
 import groovy.json.JsonBuilder
 import spock.lang.Specification
-import com.ratedpeople.service.HomeownerService
+import com.ratedpeople.service.UserService
 import com.ratedpeople.service.RatingService
 import com.ratedpeople.service.utility.MatcherStringUtility
 import com.ratedpeople.service.utility.ResultInfo
@@ -15,12 +15,12 @@ import com.ratedpeople.support.DatabaseHelper
 
 class RatingFunctionalTest extends Specification {
 
-	private HomeownerService homeownerService = new HomeownerService()
+	private UserService userService = new UserService()
 	private RatingService ratingService = new RatingService()
 
-	def "test add HO Rating"(){
+	/*def "test add HO Rating"(){
 		given :
-			final UserInfo user = homeownerService.getHoUser();
+			final UserInfo user = userService.getDefaultHoUser();
 			final def json = getRatingObject(user)
 			println "Json is " +  json.toString()
 			println "********************************"
@@ -41,7 +41,7 @@ class RatingFunctionalTest extends Specification {
 	
 	def "test get Rating"(){
 		given :
-			final UserInfo user = homeownerService.getHoUser();
+			final UserInfo user = userService.getDefaultHoUser();
 		when:
 			ResultInfo result = ratingService.getRating(CommonVariable.DEFAULT_CLOSED_JOB_ID, user)
 		then:
@@ -64,7 +64,7 @@ class RatingFunctionalTest extends Specification {
 		}
 		
 		return json;
-	}
+	}*/
 }
 
 

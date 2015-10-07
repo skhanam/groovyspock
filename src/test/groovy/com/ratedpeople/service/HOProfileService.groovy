@@ -38,6 +38,17 @@ final class HOProfileService{
 
 		return result;
 	}
+	
+	public ResultInfo createPhone(final def phones, final UserInfo userInfo){
+		String url = PROFILE_PREFIX + userInfo.getId() + "/phones"
+		ResultInfo result = http.callPostMethodWithAuthentication(url, userInfo.getToken(), phones)
+
+		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_201)){
+			println "Created"
+		}
+
+		return result;
+	}
 
 	public ResultInfo updateAddress(final def address, final UserInfo userInfo){
 		String url = PROFILE_PREFIX + userInfo.getId() + "/addresses"

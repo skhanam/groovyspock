@@ -7,7 +7,7 @@ import groovy.json.JsonBuilder
 import spock.lang.Specification
 
 import com.ratedpeople.service.HOProfileService
-import com.ratedpeople.service.HomeownerService
+import com.ratedpeople.service.UserService
 import com.ratedpeople.service.utility.ResultInfo
 import com.ratedpeople.service.utility.UserInfo
 import com.ratedpeople.support.CommonVariable
@@ -20,7 +20,7 @@ class SmsPinTokenFunctionalTest extends Specification{
 
 	private static String getpinToken
 
-	private HomeownerService homeownerService = new HomeownerService();
+	private UserService userService = new UserService();
 	private HOProfileService hoProfileService = new HOProfileService();
 
 	def testRegeneratePINToken(){
@@ -28,7 +28,7 @@ class SmsPinTokenFunctionalTest extends Specification{
 		println "SmsPinToken"
 		println "Test Running ............. :  testRegeneratePINToken"
 		given:
-			UserInfo user = homeownerService.getHoUser()
+			UserInfo user = userService.getDefaultHO()
 			cleanDB(user)
 		when:
 			ResultInfo result = hoProfileService.resetPin(user, "2")
@@ -51,7 +51,7 @@ class SmsPinTokenFunctionalTest extends Specification{
 			println "****************************************************"
 			println "SmsPinToken"
 			println "Test Running ............. :  testValidate pin"
-			UserInfo user = homeownerService.getHoUser()
+			UserInfo user = userService.getDefaultHO()
 			String responseStatus = null
 			try{
 				def getphoneId = DatabaseHelper.select("select phone_id from hoprofile.ho_profile where user_id =  '${user.getId()}'")

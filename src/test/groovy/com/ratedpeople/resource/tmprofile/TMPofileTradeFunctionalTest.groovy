@@ -3,8 +3,9 @@
  */
 package com.ratedpeople.resource.tmprofileimport groovy.json.JsonBuilder
 import spock.lang.Specification
+
+import com.ratedpeople.service.UserService
 import com.ratedpeople.service.TMProfileService
-import com.ratedpeople.service.TradesmanService
 import com.ratedpeople.service.utility.MatcherStringUtility
 import com.ratedpeople.service.utility.ResultInfo
 import com.ratedpeople.service.utility.UserInfo
@@ -18,16 +19,13 @@ import com.ratedpeople.support.DatabaseHelper
  */
 class TMPofileTradeFunctionalTest  extends Specification{
 
-	private static final String PROFILE_PREFIX = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/users/"
-
-	private static final String MATCH_PREFIX = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/match"
-
-	private TradesmanService tradesmanService = new TradesmanService();
+	
+	private UserService userService = new UserService();
 	private TMProfileService tmProfileService = new TMProfileService()
 
 	def "Add  Tradesman Profile Trade"() {
 		given :
-			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			UserInfo user =  userService.getActivateDynamicTM()
 			def json = getTrade(1,10.00)
 			println "Json is " +  json.toString()
 			println "********************************"
@@ -40,7 +38,7 @@ class TMPofileTradeFunctionalTest  extends Specification{
 
 	def "Update  Tradesman Trade"(){
 		given :
-			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			UserInfo user =  userService.getActivateDynamicTM()
 			def json = getTrade(1,10.00)
 			tmProfileService.addTrade(user, json)
 			
@@ -59,7 +57,7 @@ class TMPofileTradeFunctionalTest  extends Specification{
 
 	def "Get  Tradesman Trade"(){
 		given :
-			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			UserInfo user =  userService.getActivateDynamicTM()
 			def json = getTrade(1,10.00)
 			tmProfileService.addTrade(user, json)
 			println "********************************"
@@ -70,20 +68,11 @@ class TMPofileTradeFunctionalTest  extends Specification{
 			result.getResponseCode().contains(CommonVariable.STATUS_200)
 	}
 	
-	def "Get  Tradesman info Id"(){
-		given :
-			UserInfo user =  tradesmanService.createTradesmanUser()
-			println "********************************"
-			println "Test running ..  Get Tradesman Id"
-		when:
-			ResultInfo result = tmProfileService.getTmInfo(user)
-		then:
-			result.getResponseCode().contains(CommonVariable.STATUS_200)
-	}
+	
 	
 	def "Delete  Tradesman Trade"(){
 		given :
-			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			UserInfo user = userService.getActivateDynamicTM()
 			def json = getTrade(1,10.00)
 			tmProfileService.addTrade(user, json)
 			

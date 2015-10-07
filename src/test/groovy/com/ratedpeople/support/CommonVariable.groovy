@@ -3,14 +3,18 @@ package com.ratedpeople.support
 
 public abstract class CommonVariable {
 	
+	public static final String SERVER_URL = System.getProperty("SERVER_URL", this.DEFAULT_URL);
+	
+	public static final String CLIENT_ID = "9ecc8459ea5f39f9da55cb4d71a70b5d1e0f0b80"
+	
 	public static final String DB_URL = "jdbc:mysql://minerva.ratedcloud.net:3306/"
 	public static final String DB_USERNAME = "ratedpeople"
 	public static final String DB_PWD = "ratedpeople"
 	public static final String DB_DRIVER = "com.mysql.jdbc.Driver"
 	
 //	public static final String SERVER_URL = System.getProperty('env')
-	public static final String SERVER_URL = "http://minerva.ratedcloud.net:8765"
-//	public static final String SERVER_URL = "http://davide-devbox.ratedcloud.net:8765"
+	public static final String DEFAULT_URL = "https://minerva.ratedcloud.net:8765"
+//	public static final String DEFAULT_URL = "http://davide-devbox.ratedcloud.net:8765"
 	public static final String USER_SERVICE_PREFIX = "/api/user/"
 	public static final String AUTHORIZATION_SERVER_PREFIX = "/api/uaa/"
 	public static final String PAYMENT_SERVICE_PREFIX = "/api/payment/"

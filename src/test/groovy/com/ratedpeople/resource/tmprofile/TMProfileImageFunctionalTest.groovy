@@ -3,16 +3,10 @@
  */
 package com.ratedpeople.resource.tmprofile
 
-import groovyx.net.http.ContentType
-import groovyx.net.http.Method
-
-import org.apache.http.entity.mime.MultipartEntityBuilder
-import org.apache.http.entity.mime.content.ByteArrayBody
-
 import spock.lang.Specification
 
+import com.ratedpeople.service.UserService
 import com.ratedpeople.service.TMProfileService
-import com.ratedpeople.service.TradesmanService
 import com.ratedpeople.service.utility.ResultInfo
 import com.ratedpeople.service.utility.UserInfo
 import com.ratedpeople.support.CommonVariable
@@ -27,12 +21,12 @@ class TMProfileImageFunctionalTest extends Specification{
 
 	private static final String MATCH_PREFIX = CommonVariable.TMPROFILE_SERVICE_PREFIX + "v1.0/match"
 
-	private TradesmanService tradesmanService = new TradesmanService();
+	private UserService userService = new UserService();
 	private TMProfileService tmProfileService = new TMProfileService()
 
 	def "Post a Image for Tradesman"(){
 		given:
-			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			UserInfo user =  userService.getActivateDynamicTM()
 			def query = [
 				imageType:CommonVariable.IMAGE_TYPE_PROFILE
 			]
@@ -46,12 +40,12 @@ class TMProfileImageFunctionalTest extends Specification{
 
 	def "Get a Image from Tradesman profile"(){
 		given:
-			UserInfo user =  tradesmanService.createAndActivateDynamicUser()
+			UserInfo user =  userService.getActivateDynamicTM()
 			def query = [
 				imageType:CommonVariable.IMAGE_TYPE_PROFILE
 			]
 			tmProfileService.postImage(user,query)
-			Thread.sleep(3000);
+			Thread.sleep(6000);
 			println "********************************"
 			println "Test Running .... Get Image to TM Profile"
 		when:

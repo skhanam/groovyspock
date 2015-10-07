@@ -5,9 +5,9 @@ package com.ratedpeople.resource.payment
 
 import groovy.json.*
 import spock.lang.Specification
-import com.ratedpeople.service.HomeownerService
+
+import com.ratedpeople.service.UserService
 import com.ratedpeople.service.PaymentService
-import com.ratedpeople.service.TradesmanService
 import com.ratedpeople.service.utility.ResultInfo
 import com.ratedpeople.service.utility.UserInfo
 import com.ratedpeople.support.CommonVariable
@@ -20,16 +20,16 @@ import com.ratedpeople.support.DatabaseHelper
  */
 class PreauthCreditCardFunctionalTest extends Specification{
 
-	private HomeownerService homeownerService = new HomeownerService();
+	private UserService userService = new UserService();
 	private PaymentService paymentService = new PaymentService()
-	private TradesmanService tradesmanService = new TradesmanService()
+	
 
 	private static final long RANDOM_JOB_ID = Math.round(Math.random()*1000);
 
 	def "test preauth credit card"(){
 		given:
-			UserInfo ho =  homeownerService.getHoUser()
-			UserInfo tm =  tradesmanService.createTradesmanUser()
+			UserInfo ho =  userService.getDefaultHO()
+			UserInfo tm =  userService.getDefaultTM()
 
 			def json = new JsonBuilder()
 			json {
