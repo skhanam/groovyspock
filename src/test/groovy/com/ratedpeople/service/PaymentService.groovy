@@ -73,7 +73,7 @@ final class PaymentService{
 		String url = PAYMENT_RESOURCE_URI + userInfo.getId() + "/jobs/"+jobId
 		ResultInfo result = http.callPutMethodWithAuthentication(url, userInfo.getToken(),null, body)
 		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
-			println "UPdated"
+			println "Updated"
 		}
 
 		return result;

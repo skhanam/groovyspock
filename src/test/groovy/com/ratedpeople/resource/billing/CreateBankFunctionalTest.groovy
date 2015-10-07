@@ -2,8 +2,9 @@ package com.ratedpeople.resource.billing
 
 import groovy.json.JsonBuilder
 import spock.lang.Specification
+
 import com.ratedpeople.service.BillingService
-import com.ratedpeople.service.TradesmanService
+import com.ratedpeople.service.UserService
 import com.ratedpeople.service.utility.ResultInfo
 import com.ratedpeople.service.utility.UserInfo
 import com.ratedpeople.support.CommonVariable
@@ -12,13 +13,13 @@ import com.ratedpeople.support.DatabaseHelper
 class CreateBankFunctionalTest extends Specification{
 
 	
-
+	private UserService userService = new UserService();
 	private BillingService billingService = new BillingService();
-	private TradesmanService tradesmanService = new TradesmanService();
+	
 
 	def "Create bank account Success"(){
 		given:
-			UserInfo user = tradesmanService.createAndActivateDynamicUser()
+			UserInfo user = userService.getActivateDynamicTM()
 			def jsonBank1 = getBank(user,"")
 		when:
 			ResultInfo result = billingService.createBankDetails(jsonBank1,user)
@@ -28,7 +29,7 @@ class CreateBankFunctionalTest extends Specification{
 
 	def "Get bank account"(){
 		given:
-			UserInfo user = tradesmanService.createAndActivateDynamicUser()
+			UserInfo user = userService.getActivateDynamicTM()
 			def jsonBank1 = getBank(user,"")
 			billingService.createBankDetails(jsonBank1,user)
 		when:
@@ -39,7 +40,7 @@ class CreateBankFunctionalTest extends Specification{
 
 	def "Update bank account "(){
 		given:
-			UserInfo user = tradesmanService.createAndActivateDynamicUser()
+			UserInfo user = userService.getActivateDynamicTM()
 			def jsonBank1 = getBank(user,"")
 			billingService.createBankDetails(jsonBank1,user)
 			def jsonBank2 = getBank(user,"update")

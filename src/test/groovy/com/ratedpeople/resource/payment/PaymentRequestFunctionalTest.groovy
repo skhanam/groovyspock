@@ -8,7 +8,7 @@ import groovyx.net.http.ContentType
 import groovyx.net.http.Method
 import spock.lang.Specification
 
-import com.ratedpeople.service.HomeownerService;
+import com.ratedpeople.service.UserService;
 import com.ratedpeople.service.PaymentService;
 import com.ratedpeople.service.utility.ResultInfo;
 import com.ratedpeople.service.utility.UserInfo;
@@ -22,14 +22,14 @@ import com.ratedpeople.support.DatabaseHelper
  */
 class PaymentRequestFunctionalTest extends Specification{
 
-	private HomeownerService homeownerService = new HomeownerService();
+	private UserService userService = new UserService();
 	private PaymentService paymentService = new PaymentService()
 
 	private static final long RANDOM_JOB_ID = Math.round(Math.random()*1000);
 
 	def "test request payment "(){
 		given:
-		UserInfo user =  homeownerService.getHoUser()
+		UserInfo user =  userService.getDefaultHO()
 		def json = new JsonBuilder()
 		json { "ipAddress" CommonVariable.DEFAULT_IP }
 

@@ -6,9 +6,8 @@ package com.ratedpeople.resource.job
 import groovy.json.JsonBuilder
 import spock.lang.Specification
 
-import com.ratedpeople.service.HomeownerService
+import com.ratedpeople.service.UserService
 import com.ratedpeople.service.JobService
-import com.ratedpeople.service.TradesmanService
 import com.ratedpeople.service.utility.ResultInfo
 import com.ratedpeople.service.utility.UserInfo
 import com.ratedpeople.support.CommonVariable
@@ -23,12 +22,12 @@ class TMJobListFunctionalTest extends Specification {
 	protected static long RANDOM_MOBILE = Math.round(Math.random()*100000000);
 
 	private JobService jobService = new JobService();
-	private TradesmanService tradesmanService = new TradesmanService();
-	private HomeownerService homeownerService = new HomeownerService();
+	private UserService userService = new UserService();
+	
 
 	def "Get Tradesman Job List"(){
 		given:
-		UserInfo user =  tradesmanService.createTradesmanUser()
+		UserInfo user =  userService.getDefaultTM()
 		println "********************************"
 		println "Test running ..  " +"Get Tradesman Job List"
 		DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id = 5 WHERE id = 5")
@@ -40,7 +39,7 @@ class TMJobListFunctionalTest extends Specification {
 
 	def "Get Unique Job Address HomeOwner"(){
 		given:
-		UserInfo user =  homeownerService.getHoUser()
+		UserInfo user =  userService.getDefaultHO()
 		println "********************************"
 		println "Test running ..  " +"Get Unique Job Address HomeOwner"
 		when:
@@ -52,7 +51,7 @@ class TMJobListFunctionalTest extends Specification {
 
 	def "Tradesman Accept Job"(){
 		given:
-		UserInfo user =  tradesmanService.createTradesmanUser()
+		UserInfo user =   userService.getDefaultTM()
 		println "********************************"
 		println "Test running ..  " +"Tradesman Accept Job"
 		when:
@@ -65,7 +64,7 @@ class TMJobListFunctionalTest extends Specification {
 
 	def "Tradesman Start Job"(){
 		given:
-		UserInfo user =  tradesmanService.createTradesmanUser()
+		UserInfo user =   userService.getDefaultTM()
 		println "********************************"
 		println "Test running ..  " +"Tradesman Start Job"
 		
@@ -85,7 +84,7 @@ class TMJobListFunctionalTest extends Specification {
 
 	def "Tradesman Pause Job"(){
 		given:
-		UserInfo user =  tradesmanService.createTradesmanUser()
+		UserInfo user =   userService.getDefaultTM()
 		println "********************************"
 		println "Test running ..  " +"Tradesman Pause Job"
 		def json = new JsonBuilder()
@@ -105,7 +104,7 @@ class TMJobListFunctionalTest extends Specification {
 
 	def "Tradesman Complete Job"(){
 		given:
-		UserInfo user =  tradesmanService.createTradesmanUser()
+		UserInfo user =  userService.getDefaultTM()
 		println "********************************"
 		println "Test running ..  " +"Tradesman Complete Job"
 		def json = new JsonBuilder()
@@ -125,7 +124,7 @@ class TMJobListFunctionalTest extends Specification {
 
 	def "Tradesman Reject Job"(){
 		given:
-		UserInfo user =  tradesmanService.createTradesmanUser()
+		UserInfo user =   userService.getDefaultTM()
 		println "********************************"
 		println "Test running ..  " +"Tradesman Reject Job"
 		def json = new JsonBuilder()
@@ -146,7 +145,7 @@ class TMJobListFunctionalTest extends Specification {
 
 	def "Get Single Job for Tradesman"(){
 		given:
-		UserInfo user =  tradesmanService.createTradesmanUser()
+		UserInfo user =  userService.getDefaultTM()
 		println "********************************"
 		println "Test running ..  " +" Single Job for Tradesman"
 		when:
@@ -157,7 +156,7 @@ class TMJobListFunctionalTest extends Specification {
 
 	def "Raise an Invoice by Tradesman"(){
 		given:
-		UserInfo user =  tradesmanService.createTradesmanUser()
+		UserInfo user =   userService.getDefaultTM()
 		println "********************************"
 		println "Test running ..  " +" Raise an Invoice by Tradesman"
 		def json = new JsonBuilder()
