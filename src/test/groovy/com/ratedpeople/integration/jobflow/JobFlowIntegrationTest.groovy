@@ -129,6 +129,7 @@ class JobFlowIntegrationTest extends Specification{
 			result.getResponseCode().contains(CommonVariable.STATUS_200)
 			result = jobService.raiseInvoice(tm,jobId,createJsonInvoice(jobId))
 			result.getResponseCode().contains(CommonVariable.STATUS_200)
+			Thread.sleep(1000)
 			//ho pay the job
 			def json = new JsonBuilder()
 			json { "ipAddress" CommonVariable.DEFAULT_IP }
