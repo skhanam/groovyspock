@@ -56,7 +56,7 @@ class TMJobListFunctionalTest extends Specification {
 		when:
 			ResultInfo result = jobService.acceptJob(user,"2")
 		then:
-			esult.getResponseCode().contains(CommonVariable.STATUS_200)
+			result.getResponseCode().contains(CommonVariable.STATUS_200)
 		cleanup:
 			DatabaseHelper.executeQuery("UPDATE job.job SET job_status_id = 2 WHERE id = 2")
 	}

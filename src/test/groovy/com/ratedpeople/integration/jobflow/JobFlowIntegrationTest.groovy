@@ -6,9 +6,9 @@ import groovy.json.JsonBuilder
 import spock.lang.Specification
 
 import com.ratedpeople.service.HOProfileService
-import com.ratedpeople.service.UserService
 import com.ratedpeople.service.JobService
 import com.ratedpeople.service.PaymentService
+import com.ratedpeople.service.UserService
 import com.ratedpeople.service.utility.MatcherStringUtility
 import com.ratedpeople.service.utility.ResultInfo
 import com.ratedpeople.service.utility.UserInfo
@@ -23,38 +23,38 @@ class JobFlowIntegrationTest extends Specification{
 	private static String getpinToken
 	private static String phoneid
 
+
 	private UserService userService = new UserService()
 	private HOProfileService hoProfileService = new HOProfileService()
 	private JobService jobService = new JobService()
 	private PaymentService paymentService = new PaymentService()
+
+
 
 	def "JobFlow Integration"(){
 		given:
 			UserInfo hoUser = userService.getPendingDynamicHO();
 			println "********************************"
 			println "Test Running .... JobFlow Integration"
+
 		when:
 			//post phone
 			ResultInfo result = hoProfileService.createPhone(getJsonPhone(hoUser),hoUser)
-			result.getResponseCode().contains(CommonVariable.STATUS_201)
+			checkResult(result,CommonVariable.STATUS_201)
 			Thread.sleep(1000)
 			String phoneId = getPhoneId(hoUser)
 			def jsonPin = getJsonPin(hoUser,phoneId)
-			
 			//validate pin
 			result = hoProfileService.verifyPin(hoUser, phoneId, jsonPin)
-			result.getResponseCode().contains(CommonVariable.STATUS_200)
+			checkResult(result,CommonVariable.STATUS_200)
 			Thread.sleep(1000)
-			
 			//refresh token
 			result = userService.authToken(hoUser);
-			
 			//post job
 			def jobJson = createJsonJob(hoUser,"")
 			result = jobService.createJob(jobJson,hoUser)
 			String jobId = MatcherStringUtility.getMatch("jobId=(.*)jobRejectedDescription",result.getBody())
-			result.getResponseCode().contains(CommonVariable.STATUS_201)
-			
+			checkResult(result,CommonVariable.STATUS_201)
 			//post credit card
 			Thread.sleep(1000)
 			def cardJson =  createJsonCreditCard(hoUser)
@@ -62,46 +62,47 @@ class JobFlowIntegrationTest extends Specification{
 			result = paymentService.getCreditCard(hoUser)
 			String token = MatcherStringUtility.getMatch("token=(.*),type",result.getBody())
 	
+	
 			UserInfo tm =  userService.getDefaultTM()
 			def preauthJson =  createPreauth(hoUser,tm,jobId,token)
 			result = paymentService.preauth(hoUser, preauthJson)
-			result.getResponseCode().contains(CommonVariable.STATUS_200)
+			checkResult(result,CommonVariable.STATUS_201)
 			Thread.sleep(1000)
 			result = jobService.getJobForHo(hoUser,jobId)
 	
-			result.getResponseCode().contains(CommonVariable.STATUS_200)
+			checkResult(result,CommonVariable.STATUS_200)
 			String status = MatcherStringUtility.getMatch("jobStatus=(.*),title",result.getBody())
 		then:
 			status=="REQUESTED"
+
+
 	}
+
 
 	def "JobFlow paid Integration "(){
 		given:
 			UserInfo hoUser = userService.getPendingDynamicHO();
 			println "********************************"
 			println "Test Running .... JobFlow Integration"
+
 		when:
 			//post phone
 			ResultInfo result = hoProfileService.createPhone(getJsonPhone(hoUser),hoUser)
-			result.getResponseCode().contains(CommonVariable.STATUS_201)
+			checkResult(result,CommonVariable.STATUS_201)
 			Thread.sleep(1000)
 			String phoneId = getPhoneId(hoUser)
 			def jsonPin = getJsonPin(hoUser,phoneId)
-			
 			//validate pin
 			result = hoProfileService.verifyPin(hoUser, phoneId, jsonPin)
-			result.getResponseCode().contains(CommonVariable.STATUS_200)
+			checkResult(result,CommonVariable.STATUS_200)
 			Thread.sleep(1000)
-			
 			//refresh token
 			result = userService.authToken(hoUser);
-			
 			//post job
 			def jobJson = createJsonJob(hoUser,"")
 			result = jobService.createJob(jobJson,hoUser)
 			String jobId = MatcherStringUtility.getMatch("jobId=(.*)jobRejectedDescription",result.getBody())
-			result.getResponseCode().contains(CommonVariable.STATUS_201)
-			
+			checkResult(result,CommonVariable.STATUS_201)
 			//post credit card
 			Thread.sleep(1000)
 			def cardJson =  createJsonCreditCard(hoUser)
@@ -109,39 +110,53 @@ class JobFlowIntegrationTest extends Specification{
 			result = paymentService.getCreditCard(hoUser)
 			String token = MatcherStringUtility.getMatch("token=(.*),type",result.getBody())
 	
+	
 			UserInfo tm =  userService.getDefaultTM()
 			def preauthJson =  createPreauth(hoUser,tm,jobId,token)
 			result = paymentService.preauth(hoUser, preauthJson)
-			result.getResponseCode().contains(CommonVariable.STATUS_200)
+			checkResult(result,CommonVariable.STATUS_201)
 			Thread.sleep(1000)
 			result = jobService.getJobForHo(hoUser,jobId)
-			result.getResponseCode().contains(CommonVariable.STATUS_200)
+			checkResult(result,CommonVariable.STATUS_200)
 			String status = MatcherStringUtility.getMatch("jobStatus=(.*),title",result.getBody())
 			status=="REQUESTED"
-			
 			//Tm accept job
 			result = jobService.acceptJob(tm,jobId)
-			result.getResponseCode().contains(CommonVariable.STATUS_200)
+			checkResult(result,CommonVariable.STATUS_200)
 			result = jobService.startJob(tm,jobId,createJsonStartJob(jobId))
-			result.getResponseCode().contains(CommonVariable.STATUS_200)
+			checkResult(result,CommonVariable.STATUS_200)
 			result = jobService.completeJob(tm,jobId,createJsonStopJob(jobId))
-			result.getResponseCode().contains(CommonVariable.STATUS_200)
+			checkResult(result,CommonVariable.STATUS_200)
 			result = jobService.raiseInvoice(tm,jobId,createJsonInvoice(jobId))
-			result.getResponseCode().contains(CommonVariable.STATUS_200)
+			checkResult(result,CommonVariable.STATUS_200)
 			Thread.sleep(1000)
-			
 			//ho pay the job
 			def json = new JsonBuilder()
 			json { "ipAddress" CommonVariable.DEFAULT_IP }
 			result = paymentService.postPayment(hoUser,jobId, json)
-			result.getResponseCode().contains(CommonVariable.STATUS_200)
+			checkResult(result,CommonVariable.STATUS_200)
 			Thread.sleep(1000)
 			result = jobService.getJobForHo(hoUser,jobId)
-			result.getResponseCode().contains(CommonVariable.STATUS_200)
+			checkResult(result,CommonVariable.STATUS_200)
 			status = MatcherStringUtility.getMatch("jobStatus=(.*),title",result.getBody())
+		
 		then:
-			status=="CLOSED"
+		status=="CLOSED"
+
+
+
+
+
 	}
+
+	private checkResult(ResultInfo result,String code) {
+		if(result.getResponseCode().contains(code)!=true) {
+			println result.getResponseCode()+" "+result.getError() +" "+result.getBody()
+			throw new Exception()
+		}
+	}
+
+
 
 	private def getPhoneId(final UserInfo user){
 		def queryResult1 = DatabaseHelper.select("select phone_id from hoprofile.ho_profile where user_id = '${user.getId()}'")
@@ -173,6 +188,7 @@ class JobFlowIntegrationTest extends Specification{
 		return json
 	}
 
+
 	private def createJsonJob(final UserInfo user, final String addDescription){
 		long RANDOM_MOBILE = Math.round(Math.random()*1000000000);
 		def json = new JsonBuilder()
@@ -185,7 +201,7 @@ class JobFlowIntegrationTest extends Specification{
 			"hoRate" CommonVariable.DEFAULT_HOURRATE
 			"jobContactDetails" {
 				"homeownerName" "hotest"
-				"email" user.getUsername()
+				"email" "test@gid.com"
 				"mobilePhone" CommonVariable.DEFAULT_MOBILE_PREFIX  + RANDOM_MOBILE
 				"line1" CommonVariable.DEFAULT_LINE1
 				"city" CommonVariable.DEFAULT_CITY
@@ -198,6 +214,8 @@ class JobFlowIntegrationTest extends Specification{
 		println "Json is   : ${json.toString()}"
 		return json;
 	}
+
+
 
 	private def createJsonCreditCard(UserInfo user){
 		def json = new JsonBuilder()
@@ -256,7 +274,7 @@ class JobFlowIntegrationTest extends Specification{
 	private def createJsonInvoice(String job){
 		def json = new JsonBuilder()
 		json {
-			"jobId" job
+			"jobId" Long.parseLong(job)
 			"hoursWorked" '1.5'
 		}
 		return json;

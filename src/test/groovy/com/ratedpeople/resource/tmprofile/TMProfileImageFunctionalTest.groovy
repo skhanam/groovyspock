@@ -45,12 +45,31 @@ class TMProfileImageFunctionalTest extends Specification{
 				imageType:CommonVariable.IMAGE_TYPE_PROFILE
 			]
 			tmProfileService.postImage(user,query)
-			Thread.sleep(6000);
+			
 			println "********************************"
 			println "Test Running .... Get Image to TM Profile"
 		when:
-			ResultInfo result = tmProfileService.getImage(user)
+			boolean imageExist = false
+			ResultInfo result = null
+			int retry = 0;
+			while(retry <3){
+				Thread.sleep(2000);
+				result = tmProfileService.getImage(user)
+				imageExist=checkResult(result,CommonVariable.STATUS_200)
+				if(imageExist==true) break;
+				retry++;
+			
+			}
+			
 		then:
 			result.getResponseCode().contains(CommonVariable.STATUS_200)
+	}
+	
+	private boolean checkResult(ResultInfo result,String code) {
+		if(result.getResponseCode().contains(code)!=true) {
+			println result.getResponseCode()+" "+result.getError() +" "+result.getBody()
+			return false;
+		} 
+		return true;
 	}
 }
