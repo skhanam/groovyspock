@@ -19,6 +19,7 @@ class UserService{
 	private static final String HOMEOWNER_URI_PREFIX = CommonVariable.USER_SERVICE_PREFIX + "v1.0/homeowners/"
 	private static final String TRADESMAN_URI_PREFIX = CommonVariable.USER_SERVICE_PREFIX + "v1.0/tradesmen/"
 	private static final String USER_URI_PREFIX = CommonVariable.USER_SERVICE_PREFIX + "v1.0/users/"
+	private static final String USER_PROXY_URI_PREFIX = CommonVariable.USERPROXY_SERVICE_PREFIX + "v1.0/users/"
 	private static final String EMAIL_POSTFIX = "@gid.com"
 
 	private static final HttpConnectionService http = new HttpConnectionService()
@@ -226,7 +227,23 @@ class UserService{
 
 		return result;
 	}
+	
+	
+	public ResultInfo getExistingHoInfo(UserInfo userInfo){
+		String url = USER_PROXY_URI_PREFIX +"checkemail"
+		def query = [
+			email: CommonVariable.DEFAULT_HO_USERNAME
+			]
+		ResultInfo result = http.callGetMethodWithoutAuthentication(url,query)
+		if(result.getResponseCode().toString().contains(CommonVariable.STATUS_200)){
+			println "Ok"
+		}
 
+		return result;
+	}
+	
+	
+	
 	public def getPasswordToken(UserInfo userInfo){
 		String url =  USER_URI_PREFIX + userInfo.getId() + "/password/token"
 

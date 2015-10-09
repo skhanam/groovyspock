@@ -7,6 +7,7 @@ import groovyx.net.http.Method
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder
 import org.apache.http.entity.mime.content.ByteArrayBody
 

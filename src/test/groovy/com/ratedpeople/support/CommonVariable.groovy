@@ -24,6 +24,7 @@ public abstract class CommonVariable {
 	public static final String JOB_SERVICE_PREFIX = "/api/chores/"
 	public static final String TMPROFILE_SERVICE_PREFIX = "/api/tmprofile/"
 	public static final String LOCATION_SERVICE_PREFIX = "/api/location/"
+	public static final String USERPROXY_SERVICE_PREFIX = "/api/userproxy/"
 	
 	public static final String DEFAULT_GET_TOKEN_URI = CommonVariable.AUTHORIZATION_SERVER_PREFIX + "oauth/token"
 	public static final String DEFAULT_ME_URI = CommonVariable.USER_SERVICE_PREFIX + "v1.0/me"
