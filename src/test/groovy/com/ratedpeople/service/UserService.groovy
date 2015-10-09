@@ -230,7 +230,7 @@ class UserService{
 	
 	
 	public ResultInfo getExistingHoInfo(UserInfo userInfo){
-		String url = USER_PROXY_URI_PREFIX +"checkmail"
+		String url = USER_PROXY_URI_PREFIX +"checkemail"
 		def query = [
 			email: CommonVariable.DEFAULT_HO_USERNAME
 			]

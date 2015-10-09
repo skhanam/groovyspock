@@ -19,10 +19,6 @@ import com.ratedpeople.support.DatabaseHelper
  */
 class ExistingUserFunctionalTest extends Specification {
 
-//	private static final String EXISTING_USER_HO_URI = CommonVariable.USERPROXY_SERVICE_PREFIX + "v1.0/users/checkmail"
-//	private static final String REGISTER_USER_TM_URI = CommonVariable.USER_SERVICE_PREFIX + "v1.0/tradesmen/register"
-
-	
 	private UserService userService = new UserService();
 	private TMProfileService tmProfileService = new TMProfileService()
 
@@ -30,16 +26,14 @@ class ExistingUserFunctionalTest extends Specification {
 
 	def "Get Existing User"(){
 		given :
-			UserInfo user =  userService.getDefaultHO()
-			println "********************************"
-			println "Test running ..  Get user info Id"
+		UserInfo user =  userService.getDefaultHO()
+		println "********************************"
+		println "Test running ..  Get user info Id"
 		when:
-			ResultInfo result = userService.getExistingHoInfo(user)
+		ResultInfo result = userService.getExistingHoInfo(user)
 		then:
-			result.getResponseCode().contains(CommonVariable.STATUS_200)
+		result.getResponseCode().contains(CommonVariable.STATUS_200)
+		String originUser = MatcherStringUtility.getMatch("userOrigin=(.*),userRef",result.getBody())
+		originUser=="GID"
 	}
-
-	
-	
-
 }
